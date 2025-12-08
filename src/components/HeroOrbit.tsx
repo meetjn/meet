@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { MapPin } from "lucide-react";
 
 import { ParticleHero } from "@/components/ParticleCanvas";
-import { heroSignals, identity, stats } from "@/content/portfolio";
+import { identity, stats } from "@/content/portfolio";
 
 const HERO_PARALLAX_RELEASE_MS = 420;
 const HERO_REVEAL_DELAY_MS = 750;
