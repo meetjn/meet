@@ -2,13 +2,12 @@ export const identity = {
   name: "Meet Jain",
   role: "Full Stack × Blockchain Engineer",
   headline:
-    "I build consumer-grade crypto journeys for YC-scale companies—shipping payment rails, wallets, and security systems that feel invisible.",
-  location: "San Francisco · Remote friendly",
+    "I build production grade web apps and payment flows for fast moving teams — from SaaS dashboards to crypto rails.",
+  location: "India · Remote friendly",
   email: "meetjaiin@gmail.com",
   phone: "+91 88549 28428",
   github: "https://github.com/meet-metakeep",
   linkedin: "https://www.linkedin.com/in/meetjaiin",
-  availability: "Open to YC-backed teams moving fast on crypto or fintech infra.",
 };
 
 export const heroSignals = [
@@ -20,24 +19,19 @@ export const heroSignals = [
 
 export const stats = [
   {
-    value: "0-fee",
-    label: "Retail on-ramp",
-    detail: "Coinbase API + MetaKeep SDK experience for first-time buyers.",
+    value: "L1 ↔ UI",
+    label: "Technical Depth",
+    detail: "From raw Solidity bytes to pixel-perfect React framer motion.",
   },
   {
-    value: "40%",
-    label: "Fewer pre-prod bugs",
-    detail: "Wallet Isolation hardened enterprise custody rollouts.",
+    value: "Rapid",
+    label: "Ship Cadence",
+    detail: "Bias for action. Deploying production features weekly.",
   },
   {
-    value: "8 apps",
-    label: "SDK demo suite",
-    detail: "6 Android + 2 iOS showcasing Solana/EVM flows.",
-  },
-  {
-    value: "100%",
-    label: "Smart-contract coverage",
-    detail: "AOSSIE FairFund suite with 25% gas savings.",
+    value: "Zero-Friction",
+    label: "User Experience",
+    detail: "Building rails that make crypto invisible to the end user.",
   },
 ];
 
@@ -61,7 +55,7 @@ export const experience = [
     title: "Blockchain Developer Intern",
     timeline: "Oct 2024 – Mar 2025 · Remote",
     summary:
-      "Led the MVP of a DEX on Uniswap v3 primitives plus a multi-sig treasury.",
+      "Led the MVP of a DEX using Uniswap v3 contracts and a multi-sig wallet.",
     impact: [
       "Implemented concentrated-liquidity swaps with automated position rebalancing.",
       "Shipped production-ready multisig wallet so the protocol could self-custody fees.",
@@ -101,7 +95,7 @@ export const keystoneBuilds = [
 export const personalProjects = [
   {
     name: "Transaction Link Generator",
-    link: "https://github.com/meet-metakeep/Transaction-Link-Generator",
+    link: "https://github.com/meetjn/Transaction-link-generator",
     summary:
       "Secure React + AWS app that creates one-click MetaKeep transaction URLs with full audit logging.",
     highlight: "CI/CD via GitHub Actions brought deploys down by 90%.",
@@ -109,7 +103,7 @@ export const personalProjects = [
   },
   {
     name: "DeFi Stable Coin",
-    link: "https://github.com/meet-metakeep/defi-stable-coin",
+    link: "https://github.com/meetjn/Defi-Protocol",
     summary:
       "Collateralized lending protocol with dynamic interest bands and on-chain auditing.",
     highlight: "Foundry-based test harness covering liquidation edges and rate shifts.",
@@ -142,10 +136,28 @@ export const demoSuite = [
 
 export const openSource = [
   {
-    org: "AOSSIE · FairFund",
+    org: "StabilityNexus · FairFund",
     contribution:
       "Cut gas by 25%, fixed critical bugs, and drove coverage to 100% across the FairFund contracts.",
-    link: "https://github.com/AOSSIE",
+    link: "https://github.com/StabilityNexus/FairFund/pull/74",
+  },
+  {
+    org: "StabilityNexus · FairFund",
+    contribution:
+      "Earlier refactors and improvements that hardened FundingVault and reduced gas costs.",
+    link: "https://github.com/StabilityNexus/FairFund/pull/69",
+  },
+  {
+    org: "AOSSIE · Agora-Blockchain",
+    contribution:
+      "Fixed edge cases in election logic to prevent out-of-bounds access in removeCandidate.",
+    link: "https://github.com/AOSSIE-Org/Agora-Blockchain/pull/119",
+  },
+  {
+    org: "AOSSIE · Agora-Blockchain",
+    contribution:
+      "Optimized voting and messaging contracts to reduce gas usage across cross-chain calls.",
+    link: "https://github.com/AOSSIE-Org/Agora-Blockchain/pull/123",
   },
 ];
 
@@ -158,4 +170,5 @@ export const contact = {
     { label: "View GitHub", href: "https://github.com/meet-metakeep" },
   ],
 };
+
 

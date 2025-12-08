@@ -1,17 +1,14 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import Script from "next/script";
+import { Inter } from "next/font/google";
 import "./globals.css";
+import { Navbar } from "@/components/Navbar";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
+  display: "swap",
 });
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
 export const metadata: Metadata = {
   title: "Meet Jain · Full Stack & Blockchain Engineer",
   description:
@@ -40,10 +37,22 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#03010a] text-white`}
-      >
-        {children}
+      <body className={`${inter.variable} antialiased bg-black text-white`}>
+        <Script
+          src="https://cdn.jsdelivr.net/npm/metakeep@2.2.8/lib/index.js"
+          integrity="sha256-dVJ6hf8zqdtHxHJCDJnLAepAyCCbu6lCXzZS3lqMIto="
+          crossOrigin="anonymous"
+          strategy="beforeInteractive"
+        />
+        <div className="relative min-h-screen bg-black pb-16 text-white">
+          <div className="pointer-events-none absolute inset-0 opacity-30">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.08),_transparent_55%)]" />
+          </div>
+          <div className="relative z-10 mx-auto w-full max-w-[1600px] px-4 pb-6 pt-10 sm:px-6 lg:px-10">
+            <Navbar />
+          </div>
+          <div className="relative z-10">{children}</div>
+        </div>
       </body>
     </html>
   );
