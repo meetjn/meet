@@ -31,7 +31,8 @@ export const stats = [
   {
     value: "Zero-Friction",
     label: "User Experience",
-    detail: "Building rails that make crypto invisible to the end user.",
+    detail:
+      "Designing flows where users see clean dollars and outcomes, not wallets and gas.",
   },
 ];
 
@@ -136,25 +137,25 @@ export const demoSuite = [
 
 export const openSource = [
   {
-    org: "StabilityNexus · FairFund",
+    org: "StabilityNexus · FairFund · Coverage",
     contribution:
       "Cut gas by 25%, fixed critical bugs, and drove coverage to 100% across the FairFund contracts.",
     link: "https://github.com/StabilityNexus/FairFund/pull/74",
   },
   {
-    org: "StabilityNexus · FairFund",
+    org: "StabilityNexus · FairFund · FundingVault",
     contribution:
       "Earlier refactors and improvements that hardened FundingVault and reduced gas costs.",
     link: "https://github.com/StabilityNexus/FairFund/pull/69",
   },
   {
-    org: "AOSSIE · Agora-Blockchain",
+    org: "AOSSIE · Agora-Blockchain · Safety",
     contribution:
       "Fixed edge cases in election logic to prevent out-of-bounds access in removeCandidate.",
     link: "https://github.com/AOSSIE-Org/Agora-Blockchain/pull/119",
   },
   {
-    org: "AOSSIE · Agora-Blockchain",
+    org: "AOSSIE · Agora-Blockchain · Gas",
     contribution:
       "Optimized voting and messaging contracts to reduce gas usage across cross-chain calls.",
     link: "https://github.com/AOSSIE-Org/Agora-Blockchain/pull/123",
@@ -164,11 +165,14 @@ export const openSource = [
 export const contact = {
   headline: "Building something ambitious?",
   pitch:
-    "YC-scale companies get a partner who can ship regulated on-ramps, wallets, and smart-contract systems without slowing growth.",
+    "Whether you’re building fintech, SaaS, or web3, I partner with founders and execs to quietly own wallets, payments, and smart-contract systems end-to-end so your team can stay focused on product and distribution.",
   actions: [
-    { label: "Book a 15-min sync", href: "mailto:meetjaiin@gmail.com?subject=Let%27s%20ship%20crypto%20infra" },
-    { label: "View GitHub", href: "https://github.com/meet-metakeep" },
+    {
+      label: "Book a 15-min sync",
+      href: "https://calendly.com/meetjaiin/30min",
+    },
   ],
 };
+
 
 

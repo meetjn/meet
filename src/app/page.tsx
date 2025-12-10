@@ -185,7 +185,7 @@ export default function Home() {
         </SectionShell>
 
         <SectionShell
-          eyebrow="Next chapter"
+          eyebrow="Get in touch"
           title={contact.headline}
           className="solid-panel"
         >

@@ -14,6 +14,9 @@ export const metadata: Metadata = {
   description:
     "MetaKeep + Quranium builder shipping zero-fee onramps, wallet isolation, and audited DeFi systems for YC-backed teams.",
   metadataBase: new URL("https://meet.build"), // placeholder domain, update when deployed
+  icons: {
+    icon: "/design/logo.jpeg",
+  },
   openGraph: {
     title: "Meet Jain · Full Stack & Blockchain Engineer",
     description:

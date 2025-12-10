@@ -149,12 +149,9 @@ export function Navbar() {
   };
 
   const handleResumeDownload = () => {
-    const link = document.createElement("a");
-    link.href = RESUME_PATH;
-    link.download = "Meet-Jain-Resume.pdf";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    if (typeof window === "undefined") return;
+    // Use direct navigation so iOS treats it as a user gesture and opens reliably.
+    window.location.assign(RESUME_PATH);
   };
 
   const handleConnect = useCallback(async () => {
@@ -171,11 +168,7 @@ export function Navbar() {
       const response: MetaKeepWalletResponse = await sdk.getWallet();
       if (response.status === "SUCCESS" && response.wallet?.solAddress) {
         setWallet(response.wallet.solAddress);
-        if (!reduceMotionQuery.current || !reduceMotionQuery.current.matches) {
-          setTimeout(handleResumeDownload, 450);
-        } else {
-          handleResumeDownload();
-        }
+        handleResumeDownload();
       }
     } catch (error) {
       console.error("MetaKeep connection failed:", error);
