@@ -6,7 +6,7 @@ export const identity = {
   location: "India · Remote friendly",
   email: "meetjaiin@gmail.com",
   phone: "+91 88549 28428",
-  github: "https://github.com/meet-metakeep",
+  github: "https://github.com/meetjn",
   linkedin: "https://www.linkedin.com/in/meetjaiin",
 };
 
