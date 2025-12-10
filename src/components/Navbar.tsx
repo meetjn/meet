@@ -142,10 +142,17 @@ export function Navbar() {
   const toggleMenu = () => setIsMenuOpen((prev) => !prev);
 
   const scrollToMedia = () => {
-    if (typeof document === "undefined") return;
+    if (typeof window === "undefined" || typeof document === "undefined") return;
     const target = document.getElementById(MEDIA_SECTION_ID);
     if (!target) return;
-    target.scrollIntoView({ behavior: "smooth", block: "start" });
+
+    // Account for sticky navbar height so the footer isn't hidden behind it,
+    // especially on smaller mobile screens.
+    const targetRect = target.getBoundingClientRect();
+    const headerOffset = 120; // approx navbar + spacing
+    const scrollTop = window.scrollY + targetRect.top - headerOffset;
+
+    window.scrollTo({ top: Math.max(scrollTop, 0), behavior: "smooth" });
   };
 
   const handleResumeDownload = () => {
@@ -160,7 +167,11 @@ export function Navbar() {
       return;
     }
     if (!sdk) {
-      console.warn("MetaKeep SDK not ready yet.");
+      console.warn(
+        "MetaKeep SDK not ready yet; falling back to direct resume download."
+      );
+      // Fallback so mobile users and non-configured envs still get the resume.
+      handleResumeDownload();
       return;
     }
     setIsConnecting(true);
