@@ -15,7 +15,11 @@ export const metadata: Metadata = {
     "MetaKeep + Quranium builder shipping zero-fee onramps, wallet isolation, and audited DeFi systems for YC-backed teams.",
   metadataBase: new URL("https://meet.build"), // placeholder domain, update when deployed
   icons: {
-    icon: "/design/logo.jpeg",
+    icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/favicon.ico", sizes: "any" },
+    ],
+    apple: "/favicon.svg",
   },
   openGraph: {
     title: "Meet Jain · Full Stack & Blockchain Engineer",
@@ -47,13 +51,11 @@ export default function RootLayout({
           crossOrigin="anonymous"
           strategy="beforeInteractive"
         />
-        <div className="relative min-h-screen bg-black pb-16 text-white">
+        <div className="relative min-h-screen bg-black pb-16 pt-10 text-white">
           <div className="pointer-events-none absolute inset-0 opacity-30">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.08),_transparent_55%)]" />
           </div>
-          <div className="relative z-10 mx-auto w-full max-w-[1600px] px-4 pb-6 pt-10 sm:px-6 lg:px-10">
-            <Navbar />
-          </div>
+          <Navbar />
           <div className="relative z-10">{children}</div>
         </div>
       </body>

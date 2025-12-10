@@ -142,17 +142,10 @@ export function Navbar() {
   const toggleMenu = () => setIsMenuOpen((prev) => !prev);
 
   const scrollToMedia = () => {
-    if (typeof window === "undefined" || typeof document === "undefined") return;
+    if (typeof document === "undefined") return;
     const target = document.getElementById(MEDIA_SECTION_ID);
     if (!target) return;
-
-    // Account for sticky navbar height so the footer isn't hidden behind it,
-    // especially on smaller mobile screens.
-    const targetRect = target.getBoundingClientRect();
-    const headerOffset = 120; // approx navbar + spacing
-    const scrollTop = window.scrollY + targetRect.top - headerOffset;
-
-    window.scrollTo({ top: Math.max(scrollTop, 0), behavior: "smooth" });
+    target.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   const handleResumeDownload = () => {
@@ -167,11 +160,7 @@ export function Navbar() {
       return;
     }
     if (!sdk) {
-      console.warn(
-        "MetaKeep SDK not ready yet; falling back to direct resume download."
-      );
-      // Fallback so mobile users and non-configured envs still get the resume.
-      handleResumeDownload();
+      console.warn("MetaKeep SDK not ready yet.");
       return;
     }
     setIsConnecting(true);
@@ -179,7 +168,7 @@ export function Navbar() {
       const response: MetaKeepWalletResponse = await sdk.getWallet();
       if (response.status === "SUCCESS" && response.wallet?.solAddress) {
         setWallet(response.wallet.solAddress);
-        handleResumeDownload();
+          handleResumeDownload();
       }
     } catch (error) {
       console.error("MetaKeep connection failed:", error);
@@ -195,7 +184,7 @@ export function Navbar() {
 
   return (
     <header
-      className={`sticky top-4 z-30 mx-auto w-full max-w-[1600px] px-4 transition duration-500 ease-out sm:top-6 sm:px-6 ${
+      className={`sticky top-4 z-50 mx-auto w-full max-w-[1600px] px-4 transition duration-500 ease-out sm:top-6 sm:px-6 lg:px-10 ${
         isHidden
           ? "-translate-y-20 opacity-0 pointer-events-none"
           : "translate-y-0 opacity-100"
@@ -225,7 +214,7 @@ export function Navbar() {
           aria-controls={MOBILE_NAV_ID}
           aria-expanded={isMenuOpen}
           onClick={toggleMenu}
-          className="nav-pill flex h-11 w-11 items-center justify-center border border-white/20 text-white/80 transition hover:border-[#f5c775] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 md:hidden"
+          className="nav-pill relative z-50 flex h-11 w-11 items-center justify-center border border-white/30 bg-black/60 text-white backdrop-blur-sm transition hover:border-[#f5c775] hover:bg-black/80 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 md:hidden"
         >
           <span className="sr-only">Toggle navigation</span>
           <svg
@@ -234,7 +223,7 @@ export function Navbar() {
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
-            strokeWidth="1.5"
+            strokeWidth="2"
             strokeLinecap="round"
           >
             <path d="M4 7h16M4 12h12M4 17h16" />
@@ -245,14 +234,14 @@ export function Navbar() {
           <button
             type="button"
             onClick={scrollToMedia}
-            className="nav-pill inline-flex items-center justify-center border border-white/20 px-5 py-2 text-sm font-semibold text-white/80 transition hover:border-[#f5c775] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+            className="nav-pill inline-flex items-center justify-center border border-white/25 bg-white/5 px-5 py-2 text-sm font-semibold text-white backdrop-blur-sm transition hover:border-[#f5c775] hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 active:scale-[0.98]"
           >
             Media
           </button>
           <button
             type="button"
             onClick={handleConnect}
-            className="nav-pill inline-flex items-center justify-center border border-white/20 px-6 py-2 text-sm font-semibold text-white transition hover:border-[#f5c775] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+            className="nav-pill inline-flex items-center justify-center border border-white/25 bg-white/5 px-6 py-2 text-sm font-semibold text-white backdrop-blur-sm transition hover:border-[#f5c775] hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 active:scale-[0.98]"
             disabled={isConnecting}
           >
             {buttonLabel}
@@ -273,7 +262,7 @@ export function Navbar() {
 
       <div className="md:hidden">
         <div
-          className={`fixed inset-0 z-20 bg-black/70 backdrop-blur-lg transition-opacity duration-300 ${
+          className={`fixed inset-0 z-[60] bg-black/80 backdrop-blur-lg transition-opacity duration-300 ${
             isMenuOpen ? "opacity-100" : "pointer-events-none opacity-0"
           }`}
           aria-hidden="true"
@@ -281,17 +270,17 @@ export function Navbar() {
         />
         <nav
           id={MOBILE_NAV_ID}
-          className={`fixed left-4 right-4 top-4 z-30 rounded-[32px] border border-white/15 bg-[#05070c]/95 px-6 pb-8 pt-20 text-sm text-white/80 shadow-[0_40px_140px_rgba(0,0,0,0.65)] transition-all duration-300 ${
+          className={`mobile-nav-starfield fixed left-4 right-4 top-4 z-[70] overflow-hidden rounded-[32px] border border-white/20 bg-[#05070c]/98 backdrop-blur-xl px-6 pb-8 pt-20 text-sm text-white shadow-[0_40px_140px_rgba(0,0,0,0.85)] transition-all duration-300 ${
             isMenuOpen
               ? "translate-y-0 opacity-100"
               : "-translate-y-4 opacity-0 pointer-events-none"
           }`}
         >
-          <div className="absolute right-4 top-4">
+          <div className="absolute right-4 top-4 z-20">
             <button
               type="button"
               onClick={closeMenu}
-              className="nav-pill inline-flex h-10 w-10 items-center justify-center border border-white/25 text-white/70 hover:border-white hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+              className="nav-pill inline-flex h-10 w-10 items-center justify-center border border-white/30 bg-white/5 text-white backdrop-blur-sm hover:border-white hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
             >
               <span className="sr-only">Close navigation</span>
               <svg
@@ -300,18 +289,18 @@ export function Navbar() {
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
-                strokeWidth="1.5"
+                strokeWidth="2"
                 strokeLinecap="round"
               >
                 <path d="M6 6l12 12M6 18L18 6" />
               </svg>
             </button>
           </div>
-          <div className="flex flex-col gap-4">
+          <div className="relative z-10 flex flex-col gap-4">
             <button
               type="button"
               onClick={handleConnect}
-              className="nav-pill flex w-full items-center justify-center border border-white/20 px-5 py-3 text-base font-semibold text-white transition hover:border-[#f5c775] hover:text-white"
+              className="nav-pill flex w-full items-center justify-center border border-white/25 bg-white/5 px-5 py-3 text-base font-semibold text-white backdrop-blur-sm transition hover:border-[#f5c775] hover:bg-white/10 hover:text-white active:scale-[0.98]"
               disabled={isConnecting}
             >
               {buttonLabel}
@@ -322,7 +311,7 @@ export function Navbar() {
                 closeMenu();
                 scrollToMedia();
               }}
-              className="nav-pill flex w-full items-center justify-center border border-white/20 px-5 py-3 text-base font-semibold text-white/85 transition hover:border-[#f5c775] hover:text-white"
+              className="nav-pill flex w-full items-center justify-center border border-white/25 bg-white/5 px-5 py-3 text-base font-semibold text-white backdrop-blur-sm transition hover:border-[#f5c775] hover:bg-white/10 hover:text-white active:scale-[0.98]"
             >
               Media
             </button>

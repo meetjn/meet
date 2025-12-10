@@ -60,17 +60,6 @@ body {
   backdrop-filter: blur(24px);
 }
 
-.footer-panel {
-  background: transparent;
-  box-shadow: none;
-  backdrop-filter: none;
-  border-color: rgba(148, 163, 184, 0.32);
-}
-
-.solid-panel {
-  background: #000;
-}
-
 .texture-panel {
   background-image: radial-gradient(
       circle at 10% 10%,
@@ -293,7 +282,7 @@ body {
   background-image: url("/cosmos/footer.jpg");
   background-size: cover;
   background-position: center bottom;
-  opacity: 0.85;
+  opacity: 0.5;
   mix-blend-mode: normal;
   filter: saturate(1.05);
   pointer-events: none;
@@ -396,4 +385,23 @@ body {
   100% {
     transform: translate(-50%, -50%) translateX(calc(50% - 3px));
   }
+}
+
+/* Mobile nav starfield background */
+.mobile-nav-starfield {
+  position: relative;
+  isolation: isolate;
+}
+
+.mobile-nav-starfield::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image: url("/cosmos/starfield.jpg");
+  background-size: cover;
+  background-position: center;
+  opacity: 0.15;
+  border-radius: inherit;
+  pointer-events: none;
 }
