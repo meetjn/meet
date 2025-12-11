@@ -24,6 +24,8 @@ export function Navbar() {
   const [isConnecting, setIsConnecting] = useState(false);
   const [wallet, setWallet] = useState<string | null>(null);
   const [sdk, setSdk] = useState<MetaKeepInstance | null>(null);
+  const [isMobileNavVisible, setIsMobileNavVisible] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const lastScrollY = useRef(0);
   const reduceMotionQuery = useRef<MediaQueryList | null>(null);
 
@@ -86,6 +88,33 @@ export function Navbar() {
     reduceMotionQuery.current = window.matchMedia(
       "(prefers-reduced-motion: reduce)"
     );
+  }, []);
+
+  // Detect mobile screen and delay navbar appearance on mobile
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    
+    // Hero reveal delay is 750ms, wait 2.5 seconds after that (total ~3.25s)
+    // This ensures navbar appears after hero section is done loading
+    const heroRevealDelay = 750;
+    const additionalDelay = 2500;
+    const totalDelay = heroRevealDelay + additionalDelay;
+    
+    const timer = window.setTimeout(() => {
+      setIsMobileNavVisible(true);
+    }, totalDelay);
+    
+    return () => {
+      window.removeEventListener("resize", checkMobile);
+      window.clearTimeout(timer);
+    };
   }, []);
 
   useEffect(() => {
@@ -182,13 +211,17 @@ export function Navbar() {
     ? `${wallet.slice(0, 6)}…${wallet.slice(-4)}`
     : null;
 
+  // On mobile, hide navbar until hero is done loading
+  const shouldShowNavbar = !isMobile || isMobileNavVisible;
+  const navbarVisibilityClass = !shouldShowNavbar
+    ? "-translate-y-20 opacity-0 pointer-events-none"
+    : isHidden
+    ? "-translate-y-20 opacity-0 pointer-events-none"
+    : "translate-y-0 opacity-100";
+
   return (
     <header
-      className={`sticky top-4 z-50 mx-auto w-full max-w-[1600px] px-4 transition duration-500 ease-out sm:top-6 sm:px-6 lg:px-10 ${
-        isHidden
-          ? "-translate-y-20 opacity-0 pointer-events-none"
-          : "translate-y-0 opacity-100"
-      }`}
+      className={`sticky top-4 z-50 mx-auto w-full max-w-[1600px] px-4 transition duration-500 ease-out sm:top-6 sm:px-6 lg:px-10 ${navbarVisibilityClass}`}
     >
       <div className="glass-panel noise-surface flex items-center justify-between gap-3 rounded-3xl px-4 py-3 backdrop-blur-2xl sm:px-6 sm:py-4">
         <Link

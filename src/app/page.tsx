@@ -46,7 +46,7 @@ const SectionShell = ({
 
 export default function Home() {
   return (
-    <main className="px-4 pb-20 pt-4 text-white sm:px-6 lg:px-10">
+    <main className="px-4 pb-20 pt-0 text-white sm:px-6 sm:pt-4 lg:px-10">
       <HeroOrbit />
       <div className="mx-auto mt-16 flex w-full max-w-[1500px] flex-col gap-10">
         <SectionShell

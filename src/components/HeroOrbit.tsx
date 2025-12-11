@@ -112,7 +112,7 @@ export function HeroOrbit() {
   return (
     <section
       ref={heroRef}
-      className="hero-orbit relative mx-auto mt-2 w-full max-w-[1500px] rounded-[32px] border border-white/8 bg-white/5 px-4 py-12 text-white shadow-[0_60px_140px_rgba(0,0,0,0.55)] sm:mt-4 sm:rounded-[44px] sm:px-8 sm:py-16 lg:mt-6 lg:rounded-[52px] lg:px-20 lg:py-[5.5rem]"
+      className="hero-orbit relative mx-auto -mt-18 w-full max-w-[1500px] rounded-[32px] border border-white/8 bg-white/5 px-4 py-12 text-white shadow-[0_60px_140px_rgba(0,0,0,0.55)] sm:mt-4 sm:rounded-[44px] sm:px-8 sm:py-16 lg:mt-6 lg:rounded-[52px] lg:px-20 lg:py-[5.5rem]"
       onPointerMove={handlePointerMove}
       onPointerLeave={handlePointerLeave}
     >
