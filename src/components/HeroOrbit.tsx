@@ -131,12 +131,12 @@ export function HeroOrbit() {
               style={delayStyle(0.05)}
             >
               <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-400" />
-              Full‑stack product engineer
+              Co-founder · Fintech &amp; Blockchain Engineer
             </p>
             <h1
               className={[
                 animateClass,
-                "text-balance text-[clamp(2.5rem,6vw,3.8rem)] font-semibold leading-tight text-white lg:text-6xl",
+                "text-balance text-[clamp(2.2rem,5.5vw,3.6rem)] font-semibold leading-tight text-white lg:text-[3.5rem]",
               ].join(" ")}
               style={delayStyle(0.15)}
             >
@@ -145,32 +145,51 @@ export function HeroOrbit() {
             <p
               className={[
                 animateClass,
-                "text-lg text-white/70 sm:text-xl",
+                "text-base text-white/65 sm:text-lg",
               ].join(" ")}
               style={delayStyle(0.25)}
             >
               {identity.role}
             </p>
-            <p
+            <div
               className={[
                 animateClass,
-                "text-sm text-white/60 sm:text-base",
+                "flex flex-wrap gap-2 text-[11px] uppercase tracking-[0.3em]",
               ].join(" ")}
               style={delayStyle(0.3)}
             >
-              Open to remote YC‑backed and early‑stage teams building web,
-              fintech, or crypto products.
-            </p>
+              {[
+                "Go",
+                "TypeScript",
+                "Solidity",
+                "Rust",
+                "Docker",
+                "Terraform",
+                "Solana",
+                "Ethereum",
+              ].map((tech) => (
+                <span
+                  key={tech}
+                  className="rounded-full border border-white/15 px-2.5 py-0.5 text-white/50"
+                >
+                  {tech}
+                </span>
+              ))}
+            </div>
             <div
-              className="flex flex-wrap gap-3 text-sm text-white/65"
+              className={[
+                animateClass,
+                "flex flex-wrap gap-3 text-sm text-white/55",
+              ].join(" ")}
               style={delayStyle(0.35)}
             >
               <span className="inline-flex items-center gap-2">
-                <MapPin size={16} />
+                <MapPin size={15} />
                 {identity.location}
               </span>
+              <span className="text-white/25">·</span>
+              <span>Open to remote YC&#8209;backed &amp; founding engineer roles</span>
             </div>
-            {/* heroSignals cards removed per design request */}
           </div>
         </div>
 
@@ -187,31 +206,39 @@ export function HeroOrbit() {
             style={delayStyle(0.7)}
           >
             <div className="flex flex-col gap-3 text-sm text-white/70 sm:flex-row sm:items-center sm:justify-between">
-              <p>Invisible Infra, Visible Results</p>
-              <span className="rounded-full bg-white/15 px-3 py-1 text-[11px] uppercase tracking-[0.35em]">
+              <p>Infrastructure that ships · Results that compound</p>
+              <span className="w-fit rounded-full bg-emerald-400/15 px-3 py-1 text-[11px] uppercase tracking-[0.35em] text-emerald-300">
                 Active
               </span>
             </div>
-            <p className="mt-6 text-4xl font-semibold text-white lg:text-[2.6rem]">
-              Highlights
+            <p className="mt-5 text-3xl font-semibold text-white lg:text-[2.4rem]">
+              Recent wins
             </p>
-            <p className="mt-3 text-base text-white/75">
-              Built the fiat on-ramp from scratch, productionized wallet
-              isolation, and wired MoonPay → Jupiter → $LOOK directly into
-              MetaKeep wallets
-            </p>
-            <div className="mt-7 grid grid-cols-2 gap-4 text-xs text-white/60">
-              {/* <div>
-                <p className="text-[10px] uppercase tracking-[0.45em] text-white/35">
-                  Delivery
-                </p>
-                <p>Weekly launch rhythm</p>
-              </div> */}
+            <ul className="mt-4 space-y-2.5 text-sm text-white/75">
+              {[
+                "Engineered Rezolve AI acquisition showcase — NASDAQ deal",
+                "Co-founded Revalon Finance — 80% LTV on-chain lending",
+                "Predexy: 7-platform arbitrage engine in production",
+                "MetaKeep Wallet Isolation cut defects 40%",
+              ].map((signal) => (
+                <li key={signal} className="flex items-start gap-2.5">
+                  <span className="mt-[6px] h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-400" />
+                  <span>{signal}</span>
+                </li>
+              ))}
+            </ul>
+            <div className="mt-6 grid grid-cols-2 gap-4 border-t border-white/10 pt-5 text-xs text-white/55">
               <div>
-                <p className="text-[10px] uppercase tracking-[0.45em] text-white/35">
-                  Toolchain
+                <p className="text-[10px] uppercase tracking-[0.45em] text-white/30">
+                  Core Stack
                 </p>
-                <p>Next.js · Solana/EVM · Node.js · AWS</p>
+                <p className="mt-1">Go · Next.js · Solana/EVM</p>
+              </div>
+              <div>
+                <p className="text-[10px] uppercase tracking-[0.45em] text-white/30">
+                  DevOps
+                </p>
+                <p className="mt-1">Docker · Terraform · AWS · CI/CD</p>
               </div>
             </div>
           </div>

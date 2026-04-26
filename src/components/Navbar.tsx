@@ -237,7 +237,7 @@ export function Navbar() {
               Meet Jain
             </p>
             <p className="text-[11px] text-white/40 sm:text-xs">
-              Full Stack × Blockchain
+              Co-founder · Fintech &amp; Blockchain
             </p>
           </div>
         </Link>

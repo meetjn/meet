@@ -10,23 +10,23 @@ const inter = Inter({
   display: "swap",
 });
 export const metadata: Metadata = {
-  title: "Meet Jain · Full Stack & Blockchain Engineer",
+  title: "Meet Jain · Co-founder & Senior Engineer · Fintech & Blockchain",
   description:
-    "MetaKeep + Quranium builder shipping zero-fee onramps, wallet isolation, and audited DeFi systems for YC-backed teams.",
-  metadataBase: new URL("https://meet.build"), // placeholder domain, update when deployed
+    "Co-founder of Revalon Finance · Senior Engineer at MetaKeep (acquired by Rezolve, NASDAQ) · Shipping distributed systems, on-chain lending protocols, and multi-platform data pipelines.",
+  metadataBase: new URL("https://meet.build"),
   openGraph: {
-    title: "Meet Jain · Full Stack & Blockchain Engineer",
+    title: "Meet Jain · Co-founder & Senior Engineer · Fintech & Blockchain",
     description:
-      "Shipping production crypto onramps, custody, and smart-contract systems for YC-speed teams.",
+      "Built the Rezolve AI acquisition showcase, co-founded Revalon Finance's on-chain lending protocol, and shipped Predexy — a 7-platform prediction market arbitrage engine.",
     url: "https://meet.build",
     siteName: "Meet Jain Portfolio",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Meet Jain · Full Stack & Blockchain Engineer",
+    title: "Meet Jain · Co-founder & Senior Engineer · Fintech & Blockchain",
     description:
-      "Full stack + blockchain engineer building wallets, onramps, and DeFi rails.",
+      "Co-founder, Revalon Finance · Senior Engineer, MetaKeep (NASDAQ: RZLV) · Go · TypeScript · Solidity · Docker · Terraform",
   },
 };
 
