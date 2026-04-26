@@ -1,33 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-import type {
-  MetaKeepConstructor,
-  MetaKeepInstance,
-  MetaKeepWalletResponse,
-} from "@/types/metakeep";
 import { MEDIA_SECTION_ID } from "@/components/Footer";
 
 const MOBILE_NAV_ID = "portfolio-nav-mobile";
 const RESUME_PATH = "/Resume.pdf";
-const METAKEEP_APP_ID = process.env.NEXT_PUBLIC_METAKEEP_APP_ID;
-const METAKEEP_POLL_INTERVAL_MS = 200;
 
-/**
- * @notice Sticky navigation with MetaKeep-powered wallet verification -> resume handoff.
- */
 export function Navbar() {
   const [isHidden, setIsHidden] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isConnecting, setIsConnecting] = useState(false);
-  const [wallet, setWallet] = useState<string | null>(null);
-  const [sdk, setSdk] = useState<MetaKeepInstance | null>(null);
   const [isMobileNavVisible, setIsMobileNavVisible] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const lastScrollY = useRef(0);
-  const reduceMotionQuery = useRef<MediaQueryList | null>(null);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -47,13 +33,9 @@ export function Navbar() {
   }, []);
 
   useEffect(() => {
-    if (!isMenuOpen) {
-      return;
-    }
+    if (!isMenuOpen) return;
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        setIsMenuOpen(false);
-      }
+      if (event.key === "Escape") setIsMenuOpen(false);
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
@@ -62,9 +44,7 @@ export function Navbar() {
   useEffect(() => {
     if (typeof window === "undefined") return;
     const handleResize = () => {
-      if (window.innerWidth >= 768) {
-        setIsMenuOpen(false);
-      }
+      if (window.innerWidth >= 768) setIsMenuOpen(false);
     };
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
@@ -73,11 +53,7 @@ export function Navbar() {
   useEffect(() => {
     if (typeof document === "undefined") return;
     const originalOverflow = document.body.style.overflow;
-    if (isMenuOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
+    document.body.style.overflow = isMenuOpen ? "hidden" : "";
     return () => {
       document.body.style.overflow = originalOverflow;
     };
@@ -85,85 +61,13 @@ export function Navbar() {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    reduceMotionQuery.current = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    );
-  }, []);
-
-  // Detect mobile screen and delay navbar appearance on mobile
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
     checkMobile();
     window.addEventListener("resize", checkMobile);
-    
-    // Hero reveal delay is 750ms, wait 2.5 seconds after that (total ~3.25s)
-    // This ensures navbar appears after hero section is done loading
-    const heroRevealDelay = 750;
-    const additionalDelay = 2500;
-    const totalDelay = heroRevealDelay + additionalDelay;
-    
-    const timer = window.setTimeout(() => {
-      setIsMobileNavVisible(true);
-    }, totalDelay);
-    
+    const timer = window.setTimeout(() => setIsMobileNavVisible(true), 3250);
     return () => {
       window.removeEventListener("resize", checkMobile);
       window.clearTimeout(timer);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    if (!METAKEEP_APP_ID) {
-      console.warn("MetaKeep app id missing. Set NEXT_PUBLIC_METAKEEP_APP_ID.");
-      return;
-    }
-
-    let hasLoggedWaiting = false;
-    let pollTimer: number | undefined;
-    let isUnmounted = false;
-
-    const attemptInit = () => {
-      const MetaKeepCtor: MetaKeepConstructor | undefined = window.MetaKeep;
-      if (!MetaKeepCtor) {
-        if (!hasLoggedWaiting) {
-          console.warn(
-            "MetaKeep SDK script not yet available. Waiting for load…"
-          );
-          hasLoggedWaiting = true;
-        }
-        return false;
-      }
-      const instance = new MetaKeepCtor({ appId: METAKEEP_APP_ID });
-      if (!isUnmounted) {
-        setSdk(instance);
-      }
-      return true;
-    };
-
-    if (attemptInit()) {
-      return () => {
-        isUnmounted = true;
-      };
-    }
-
-    pollTimer = window.setInterval(() => {
-      if (attemptInit() && pollTimer) {
-        window.clearInterval(pollTimer);
-        pollTimer = undefined;
-      }
-    }, METAKEEP_POLL_INTERVAL_MS);
-
-    return () => {
-      isUnmounted = true;
-      if (pollTimer) {
-        window.clearInterval(pollTimer);
-      }
     };
   }, []);
 
@@ -172,52 +76,22 @@ export function Navbar() {
 
   const scrollToMedia = () => {
     if (typeof document === "undefined") return;
-    const target = document.getElementById(MEDIA_SECTION_ID);
-    if (!target) return;
-    target.scrollIntoView({ behavior: "smooth", block: "start" });
+    document.getElementById(MEDIA_SECTION_ID)?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
   };
 
   const handleResumeDownload = () => {
     if (typeof window === "undefined") return;
-    // Use direct navigation so iOS treats it as a user gesture and opens reliably.
     window.location.assign(RESUME_PATH);
   };
 
-  const handleConnect = useCallback(async () => {
-    if (wallet) {
-      handleResumeDownload();
-      return;
-    }
-    if (!sdk) {
-      console.warn("MetaKeep SDK not ready yet.");
-      return;
-    }
-    setIsConnecting(true);
-    try {
-      const response: MetaKeepWalletResponse = await sdk.getWallet();
-      if (response.status === "SUCCESS" && response.wallet?.solAddress) {
-        setWallet(response.wallet.solAddress);
-          handleResumeDownload();
-      }
-    } catch (error) {
-      console.error("MetaKeep connection failed:", error);
-    } finally {
-      setIsConnecting(false);
-    }
-  }, [sdk, wallet]);
-
-  const buttonLabel = isConnecting ? "Connecting…" : "Resume";
-  const formattedRecruiterWallet = wallet
-    ? `${wallet.slice(0, 6)}…${wallet.slice(-4)}`
-    : null;
-
-  // On mobile, hide navbar until hero is done loading
   const shouldShowNavbar = !isMobile || isMobileNavVisible;
-  const navbarVisibilityClass = !shouldShowNavbar
-    ? "-translate-y-20 opacity-0 pointer-events-none"
-    : isHidden
-    ? "-translate-y-20 opacity-0 pointer-events-none"
-    : "translate-y-0 opacity-100";
+  const navbarVisibilityClass =
+    !shouldShowNavbar || isHidden
+      ? "-translate-y-20 opacity-0 pointer-events-none"
+      : "translate-y-0 opacity-100";
 
   return (
     <header
@@ -242,12 +116,13 @@ export function Navbar() {
           </div>
         </Link>
 
+        {/* Mobile hamburger */}
         <button
           type="button"
           aria-controls={MOBILE_NAV_ID}
           aria-expanded={isMenuOpen}
           onClick={toggleMenu}
-          className="nav-pill relative z-50 flex h-11 w-11 items-center justify-center border border-white/30 bg-black/60 text-white backdrop-blur-sm transition hover:border-[#f5c775] hover:bg-black/80 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 md:hidden"
+          className="nav-pill relative z-50 flex h-11 w-11 items-center justify-center border border-white/30 bg-black/60 text-white backdrop-blur-sm transition hover:border-[#f5c775] hover:bg-black/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 md:hidden"
         >
           <span className="sr-only">Toggle navigation</span>
           <svg
@@ -263,36 +138,26 @@ export function Navbar() {
           </svg>
         </button>
 
+        {/* Desktop nav */}
         <div className="hidden items-center gap-4 md:flex">
           <button
             type="button"
             onClick={scrollToMedia}
-            className="nav-pill inline-flex items-center justify-center border border-white/25 bg-white/5 px-5 py-2 text-sm font-semibold text-white backdrop-blur-sm transition hover:border-[#f5c775] hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 active:scale-[0.98]"
+            className="nav-pill inline-flex items-center justify-center border border-white/25 bg-white/5 px-5 py-2 text-sm font-semibold text-white backdrop-blur-sm transition hover:border-[#f5c775] hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 active:scale-[0.98]"
           >
-            Media
+            Contact
           </button>
           <button
             type="button"
-            onClick={handleConnect}
-            className="nav-pill inline-flex items-center justify-center border border-white/25 bg-white/5 px-6 py-2 text-sm font-semibold text-white backdrop-blur-sm transition hover:border-[#f5c775] hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 active:scale-[0.98]"
-            disabled={isConnecting}
+            onClick={handleResumeDownload}
+            className="nav-pill inline-flex items-center justify-center border border-white/25 bg-white/5 px-6 py-2 text-sm font-semibold text-white backdrop-blur-sm transition hover:border-[#f5c775] hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 active:scale-[0.98]"
           >
-            {buttonLabel}
+            Resume
           </button>
-          {formattedRecruiterWallet && (
-            <p className="text-[11px] text-white/35">
-              Recruiter wallet{" "}
-              <span
-                className="font-mono text-white/55"
-                aria-label={`Technical recruiter Solana wallet ${wallet}`}
-              >
-                {formattedRecruiterWallet}
-              </span>
-            </p>
-          )}
         </div>
       </div>
 
+      {/* Mobile menu */}
       <div className="md:hidden">
         <div
           className={`fixed inset-0 z-[60] bg-black/80 backdrop-blur-lg transition-opacity duration-300 ${
@@ -313,7 +178,7 @@ export function Navbar() {
             <button
               type="button"
               onClick={closeMenu}
-              className="nav-pill inline-flex h-10 w-10 items-center justify-center border border-white/30 bg-white/5 text-white backdrop-blur-sm hover:border-white hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+              className="nav-pill inline-flex h-10 w-10 items-center justify-center border border-white/30 bg-white/5 text-white backdrop-blur-sm hover:border-white hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
             >
               <span className="sr-only">Close navigation</span>
               <svg
@@ -332,11 +197,10 @@ export function Navbar() {
           <div className="relative z-10 flex flex-col gap-4">
             <button
               type="button"
-              onClick={handleConnect}
-              className="nav-pill flex w-full items-center justify-center border border-white/25 bg-white/5 px-5 py-3 text-base font-semibold text-white backdrop-blur-sm transition hover:border-[#f5c775] hover:bg-white/10 hover:text-white active:scale-[0.98]"
-              disabled={isConnecting}
+              onClick={handleResumeDownload}
+              className="nav-pill flex w-full items-center justify-center border border-white/25 bg-white/5 px-5 py-3 text-base font-semibold text-white backdrop-blur-sm transition hover:border-[#f5c775] hover:bg-white/10 active:scale-[0.98]"
             >
-              {buttonLabel}
+              Resume
             </button>
             <button
               type="button"
@@ -344,26 +208,10 @@ export function Navbar() {
                 closeMenu();
                 scrollToMedia();
               }}
-              className="nav-pill flex w-full items-center justify-center border border-white/25 bg-white/5 px-5 py-3 text-base font-semibold text-white backdrop-blur-sm transition hover:border-[#f5c775] hover:bg-white/10 hover:text-white active:scale-[0.98]"
+              className="nav-pill flex w-full items-center justify-center border border-white/25 bg-white/5 px-5 py-3 text-base font-semibold text-white backdrop-blur-sm transition hover:border-[#f5c775] hover:bg-white/10 active:scale-[0.98]"
             >
-              Media
+              Contact
             </button>
-            {formattedRecruiterWallet && (
-              <p className="text-center text-xs text-white/40">
-                Recruiter wallet{" "}
-                <span
-                  className="font-mono text-white/60"
-                  aria-label={`Technical recruiter Solana wallet ${wallet}`}
-                >
-                  {formattedRecruiterWallet}
-                </span>
-              </p>
-            )}
-            {wallet && (
-              <p className="text-center text-xs text-white/50">
-                Verified Solana wallet: {wallet.slice(0, 6)}…{wallet.slice(-4)}
-              </p>
-            )}
           </div>
         </nav>
       </div>

@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Script from "next/script";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/Navbar";
@@ -13,13 +12,13 @@ export const metadata: Metadata = {
   title: "Meet Jain · Co-founder & Senior Engineer · Fintech & Blockchain",
   description:
     "Co-founder of Revalon Finance · Senior Engineer at MetaKeep (acquired by Rezolve, NASDAQ) · Shipping distributed systems, on-chain lending protocols, and multi-platform data pipelines.",
-  metadataBase: new URL("https://meet.build"),
+  metadataBase: new URL("https://meetjain.xyz"),
   openGraph: {
     title: "Meet Jain · Co-founder & Senior Engineer · Fintech & Blockchain",
     description:
       "Built the Rezolve AI acquisition showcase, co-founded Revalon Finance's on-chain lending protocol, and shipped Predexy — a 7-platform prediction market arbitrage engine.",
-    url: "https://meet.build",
-    siteName: "Meet Jain Portfolio",
+    url: "https://meetjain.xyz",
+    siteName: "meetjain.xyz",
     type: "website",
   },
   twitter: {
@@ -38,12 +37,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} antialiased bg-black text-white`}>
-        <Script
-          src="https://cdn.jsdelivr.net/npm/metakeep@2.2.8/lib/index.js"
-          integrity="sha256-dVJ6hf8zqdtHxHJCDJnLAepAyCCbu6lCXzZS3lqMIto="
-          crossOrigin="anonymous"
-          strategy="beforeInteractive"
-        />
         <div className="relative min-h-screen bg-black pb-16 pt-4 text-white">
           <div className="pointer-events-none absolute inset-0 opacity-30">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.08),_transparent_55%)]" />
