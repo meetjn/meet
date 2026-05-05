@@ -1,3 +1,12 @@
+type KeystoneBuild = {
+  title: string;
+  metric: string;
+  description: string;
+  proof: string;
+  tags: string[];
+  link?: string;
+};
+
 export const identity = {
   name: "Meet Jain",
   role: "Product Infrastructure Engineer · Financial Protocols · Onchain Systems",
@@ -106,7 +115,7 @@ export const experience = [
   },
 ];
 
-export const keystoneBuilds = [
+export const keystoneBuilds: KeystoneBuild[] = [
   {
     title: "Revalon Lending Protocol",
     metric: "Zero bad debt on testnet",
