@@ -55,13 +55,15 @@ body {
 .glass-panel {
   background: var(--color-bg-card);
   border: 1px solid var(--color-border-soft);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5),
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.5),
     inset 0 1px 0 rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(24px);
 }
 
 .texture-panel {
-  background-image: radial-gradient(
+  background-image:
+    radial-gradient(
       circle at 10% 10%,
       rgba(255, 255, 255, 0.18),
       transparent 45%
@@ -199,11 +201,8 @@ body {
 .planet-panel {
   position: relative;
   overflow: hidden;
-  background: radial-gradient(
-      circle at top,
-      rgba(255, 255, 255, 0.08),
-      transparent 60%
-    ),
+  background:
+    radial-gradient(circle at top, rgba(255, 255, 255, 0.08), transparent 60%),
     linear-gradient(to bottom, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.96));
 }
 
@@ -235,11 +234,8 @@ body {
 .star-panel {
   position: relative;
   overflow: hidden;
-  background: radial-gradient(
-      circle at top,
-      rgba(255, 255, 255, 0.06),
-      transparent 55%
-    ),
+  background:
+    radial-gradient(circle at top, rgba(255, 255, 255, 0.06), transparent 55%),
     linear-gradient(to bottom, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.98));
 }
 
@@ -344,7 +340,9 @@ body {
   position: relative;
   overflow: visible;
   border-radius: 999px;
-  transition: border-color 0.3s ease, color 0.3s ease;
+  transition:
+    border-color 0.3s ease,
+    color 0.3s ease;
 }
 
 .nav-pill::after {

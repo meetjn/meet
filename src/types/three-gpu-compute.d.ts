@@ -27,4 +27,3 @@ declare module "three/examples/jsm/misc/GPUComputationRenderer.js" {
     createTexture(): THREE.DataTexture;
   }
 }
-

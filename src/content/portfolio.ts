@@ -1,9 +1,9 @@
 export const identity = {
   name: "Meet Jain",
-  role: "Co-founder · Senior Engineer · Fintech & Blockchain",
+  role: "Product Infrastructure Engineer · Financial Protocols · Onchain Systems",
   headline:
-    "I build production-grade financial infrastructure — from the crypto payment flow that closed a NASDAQ acquisition to co-founding an on-chain lending protocol for prediction markets.",
-  location: "India · Remote",
+    "Product infrastructure engineer specializing in financial protocols, onchain systems, and backend architecture at the founding layer.",
+  location: "Remote",
   email: "meetjaiin@gmail.com",
   phone: "+91 88549 28428",
   github: "https://github.com/meetjn",
@@ -11,30 +11,30 @@ export const identity = {
 };
 
 export const heroSignals = [
-  "Engineered Rezolve AI acquisition showcase — NASDAQ-listed deal",
-  "Co-founder & CTO, Revalon Finance — 80% LTV on-chain lending",
-  "Predexy: 7-platform arbitrage engine · 127 Go tests · production",
-  "MetaKeep Wallet Isolation cut enterprise defects 40%",
+  "Revalon: floor-aware lending protocol on Polygon PoS",
+  "NASDAQ acquisition validator: Rezolve AI × MetaKeep",
+  "Wallet Isolation reduced pre-production bugs by 40%",
+  "Built crypto onramp and MoonPay -> Jupiter token rail",
 ];
 
 export const stats = [
   {
-    value: "L1 → UI",
+    value: "5 Contracts",
     label: "Full-Stack Depth",
     detail:
-      "From raw Solidity bytes and Go backends to pixel-perfect Next.js interfaces — every layer owned end-to-end.",
+      "Built end-to-end lending infrastructure across Solidity contracts, Go underwriting services, and production application layers.",
   },
   {
-    value: "7 Venues",
+    value: "7 Signals",
     label: "Distributed Systems",
     detail:
-      "Predexy ingests, normalizes, and arbitrage-scans 7 prediction market platforms in real time with semantic matching.",
+      "Implemented dynamic LTV underwriting in Go using seven real-time risk multipliers with PostgreSQL audit trails.",
   },
   {
     value: "NASDAQ",
     label: "Acquisition Impact",
     detail:
-      "Shipped the Rezolve AI × MetaKeep acquisition showcase — crypto payments for luxury retail that closed the deal.",
+      "Engineered the crypto payment integration used as the primary technical validator for MetaKeep's acquisition by Rezolve AI.",
   },
 ];
 
@@ -44,40 +44,40 @@ export const experience = [
     title: "Co-founder & CTO",
     timeline: "Apr 2026 – Present · Remote",
     summary:
-      "Building a floor-aware lending protocol on prediction markets: smart-contract custody, deterministic underwriting, and on-chain loan lifecycle orchestration.",
+      "Architecting a production-grade floor-aware lending protocol with secure custody, dynamic underwriting, and automated risk controls.",
     impact: [
-      "Architected Revalon Finance's lending MVP with smart-contract custody, deterministic underwriting, and on-chain loan lifecycle — enabling capital-efficient borrowing against prediction market positions.",
-      "Designed collateral math enabling up to 80% LTV on matched YES/NO positions, validating 80 pmUSD loans against 100 pmUSD recoverable collateral.",
-      "Designed Predexy's multi-exchange data pipeline across 7 venues (Polymarket, Limitless, Manifold, PredictIt, Azuro, Drift, Predict.fun) with Go connectors, normalization, and pgvector semantic matching.",
-      "Delivered production-grade platform: authentication, RBAC, invite flows, rate limiting (Redis), background job orchestration, and Polymarket wallet position tracking.",
-      "Built cross-platform market-matching engine using sentence embeddings (all-MiniLM-L6-v2), vector search, and lexical scoring to surface direct and Dutch-book arbitrage opportunities.",
+      "Architected a floor-aware lending protocol on Polygon PoS with 5 Solidity contracts, 7-guard quote verification, 48h TimelockController, and 3-of-5 Gnosis Safe multisig to maintain zero bad debt across the full testnet lifecycle.",
+      "Built a dynamic LTV underwriting engine in Go computing per-condition borrow rates (60-90%) using 7 real-time market signal multipliers, with full PostgreSQL audit trails for ML training.",
+      "Engineered a two-sided lending marketplace with a rebasing rlUSDC receipt token, utilization-zone APY controls (6-15%), and a Go drift monitor tracking 5 collateral health metrics with a 3-tier automated margin call system.",
+      "Integrated Polymarket (trustless ERC-1155 custody) and Kalshi (CFTC-regulated API attestation) as off-chain collateral sources with AES-256 + KMS envelope encryption and sub-account position isolation.",
+      "Shipped a pnpm monorepo (Go Gin, Next.js 16, Solidity) with AWS KMS policy signing, OZ Defender keeper automation, CEI enforcement, flash-loan resistance via snapshot signing, and real-time vault reconciliation.",
     ],
     stack: [
       "Go",
       "TypeScript",
       "Next.js",
+      "Rust",
       "PostgreSQL",
       "Redis",
-      "pgvector",
       "Solidity",
       "Docker",
-      "Turborepo",
-      "Prisma",
+      "AWS KMS",
+      "Polygon PoS",
     ],
   },
   {
-    company: "MetaKeep · Acquired by Rezolve (NASDAQ: RZLV)",
+    company: "MetaKeep (Acquired)",
     title: "Senior Software Engineer",
-    timeline: "Apr 2025 – Apr 2026 · San Francisco (Remote)",
+    timeline: "Apr 2025 – May 2026 · San Francisco · Remote",
     summary:
-      "Shipped the acquisition showcase for Rezolve AI's NASDAQ deal and hardened MetaKeep's core wallet infrastructure for enterprise partners.",
+      "Delivered acquisition-critical payments infrastructure and enterprise wallet security features for production partners.",
     impact: [
-      "Architected the acquisition showcase for Rezolve AI — end-to-end crypto payment flow embedded in a luxury retail chatbot (Pandora, March 2026) that was central to closing the NASDAQ listing.",
-      "Built MetaKeep's fiat on-ramp from zero to production: Coinbase API + MetaKeep SDK enabling zero-fee, sign-up-free crypto purchases in under 45 seconds.",
-      "Led Wallet Isolation rollout — enterprise-grade security sandbox that reduced pre-production defects by 40% while maintaining weekly deploy cadence.",
-      "Built MoonPay → Jupiter → $LOOK fiat-to-token rail, chaining card purchases through Solana swaps and auto-depositing tokens into MetaKeep wallets for partner campaigns.",
-      "Designed on-chain USDC transfer system using SPL-token delegation, eliminating repeated approval flows for gasless transfers.",
-      "Delivered 8 cross-platform SDK demo apps (6 Android / 2 iOS) covering Solana and Ethereum transaction flows.",
+      "Engineered the end-to-end crypto payment integration that served as the primary technical validator for MetaKeep's acquisition by Rezolve AI (NASDAQ: RZLV) in March 2026.",
+      "Led Wallet Isolation, enforcing per-app key segregation; reduced pre-production bugs by 40% and shipped it as a production feature across the MetaKeep SDK.",
+      "Built MetaKeep's crypto onramp from zero to production using Coinbase API and MetaKeep SDK to enable zero-fee, sign-up-free purchases.",
+      "Architected a MoonPay fiat-to-token rail through Jupiter swaps with auto-deposit into MetaKeep wallets.",
+      "Designed an on-chain USDC transfer system using SPL token delegation to remove repeated approval flows and reduce user friction.",
+      "Shipped 8 SDK integration demos (6 Android, 2 iOS) covering Solana and Ethereum transaction flows for developer docs and sales enablement.",
     ],
     stack: [
       "TypeScript",
@@ -87,9 +87,9 @@ export const experience = [
       "Coinbase API",
       "SPL",
       "Node.js",
-      "AWS",
       "MoonPay",
       "Jupiter",
+      "MetaKeep SDK",
     ],
   },
   {
@@ -97,11 +97,10 @@ export const experience = [
     title: "Blockchain Developer Intern",
     timeline: "Oct 2024 – Mar 2025 · Remote",
     summary:
-      "Led the MVP of a DEX using Uniswap v3 concentrated-liquidity contracts and a production-ready multi-sig wallet.",
+      "Built decentralized finance primitives and shipped open-source smart contract contributions.",
     impact: [
-      "Implemented concentrated-liquidity token swaps with automated position rebalancing using Uniswap v3.",
-      "Shipped production-ready multisig wallet enabling the protocol to self-custody fees without third-party dependency.",
-      "Hardened smart-contract surface with Foundry fuzz and invariant tests, covering edge cases in liquidation and rebalancing logic.",
+      "Built an MVP decentralized exchange using Uniswap v3 and a multisignature wallet for a quantum-resistant L1.",
+      "Contributed 4 merged PRs to FairFund smart contracts, reducing gas costs by 25%, fixing critical bugs, and increasing test coverage to 100%.",
     ],
     stack: ["Solidity", "Foundry", "Uniswap v3", "Hardhat"],
   },
@@ -109,82 +108,61 @@ export const experience = [
 
 export const keystoneBuilds = [
   {
-    title: "Predexy — Arbitrage Engine",
-    metric: "7 platforms · real-time",
+    title: "Revalon Lending Protocol",
+    metric: "Zero bad debt on testnet",
     description:
-      "Go-native data pipeline that ingests, normalizes, and semantic-matches prediction markets across 7 venues — surfacing direct and Dutch-book arbitrage opportunities fee-adjusted.",
+      "Production-grade floor-aware lending protocol on Polygon PoS with five Solidity contracts, timelock governance, and multisig safety controls.",
     proof:
-      "127 Go tests (race-detection), pgvector semantic matching, 9-job GitHub Actions CI pipeline, Docker Compose full-stack.",
-    tags: ["Go", "pgvector", "Redis", "Docker", "Turborepo"],
-    link: "https://app.revalonlabs.xyz",
+      "Includes 7-guard on-chain quote verification, 48h TimelockController, and 3-of-5 Gnosis Safe custody.",
+    tags: ["Solidity", "Go", "Polygon", "PostgreSQL", "AWS KMS"],
   },
   {
-    title: "Rezolve Acquisition Showcase",
-    metric: "NASDAQ listing catalyst",
+    title: "Rezolve Acquisition Integration",
+    metric: "Primary technical validator",
     description:
-      "End-to-end crypto payment flow in a luxury retail chatbot (Pandora) built for Rezolve AI's NASDAQ acquisition of MetaKeep.",
+      "Engineered the end-to-end crypto payment integration used in MetaKeep's acquisition by Rezolve AI (NASDAQ: RZLV).",
     proof:
-      "Shipped March 2026; central to the Rezolve AI × MetaKeep deal announced on NASDAQ.",
-    tags: ["TypeScript", "Solana", "MetaKeep SDK", "Chatbot"],
+      "Shipped in March 2026 with sign-up-free transaction UX in a chatbot flow for luxury retail.",
+    tags: ["TypeScript", "Solana", "MetaKeep SDK", "Reown"],
   },
   {
-    title: "MetaKeep Onramp",
-    metric: "First purchase <45 s",
+    title: "MetaKeep Onramp + Fiat Rail",
+    metric: "Zero-fee, sign-up-free",
     description:
-      "Greenfield Coinbase Commerce + MetaKeep SDK integration letting retail users buy crypto with no sign-up and zero fees.",
+      "Built MetaKeep's production onramp with Coinbase API and a MoonPay -> Jupiter swap rail with automatic wallet deposit.",
     proof:
-      "Designed flow, API choreography, and auth gates; powering strategic partner pilots in production.",
-    tags: ["Next.js", "Coinbase API", "Serverless"],
+      "Reduced onboarding friction by eliminating repeated approval and sign-up barriers for end users.",
+    tags: ["Coinbase API", "MoonPay", "Jupiter", "SPL", "Node.js"],
   },
   {
-    title: "Revalon Finance Protocol",
-    metric: "80% LTV on pmUSD",
+    title: "Dynamic Underwriting Engine",
+    metric: "60-90% borrow rates",
     description:
-      "Floor-aware lending protocol using prediction market positions as collateral — smart-contract custody, deterministic underwriting, on-chain lifecycle.",
+      "Go underwriting engine computes per-condition borrow rates from seven live risk multipliers, with full auditability.",
     proof:
-      "Validated 80 pmUSD loans against 100 pmUSD matched YES/NO collateral in testnet; mainnet launch in progress.",
-    tags: ["Solidity", "Next.js", "Go", "PostgreSQL"],
-    link: "https://app.revalonlabs.xyz/revalon/lending",
+      "Signals include time-to-expiry, implied probability, liquidity, spread, cross-platform deviation, and oracle objectivity.",
+    tags: ["Go", "PostgreSQL", "Risk Engine", "ML Audit Trail"],
   },
   {
     title: "Wallet Isolation",
     metric: "40% defect drop",
     description:
-      "Enterprise isolation layer sandboxing wallet state per partner to prevent regression bleed-through across custodial flows.",
+      "Enterprise key-segregation feature enforcing per-app wallet boundaries across partner SDK integrations.",
     proof:
-      "Reduced pre-production bugs 40% while keeping deploy cadence weekly across all MetaKeep partners.",
-    tags: ["Node.js", "PostgreSQL", "Observability"],
+      "Reduced pre-production bugs by 40% and was adopted as a production-standard security control.",
+    tags: ["Node.js", "Security", "SDK", "Production"],
   },
 ];
 
 export const personalProjects = [
   {
-    name: "Predexy — Prediction Market Aggregator",
-    link: "https://app.revalonlabs.xyz",
-    isLive: true,
-    summary:
-      "Full-stack platform aggregating 7 prediction market venues into a unified data layer with semantic question matching, cross-platform arbitrage detection, and wallet position tracking.",
-    highlight:
-      "Go Gin API + Python embedding sidecar (all-MiniLM-L6-v2 + pgvector) detecting direct and Dutch-book arbitrage. 127 passing Go tests with race detection. Monorepo with Turborepo, 9-job CI pipeline.",
-    stack: [
-      "Go",
-      "TypeScript",
-      "Next.js",
-      "PostgreSQL",
-      "Redis",
-      "pgvector",
-      "Docker",
-      "Turborepo",
-    ],
-  },
-  {
     name: "Transaction Link Generator",
     link: "https://github.com/meetjn/Transaction-link-generator",
     isLive: false,
     summary:
-      "Secure React + AWS app that creates one-click MetaKeep transaction URLs with full audit logging.",
+      "Secure React + AWS application generating one-click MetaKeep transaction links with complete audit logging.",
     highlight:
-      "CI/CD via GitHub Actions reduced deployment time by 90%; hosted on EC2 with auto-deploy on merge.",
+      "CI/CD through GitHub Actions reduced deployment time by 90%; hosted on EC2 with auto-deploy on merge.",
     stack: ["TypeScript", "React", "AWS EC2", "GitHub Actions"],
   },
   {
@@ -223,28 +201,21 @@ export const demoSuite = [
 ];
 
 export const techStack = {
-  languages: ["Go", "TypeScript", "JavaScript", "Solidity", "Rust"],
-  frontend: ["Next.js", "React", "Tailwind CSS"],
-  backend: ["Gin", "Node.js", "Prisma", "REST", "WebSockets", "FastAPI"],
-  blockchain: [
-    "Ethereum",
-    "Solana",
-    "Foundry",
-    "Hardhat",
-    "SPL",
-    "Uniswap v3",
-  ],
+  languages: ["Go", "Rust", "Solidity"],
+  frontend: ["TypeScript", "Next.js", "React"],
+  backend: ["Node.js", "Prisma", "MongoDB"],
+  blockchain: ["Ethereum", "Solana", "Foundry", "Hardhat", "Uniswap v3", "SPL"],
   infrastructure: [
     "Docker",
     "Terraform",
     "Linux",
     "CI/CD",
-    "GitHub Actions",
     "AWS EC2",
+    "AWS KMS",
     "AWS Nitro Enclaves",
-    "Turborepo",
+    "GitHub Actions",
   ],
-  databases: ["PostgreSQL", "Redis", "MongoDB", "pgvector"],
+  databases: ["PostgreSQL", "Redis"],
   mobile: ["Kotlin", "Swift"],
 };
 
@@ -278,7 +249,7 @@ export const openSource = [
 export const contact = {
   headline: "Building something ambitious?",
   pitch:
-    "I partner with founders and engineering teams to own wallets, payments, smart-contract systems, and distributed data pipelines end-to-end — so you can stay focused on product and growth. Available for remote full-time or founding engineer roles.",
+    "I build protocol and application infrastructure end-to-end: lending systems, wallet/payment rails, and secure backend architecture for high-stakes products. Available for remote founding or senior engineering roles.",
   actions: [
     {
       label: "Book a 15-min sync",

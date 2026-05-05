@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { MapPin } from "lucide-react";
 
 import { ParticleHero } from "@/components/ParticleCanvas";
-import { identity, stats } from "@/content/portfolio";
+import { heroSignals, identity, stats } from "@/content/portfolio";
 
 const HERO_PARALLAX_RELEASE_MS = 420;
 const HERO_REVEAL_DELAY_MS = 750;
@@ -40,11 +40,11 @@ export function HeroOrbit() {
   useEffect(() => {
     const revealTimer = window.setTimeout(
       () => setIsReady(true),
-      HERO_REVEAL_DELAY_MS
+      HERO_REVEAL_DELAY_MS,
     );
     const parallaxTimer = window.setTimeout(
       () => setIsParallaxActive(false),
-      HERO_PARALLAX_RELEASE_MS
+      HERO_PARALLAX_RELEASE_MS,
     );
     return () => {
       window.clearTimeout(revealTimer);
@@ -131,7 +131,7 @@ export function HeroOrbit() {
               style={delayStyle(0.05)}
             >
               <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-400" />
-              Co-founder · Fintech &amp; Blockchain Engineer
+              Product Infrastructure · Protocol Engineering
             </p>
             <h1
               className={[
@@ -188,7 +188,7 @@ export function HeroOrbit() {
                 {identity.location}
               </span>
               <span className="text-white/25">·</span>
-              <span>Open to remote YC&#8209;backed &amp; founding engineer roles</span>
+              <span>Open to remote founding and senior engineering roles</span>
             </div>
           </div>
         </div>
@@ -215,12 +215,7 @@ export function HeroOrbit() {
               Recent wins
             </p>
             <ul className="mt-4 space-y-2.5 text-sm text-white/75">
-              {[
-                "Engineered Rezolve AI acquisition showcase — NASDAQ deal",
-                "Co-founded Revalon Finance — 80% LTV on-chain lending",
-                "Predexy: 7-platform arbitrage engine in production",
-                "MetaKeep Wallet Isolation cut defects 40%",
-              ].map((signal) => (
+              {heroSignals.map((signal) => (
                 <li key={signal} className="flex items-start gap-2.5">
                   <span className="mt-[6px] h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-400" />
                   <span>{signal}</span>
@@ -232,13 +227,13 @@ export function HeroOrbit() {
                 <p className="text-[10px] uppercase tracking-[0.45em] text-white/30">
                   Core Stack
                 </p>
-                <p className="mt-1">Go · Next.js · Solana/EVM</p>
+                <p className="mt-1">Go · Solidity · Next.js</p>
               </div>
               <div>
                 <p className="text-[10px] uppercase tracking-[0.45em] text-white/30">
                   DevOps
                 </p>
-                <p className="mt-1">Docker · Terraform · AWS · CI/CD</p>
+                <p className="mt-1">Docker · Terraform · AWS KMS · CI/CD</p>
               </div>
             </div>
           </div>

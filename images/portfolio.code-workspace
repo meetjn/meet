@@ -1,11 +1,11 @@
 {
-	"folders": [
-		{
-			"path": ".."
-		},
-		{
-			"path": "../../revalon"
-		}
-	],
-	"settings": {}
+  "folders": [
+    {
+      "path": "..",
+    },
+    {
+      "path": "../../revalon",
+    },
+  ],
+  "settings": {},
 }

@@ -10,10 +10,10 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
   ({ className, ...props }, ref) => {
     const composedClassName = cn(
       "rounded-3xl border border-white/10 bg-white/[0.04] p-6 text-white shadow-[0_30px_120px_rgba(0,0,0,0.55)]",
-      className
+      className,
     );
     return <div ref={ref} className={composedClassName} {...props} />;
-  }
+  },
 );
 Card.displayName = "Card";
 
@@ -26,7 +26,7 @@ const CardHeader = React.forwardRef<HTMLDivElement, CardHeaderProps>(
   ({ className, ...props }, ref) => {
     const composedClassName = cn("mb-4 space-y-3", className);
     return <div ref={ref} className={composedClassName} {...props} />;
-  }
+  },
 );
 CardHeader.displayName = "CardHeader";
 
@@ -39,10 +39,10 @@ const CardTitle = React.forwardRef<HTMLParagraphElement, CardTitleProps>(
   ({ className, ...props }, ref) => {
     const composedClassName = cn(
       "text-xl font-semibold tracking-tight text-white",
-      className
+      className,
     );
     return <p ref={ref} className={composedClassName} {...props} />;
-  }
+  },
 );
 CardTitle.displayName = "CardTitle";
 
@@ -69,7 +69,7 @@ const CardContent = React.forwardRef<HTMLDivElement, CardContentProps>(
   ({ className, ...props }, ref) => {
     const composedClassName = cn("space-y-4 text-sm text-white/80", className);
     return <div ref={ref} className={composedClassName} {...props} />;
-  }
+  },
 );
 CardContent.displayName = "CardContent";
 

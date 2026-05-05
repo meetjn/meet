@@ -227,9 +227,8 @@ export function initWebGLParticles(container: HTMLDivElement): () => void {
   camera = new PerspectiveCamera(55, 1, 0.1, 1000);
   camera.position.set(0, 0, 260);
 
-  const { gpuCompute, positionVariable, velocityVariable } = initCompute(
-    renderer,
-  );
+  const { gpuCompute, positionVariable, velocityVariable } =
+    initCompute(renderer);
   const particleBundle = createParticleMesh();
   scene.add(particleBundle.mesh);
 
@@ -276,4 +275,3 @@ export function initWebGLParticles(container: HTMLDivElement): () => void {
     renderer = null;
   };
 }
-

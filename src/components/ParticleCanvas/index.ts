@@ -1,2 +1,1 @@
 export { ParticleHero } from "./ParticleHero";
-
