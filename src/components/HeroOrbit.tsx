@@ -1,10 +1,12 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
-import { MapPin } from "lucide-react";
+import { CalendarClock, MapPin } from "lucide-react";
 
 import { ParticleHero } from "@/components/ParticleCanvas";
 import { heroSignals, identity, stats } from "@/content/portfolio";
+import { getCalendlyBookingUrl } from "@/lib/site";
 
 const HERO_PARALLAX_RELEASE_MS = 420;
 const HERO_REVEAL_DELAY_MS = 750;
@@ -189,6 +191,29 @@ export function HeroOrbit() {
               </span>
               <span className="text-white/25">·</span>
               <span>Open to remote founding and senior engineering roles</span>
+            </div>
+            <div
+              className={[
+                animateClass,
+                "flex flex-wrap gap-3 pt-2",
+              ].join(" ")}
+              style={delayStyle(0.4)}
+            >
+              <Link
+                href={getCalendlyBookingUrl({ utm_content: "hero_cta" })}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-full border border-emerald-400/35 bg-emerald-400/10 px-5 py-2.5 text-sm font-semibold text-emerald-200 transition hover:border-emerald-300/60 hover:bg-emerald-400/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300/50"
+              >
+                <CalendarClock size={18} aria-hidden />
+                Schedule a call
+              </Link>
+              <Link
+                href={`mailto:${identity.email}`}
+                className="inline-flex items-center justify-center rounded-full border border-white/20 bg-white/5 px-5 py-2.5 text-sm font-semibold text-white/90 transition hover:border-white/35 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
+              >
+                Email
+              </Link>
             </div>
           </div>
         </div>

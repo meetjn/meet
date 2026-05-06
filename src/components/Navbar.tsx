@@ -3,8 +3,6 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
-import { MEDIA_SECTION_ID } from "@/components/Footer";
-
 const MOBILE_NAV_ID = "portfolio-nav-mobile";
 const RESUME_PATH = "/Resume.pdf";
 
@@ -74,9 +72,9 @@ export function Navbar() {
   const closeMenu = () => setIsMenuOpen(false);
   const toggleMenu = () => setIsMenuOpen((prev) => !prev);
 
-  const scrollToMedia = () => {
+  const scrollToContact = () => {
     if (typeof document === "undefined") return;
-    document.getElementById(MEDIA_SECTION_ID)?.scrollIntoView({
+    document.getElementById("contact")?.scrollIntoView({
       behavior: "smooth",
       block: "start",
     });
@@ -142,7 +140,7 @@ export function Navbar() {
         <div className="hidden items-center gap-4 md:flex">
           <button
             type="button"
-            onClick={scrollToMedia}
+            onClick={scrollToContact}
             className="nav-pill inline-flex items-center justify-center border border-white/25 bg-white/5 px-5 py-2 text-sm font-semibold text-white backdrop-blur-sm transition hover:border-[#f5c775] hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 active:scale-[0.98]"
           >
             Contact
@@ -206,7 +204,7 @@ export function Navbar() {
               type="button"
               onClick={() => {
                 closeMenu();
-                scrollToMedia();
+                scrollToContact();
               }}
               className="nav-pill flex w-full items-center justify-center border border-white/25 bg-white/5 px-5 py-3 text-base font-semibold text-white backdrop-blur-sm transition hover:border-[#f5c775] hover:bg-white/10 active:scale-[0.98]"
             >

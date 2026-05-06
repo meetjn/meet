@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { identity } from "@/content/portfolio";
+import { getCalendlyBookingUrl } from "@/lib/site";
 
 export const MEDIA_SECTION_ID = "media-footer";
 
@@ -44,6 +45,14 @@ export function Footer() {
               rel="noreferrer"
             >
               LinkedIn
+            </Link>
+            <Link
+              href={getCalendlyBookingUrl({ utm_content: "footer" })}
+              className="text-xs uppercase tracking-[0.35em] transition hover:text-white"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Calendly
             </Link>
           </div>
         </div>

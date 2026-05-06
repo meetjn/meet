@@ -1,3 +1,5 @@
+import { getCalendlyBookingUrl } from "@/lib/site";
+
 type KeystoneBuild = {
   title: string;
   metric: string;
@@ -262,7 +264,7 @@ export const contact = {
   actions: [
     {
       label: "Book a 15-min sync",
-      href: "https://calendly.com/meetjaiin/30min",
+      href: getCalendlyBookingUrl(),
     },
     {
       label: "Email me",

@@ -25,14 +25,17 @@ const SectionShell = ({
   title,
   children,
   className,
+  id,
 }: {
   eyebrow: string;
   title: string;
   children: React.ReactNode;
   className?: string;
+  id?: string;
 }) => (
   <section
-    className={`glass-panel rounded-[32px] border border-white/10 p-6 shadow-[0_30px_120px_rgba(0,0,0,0.55)] sm:p-10 ${
+    id={id}
+    className={`glass-panel scroll-mt-28 rounded-[32px] border border-white/10 p-6 shadow-[0_30px_120px_rgba(0,0,0,0.55)] sm:p-10 ${
       className ?? ""
     }`}
   >
@@ -283,6 +286,7 @@ export default function Home() {
 
         {/* Contact */}
         <SectionShell
+          id="contact"
           eyebrow="Get in touch"
           title={contact.headline}
           className="solid-panel"
