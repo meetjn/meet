@@ -5,7 +5,7 @@ import { motion, useReducedMotion } from "motion/react";
 
 import { cn } from "@/lib/utils";
 
-const spring = { type: "spring" as const, stiffness: 520, damping: 34, mass: 0.7 };
+const spring = { type: "spring" as const, stiffness: 400, damping: 32, mass: 0.8 };
 
 type GlassCtaProps = {
   href: string;
@@ -27,8 +27,8 @@ export function GlassCta({
   return (
     <motion.div
       className="inline-flex"
-      whileHover={reduceMotion ? undefined : { scale: 1.03, y: -2 }}
-      whileTap={reduceMotion ? undefined : { scale: 0.96, y: 0 }}
+      whileHover={reduceMotion ? undefined : { scale: 1.01, y: -1 }}
+      whileTap={reduceMotion ? undefined : { scale: 0.98, y: 0 }}
       transition={spring}
     >
       <Link
@@ -65,8 +65,8 @@ export function GlassChip({
   return (
     <motion.div
       className="inline-flex"
-      whileHover={reduceMotion ? undefined : { scale: 1.04 }}
-      whileTap={reduceMotion ? undefined : { scale: 0.95 }}
+      whileHover={reduceMotion ? undefined : { scale: 1.02 }}
+      whileTap={reduceMotion ? undefined : { scale: 0.98 }}
       transition={spring}
     >
       <Link

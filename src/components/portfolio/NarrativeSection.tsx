@@ -1,7 +1,9 @@
-import { Quote } from "lucide-react";
-
 import { Separator } from "@/components/ui/separator";
+import { ScrollHighlightQuote } from "./ScrollHighlightQuote";
 import { ScrollReveal } from "./ScrollReveal";
+
+const QUOTE =
+  "I don't just write code. I develop a deep obsession with the domain until I understand it better than almost anyone in the room.";
 
 const paragraphs = [
   <>
@@ -29,25 +31,17 @@ const paragraphs = [
 
 export function NarrativeSection() {
   return (
-    <section id="narrative" className="section-pad scroll-mt-24 bg-portfolio-ash">
-      <ScrollReveal as="span" className="section-label">
-        Philosophy
-      </ScrollReveal>
-
-      <div className="grid items-start gap-12 lg:grid-cols-2 lg:gap-20">
-        <ScrollReveal delay={80}>
-          <blockquote className="narrative-quote">
-            <Quote className="mb-4 size-5 text-portfolio-ember opacity-80" />
-            &ldquo;I don&apos;t just write code. I develop a{" "}
-            <span className="not-italic text-portfolio-ember-glow">
-              deep obsession
-            </span>{" "}
-            with the domain until I understand it better than almost anyone in
-            the room.&rdquo;
-          </blockquote>
+    <section id="narrative" className="scroll-mt-24 bg-portfolio-ash">
+      <div className="section-pad pb-0">
+        <ScrollReveal as="span" className="section-label">
+          Philosophy
         </ScrollReveal>
+      </div>
 
-        <div className="flex flex-col gap-8">
+      <div className="grid items-start gap-12 lg:grid-cols-2 lg:gap-20 lg:px-[60px]">
+        <ScrollHighlightQuote text={QUOTE} />
+
+        <div className="section-pad flex flex-col gap-8 !pb-20 !pt-0 lg:!py-0">
           {paragraphs.map((paragraph, index) => (
             <ScrollReveal key={index} delay={120 + index * 90}>
               <p className="narrative-para">{paragraph}</p>
