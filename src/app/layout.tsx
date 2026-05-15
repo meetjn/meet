@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Bebas_Neue, DM_Serif_Display } from "next/font/google";
 import { GeistSans } from "geist/font/sans";
 
@@ -6,6 +6,12 @@ import "./globals.css";
 import { GoogleAnalytics } from "@/components/GoogleAnalytics";
 import { HotjarAnalytics } from "@/components/HotjarAnalytics";
 import { site } from "@/content/site";
+import {
+  SITE_DESCRIPTION,
+  SITE_KEYWORDS,
+  buildPortfolioJsonLd,
+  seoTwitterCreator,
+} from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
 
 const bebas = Bebas_Neue({
@@ -28,24 +34,15 @@ const title = {
   template: "%s · Meet Jain",
 };
 
-const description =
-  "Co-founder of Revalon Finance · Senior Engineer at MetaKeep (acquired by Rezolve, NASDAQ) · Lending protocols, payment rails, and acquisition-grade financial infrastructure.";
-
-const keywords = [
-  "Meet Jain",
-  "blockchain engineer",
-  "Solidity developer",
-  "DeFi",
-  "lending protocol",
-  "MetaKeep",
-  "Revalon Finance",
-  "fintech engineer",
-  "protocol engineering",
-  "remote engineer",
-];
-
 const googleVerification = process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION;
 const bingVerification = process.env.NEXT_PUBLIC_BING_SITE_VERIFICATION;
+
+const ogImage = {
+  url: "/opengraph-image",
+  width: 1200,
+  height: 630,
+  alt: "Meet Jain — product infrastructure, fintech & blockchain engineering",
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -54,25 +51,43 @@ export const metadata: Metadata = {
     apple: [{ url: "/icon-empty.svg", type: "image/svg+xml" }],
   },
   title,
-  description,
+  description: SITE_DESCRIPTION,
   applicationName: site.name,
   authors: [{ name: site.name, url: SITE_URL }],
   creator: site.name,
-  keywords,
+  publisher: site.name,
+  category: "technology",
+  keywords: [...SITE_KEYWORDS],
   alternates: { canonical: "/" },
-  robots: { index: true, follow: true },
+  formatDetection: { email: false, telephone: false },
+  referrer: "origin-when-cross-origin",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
   openGraph: {
     title: title.default,
-    description,
+    description: SITE_DESCRIPTION,
     url: SITE_URL,
     siteName: "meetjain.xyz",
     locale: "en_US",
     type: "website",
+    images: [ogImage],
   },
   twitter: {
     card: "summary_large_image",
     title: title.default,
-    description,
+    description: SITE_DESCRIPTION,
+    creator: seoTwitterCreator,
+    site: seoTwitterCreator,
+    images: [ogImage.url],
   },
   verification: {
     ...(googleVerification ? { google: googleVerification } : {}),
@@ -80,15 +95,15 @@ export const metadata: Metadata = {
   },
 };
 
-const personJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "Person",
-  name: site.name,
-  url: SITE_URL,
-  email: `mailto:${site.email}`,
-  sameAs: [site.linkedin, site.github, site.x],
-  jobTitle: site.role,
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#0a0a0a" },
+    { media: "(prefers-color-scheme: dark)", color: "#0a0a0a" },
+  ],
+  colorScheme: "dark",
 };
+
+const portfolioJsonLd = buildPortfolioJsonLd();
 
 export default function RootLayout({
   children,
@@ -96,13 +111,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="scroll-smooth">
+    <html lang="en-US" className="scroll-smooth">
       <body
         className={`${bebas.variable} ${dmSerif.variable} ${GeistSans.variable} ${GeistSans.className} overflow-x-hidden font-light antialiased`}
       >
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(portfolioJsonLd),
+          }}
         />
         <GoogleAnalytics />
         <HotjarAnalytics />

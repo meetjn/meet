@@ -275,11 +275,25 @@ body::before {
 
   .exp-item::before {
     content: "";
-    @apply absolute -left-5 top-0 w-0.5 bg-portfolio-ember transition-all duration-300;
+    @apply absolute top-0 w-0.5 bg-portfolio-ember transition-[height] duration-300 ease-out;
+    left: 0;
     height: 0;
   }
 
-  .exp-item:hover::before {
+  /* Match original offset on larger viewports (avoids clipping under body overflow-x-hidden on phones) */
+  @media (min-width: 640px) {
+    .exp-item::before {
+      left: -1.25rem;
+    }
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .exp-item:hover::before {
+      height: 100%;
+    }
+  }
+
+  .exp-item-active::before {
     height: 100%;
   }
 }
