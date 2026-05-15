@@ -1,8 +1,7 @@
-import Link from "next/link";
 import { Mail } from "lucide-react";
 
 import { site } from "@/content/site";
-import { Button } from "@/components/ui/button";
+import { GlassCta } from "@/components/ui/glass-cta";
 
 export function Hero() {
   return (
@@ -43,15 +42,13 @@ export function Hero() {
         </p>
 
         <div className="animate-fade-up animate-delay-800 flex flex-wrap items-center gap-4 opacity-0">
-          <Button asChild className="btn-primary h-auto rounded-none border-0">
-            <Link href="#work">See the work</Link>
-          </Button>
-          <Button asChild variant="outline" className="btn-ghost h-auto rounded-none bg-transparent">
-            <Link href={`mailto:${site.email}`}>
-              <Mail className="mr-2 size-3.5" />
-              Let&apos;s build
-            </Link>
-          </Button>
+          <GlassCta href="#work" variant="primary">
+            See the work
+          </GlassCta>
+          <GlassCta href={`mailto:${site.email}`} variant="ghost">
+            <Mail className="mr-2 size-3.5" />
+            Let&apos;s build
+          </GlassCta>
         </div>
       </div>
 

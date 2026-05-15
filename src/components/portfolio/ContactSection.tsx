@@ -1,16 +1,17 @@
-import Link from "next/link";
+"use client";
+
 import { Calendar, Flame, Github, Linkedin } from "lucide-react";
 
 import { XIcon } from "@/components/icons/XIcon";
 import { site } from "@/content/site";
-import { Button } from "@/components/ui/button";
+import { GlassChip, GlassCta } from "@/components/ui/glass-cta";
 import { ScrollReveal } from "./ScrollReveal";
 
 const links = [
-  { href: site.x, label: "X", external: true, icon: "x" as const },
-  { href: site.github, label: "GitHub", external: true, icon: Github },
-  { href: site.linkedin, label: "LinkedIn", external: true, icon: Linkedin },
-  { href: site.calendly, label: "Book a call", external: true, icon: Calendar },
+  { href: site.x, label: "X", icon: "x" as const },
+  { href: site.github, label: "GitHub", icon: Github },
+  { href: site.linkedin, label: "LinkedIn", icon: Linkedin },
+  { href: site.calendly, label: "Book a call", icon: Calendar },
 ] as const;
 
 export function ContactSection() {
@@ -45,40 +46,29 @@ export function ContactSection() {
 
       <ScrollReveal
         delay={240}
-        className="relative z-10 mb-10 flex flex-wrap items-center justify-center gap-6"
+        className="relative z-10 mb-10 flex flex-wrap items-center justify-center gap-3 sm:gap-4"
       >
-        {links.map((link, index) => (
-          <span key={link.label} className="flex items-center gap-6">
-            {index > 0 && (
-              <span className="hidden text-portfolio-smoke sm:inline" aria-hidden>
-                ·
-              </span>
+        {links.map((link) => (
+          <GlassChip
+            key={link.label}
+            href={link.href}
+            aria-label={link.label === "X" ? "X (Twitter)" : link.label}
+          >
+            {link.icon === "x" ? (
+              <XIcon />
+            ) : (
+              <link.icon className="size-3.5" />
             )}
-            <Link
-              href={link.href}
-              target="_blank"
-              rel="noreferrer"
-              className="contact-link"
-              aria-label={link.label === "X" ? "X (Twitter)" : link.label}
-            >
-              {link.icon === "x" ? (
-                <XIcon />
-              ) : (
-                <link.icon className="size-3.5" />
-              )}
-              {link.label}
-            </Link>
-          </span>
+            {link.label}
+          </GlassChip>
         ))}
       </ScrollReveal>
 
-      <ScrollReveal delay={320} variant="scale" className="relative z-10 pb-12 lg:pb-14">
-        <Button asChild className="btn-primary h-auto rounded-none border-0">
-          <Link href={`mailto:${site.email}`}>
-            <Flame className="mr-2 size-3.5" />
-            Reach out
-          </Link>
-        </Button>
+      <ScrollReveal delay={320} className="relative z-10 pb-12 lg:pb-14">
+        <GlassCta href={`mailto:${site.email}`} variant="primary">
+          <Flame className="mr-2 size-3.5" />
+          Reach out
+        </GlassCta>
       </ScrollReveal>
     </section>
   );

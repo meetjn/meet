@@ -23,7 +23,7 @@ export function TraitsSection() {
             key={trait.number}
             as="article"
             delay={index * 70}
-            className="trait-card relative overflow-hidden bg-portfolio-ash p-8 transition-colors hover:bg-[#1E1B17] sm:p-9"
+            className="trait-card relative overflow-hidden bg-portfolio-ash p-8 sm:p-9"
           >
             <div className="trait-number mb-4">{trait.number}</div>
             <h3 className="trait-title mb-3">{trait.title}</h3>
