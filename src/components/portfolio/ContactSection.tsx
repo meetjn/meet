@@ -4,6 +4,7 @@ import { Calendar, Flame, Github, Linkedin, Mail } from "lucide-react";
 import { site } from "@/content/site";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { ScrollReveal } from "./ScrollReveal";
 
 type ContactLink = {
   href: string;
@@ -34,22 +35,22 @@ export function ContactSection() {
         aria-hidden
       />
 
-      <span className="mb-6 block text-[11px] uppercase tracking-[0.35em] text-portfolio-ember">
+      <ScrollReveal as="span" className="mb-6 block text-[11px] uppercase tracking-[0.35em] text-portfolio-ember">
         Let&apos;s build something that matters
-      </span>
+      </ScrollReveal>
 
-      <h2 className="font-display text-[clamp(3.5rem,9vw,7.5rem)] leading-[0.9]">
+      <ScrollReveal as="h2" delay={80} className="font-display text-[clamp(3.5rem,9vw,7.5rem)] leading-[0.9]">
         Start a
         <br />
         fire.
-      </h2>
+      </ScrollReveal>
 
-      <p className="mx-auto mb-10 mt-8 max-w-md text-sm text-portfolio-mist sm:text-[15px]">
+      <ScrollReveal delay={160} className="mx-auto mb-10 mt-8 max-w-md text-sm text-portfolio-mist sm:text-[15px]">
         Available for remote founding roles, senior engineering, and high-stakes
         protocol work.
-      </p>
+      </ScrollReveal>
 
-      <div className="mb-10 flex flex-wrap items-center justify-center gap-4 sm:gap-6">
+      <ScrollReveal delay={240} className="mb-10 flex flex-wrap items-center justify-center gap-4 sm:gap-6">
         {links.map((link, index) => {
           const Icon = link.icon;
           return (
@@ -72,17 +73,19 @@ export function ContactSection() {
             </span>
           );
         })}
-      </div>
+      </ScrollReveal>
 
-      <Button
-        asChild
-        className="h-auto rounded-none bg-portfolio-ember px-8 py-3.5 text-[11px] uppercase tracking-[0.2em] text-portfolio-white hover:bg-portfolio-ember-glow"
-      >
-        <Link href={`mailto:${site.email}`}>
-          <Flame className="mr-2 size-3.5" />
-          Reach out
-        </Link>
-      </Button>
+      <ScrollReveal delay={320} variant="scale">
+        <Button
+          asChild
+          className="h-auto rounded-none bg-portfolio-ember px-8 py-3.5 text-[11px] uppercase tracking-[0.2em] text-portfolio-white hover:bg-portfolio-ember-glow"
+        >
+          <Link href={`mailto:${site.email}`}>
+            <Flame className="mr-2 size-3.5" />
+            Reach out
+          </Link>
+        </Button>
+      </ScrollReveal>
     </section>
   );
 }

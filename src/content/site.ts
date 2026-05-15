@@ -84,7 +84,7 @@ export const experience = [
   {
     period: "Oct 2024 – Mar 2025",
     tag: "Blockchain Dev Intern",
-    role: "Quranium L1",
+    role: "Quranium",
     company: "Quantum-Resistant Blockchain Infrastructure",
     points: [
       "Built an MVP decentralised exchange using Uniswap v3 and a multi-sig wallet for a quantum-resistant L1 blockchain.",

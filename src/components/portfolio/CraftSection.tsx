@@ -1,18 +1,28 @@
 import { Users } from "lucide-react";
 
 import { craftStats, mentors, site } from "@/content/site";
+import { ScrollReveal } from "./ScrollReveal";
+import { SectionHeader } from "./SectionHeader";
 
 export function CraftSection() {
   return (
     <section id="craft" className="section-pad scroll-mt-24 bg-portfolio-black">
-      <span className="section-label flex items-center gap-2">
-        <Users className="size-3" />
-        Environment & mentorship
-      </span>
-      <h2 className="section-title mb-12 sm:mb-[60px]">The room I was in</h2>
+      <SectionHeader
+        label={
+          <span className="flex items-center gap-2">
+            <Users className="size-3" />
+            Environment & mentorship
+          </span>
+        }
+        title="The room I was in"
+        className="mb-12 sm:mb-[60px]"
+      />
 
       <div className="grid gap-0.5 lg:grid-cols-2">
-        <article className="flex flex-col gap-8 bg-portfolio-smoke p-8 sm:p-10 lg:col-span-2 lg:flex-row lg:items-center lg:justify-between lg:gap-16 lg:p-12">
+        <ScrollReveal
+          as="article"
+          className="flex flex-col gap-8 bg-portfolio-smoke p-8 sm:p-10 lg:col-span-2 lg:flex-row lg:items-center lg:justify-between lg:gap-16 lg:p-12"
+        >
           <div className="flex-1">
             <p className="font-serif text-xl italic leading-relaxed text-portfolio-cream sm:text-[22px]">
               &ldquo;Being in a room with people who&apos;ve shipped systems at
@@ -44,10 +54,15 @@ export function CraftSection() {
               ))}
             </ul>
           </div>
-        </article>
+        </ScrollReveal>
 
-        {craftStats.map((stat) => (
-          <article key={stat.number} className="bg-portfolio-ash p-8 sm:p-10">
+        {craftStats.map((stat, index) => (
+          <ScrollReveal
+            key={stat.number}
+            as="article"
+            delay={120 + index * 80}
+            className="bg-portfolio-ash p-8 sm:p-10"
+          >
             <p className="font-display mb-3 text-6xl leading-none text-portfolio-ember sm:text-[80px]">
               {stat.number}
             </p>
@@ -57,7 +72,7 @@ export function CraftSection() {
             <p className="text-sm leading-relaxed text-portfolio-cream">
               {stat.text}
             </p>
-          </article>
+          </ScrollReveal>
         ))}
       </div>
     </section>
