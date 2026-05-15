@@ -31,17 +31,17 @@ const paragraphs = [
 
 export function NarrativeSection() {
   return (
-    <section id="narrative" className="scroll-mt-24 bg-portfolio-ash">
-      <div className="section-pad pb-0">
-        <ScrollReveal as="span" className="section-label">
-          Philosophy
-        </ScrollReveal>
-      </div>
+    <section id="narrative" className="section-pad scroll-mt-24 bg-portfolio-ash">
+      <ScrollReveal as="span" className="section-label">
+        Philosophy
+      </ScrollReveal>
 
-      <div className="grid items-start gap-12 lg:grid-cols-2 lg:gap-20 lg:px-[60px]">
-        <ScrollHighlightQuote text={QUOTE} />
+      <div className="grid min-w-0 items-start gap-12 lg:grid-cols-2 lg:gap-20">
+        <div className="min-w-0 overflow-hidden">
+          <ScrollHighlightQuote text={QUOTE} />
+        </div>
 
-        <div className="section-pad flex flex-col gap-8 !pb-20 !pt-0 lg:!py-0">
+        <div className="flex min-w-0 flex-col gap-8">
           {paragraphs.map((paragraph, index) => (
             <ScrollReveal key={index} delay={120 + index * 90}>
               <p className="narrative-para">{paragraph}</p>
