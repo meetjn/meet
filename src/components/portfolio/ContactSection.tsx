@@ -18,7 +18,7 @@ export function ContactSection() {
   return (
     <section
       id="contact"
-      className="relative scroll-mt-24 overflow-hidden bg-portfolio-black px-5 pt-24 text-center sm:px-10 sm:pt-32 lg:px-[60px] lg:pt-[140px]"
+      className="relative overflow-hidden bg-portfolio-black px-5 pt-24 text-center sm:px-10 sm:pt-32 lg:px-[60px] lg:pt-[140px]"
     >
       <div
         className="pointer-events-none absolute inset-x-0 bottom-0 mx-auto h-[min(300px,50%)] w-full max-w-[600px]"

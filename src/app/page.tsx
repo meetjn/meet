@@ -5,7 +5,6 @@ import {
   ExperienceSection,
   Hero,
   NarrativeSection,
-  SiteNav,
   StackSection,
   TraitsSection,
 } from "@/components/portfolio";
@@ -13,7 +12,6 @@ import {
 export default function Home() {
   return (
     <div className="flex min-h-0 flex-col bg-portfolio-black">
-      <SiteNav />
       <main>
         <Hero />
         <Divider />

@@ -5,7 +5,7 @@ import { GlassCta } from "@/components/ui/glass-cta";
 
 export function Hero() {
   return (
-    <section className="relative flex min-h-[100dvh] flex-col justify-end overflow-hidden px-5 pb-16 pt-28 sm:px-10 sm:pb-20 lg:px-[60px] lg:pb-[80px]">
+    <section className="relative flex min-h-[100dvh] flex-col justify-end overflow-hidden px-5 pb-16 pt-[max(5rem,calc(env(safe-area-inset-top)+3rem))] sm:px-10 sm:pb-20 lg:px-[60px] lg:pb-[80px] lg:pt-20">
       <div
         className="pointer-events-none absolute right-16 top-0 hidden h-full w-px opacity-30 lg:right-[120px] lg:block"
         style={{

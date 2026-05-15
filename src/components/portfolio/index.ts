@@ -1,4 +1,3 @@
-export { SiteNav } from "./SiteNav";
 export { Hero } from "./Hero";
 export { Divider } from "./Divider";
 export { NarrativeSection } from "./NarrativeSection";

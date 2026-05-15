@@ -7,7 +7,7 @@ import { SectionHeader } from "./SectionHeader";
 
 export function ExperienceSection() {
   return (
-    <section id="work" className="section-pad scroll-mt-24 bg-portfolio-ash">
+    <section id="work" className="section-pad bg-portfolio-ash">
       <SectionHeader
         label={
           <span className="flex items-center gap-2">

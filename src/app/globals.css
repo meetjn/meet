@@ -49,8 +49,9 @@ body::before {
     @apply font-display mb-[60px] text-[clamp(40px,6vw,72px)] font-normal leading-none tracking-[1px] text-portfolio-white;
   }
 
+  /* meet_jain_portfolio.html — .hero-title (Bebas: no text-transform on source) */
   .hero-title {
-    @apply font-display mb-9 text-[clamp(72px,10vw,140px)] font-normal leading-[0.9] tracking-[2px];
+    @apply mb-9 font-display text-[clamp(72px,10vw,140px)] font-normal leading-[0.9] tracking-[2px] text-portfolio-white;
   }
 
   .hero-title em {
@@ -61,8 +62,9 @@ body::before {
     @apply mb-12 max-w-[520px] border-l border-portfolio-ember pl-6 font-sans text-[15px] font-light leading-[1.8] text-portfolio-cream;
   }
 
+  /* meet_jain_portfolio.html — .contact-title (inherits headline white) */
   .contact-title {
-    @apply font-display mb-8 text-[clamp(60px,9vw,120px)] font-normal leading-[0.9];
+    @apply mb-8 font-display text-portfolio-white text-[clamp(60px,9vw,120px)] font-normal leading-[0.9];
   }
 
   .contact-eyebrow {
@@ -77,20 +79,25 @@ body::before {
     @apply inline-flex items-center gap-2 font-sans text-[11px] font-normal uppercase tracking-[2px] text-portfolio-mist transition-colors hover:text-portfolio-ember-glow;
   }
 
-  .nav-logo {
-    @apply font-display text-[22px] font-normal tracking-[3px] text-portfolio-white;
-  }
-
-  .nav-link {
-    @apply font-sans text-[12px] font-normal uppercase tracking-[2px] text-portfolio-mist transition-colors hover:text-portfolio-white;
-  }
-
   .hero-eyebrow {
     @apply font-sans text-[11px] font-normal uppercase tracking-[4px] text-portfolio-ember;
   }
 
+  /* meet_jain_portfolio.html — .narrative-quote + inner em */
   .narrative-quote {
-    @apply font-serif text-[clamp(26px,3.5vw,42px)] font-normal italic leading-[1.3] text-portfolio-white;
+    font-family: var(--font-dm-serif), "DM Serif Display", serif;
+    font-size: clamp(26px, 3.5vw, 42px);
+    font-weight: 400;
+    font-style: italic;
+    line-height: 1.3;
+    color: #f7f4ee;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .narrative-quote em {
+    font-style: normal;
+    font-weight: 400;
+    color: #e8621a;
   }
 
   .narrative-para {
@@ -207,26 +214,6 @@ body::before {
     border-color: rgba(255, 255, 255, 0.14);
   }
 
-  .glass-nav {
-    @apply border-b border-white/[0.06];
-    background: rgba(10, 10, 10, 0.55);
-    -webkit-backdrop-filter: blur(40px) saturate(180%);
-    backdrop-filter: blur(40px) saturate(180%);
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.06),
-      0 8px 32px rgba(0, 0, 0, 0.35);
-  }
-
-  .glass-nav-link {
-    @apply rounded-full px-3 py-1.5 transition-colors duration-200;
-  }
-
-  .glass-nav-link:hover {
-    background: rgba(255, 255, 255, 0.08);
-    -webkit-backdrop-filter: blur(12px);
-    backdrop-filter: blur(12px);
-  }
-
   .glass-icon-btn {
     @apply rounded-xl border border-white/10 bg-white/[0.06] text-portfolio-white shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_4px_16px_rgba(0,0,0,0.3)];
     -webkit-backdrop-filter: blur(20px) saturate(160%);
@@ -262,9 +249,6 @@ body::before {
     .glass-cta-ghost,
     .glass-chip {
       background: rgba(20, 18, 16, 0.95);
-    }
-    .glass-nav {
-      background: rgba(10, 10, 10, 0.92);
     }
   }
 

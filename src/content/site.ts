@@ -9,13 +9,6 @@ export const site = {
   location: "Jaipur, India · Remote · 2026",
 } as const;
 
-export const navLinks = [
-  { href: "#narrative", label: "Philosophy" },
-  { href: "#work", label: "Work" },
-  { href: "#craft", label: "Craft" },
-  { href: "#contact", label: "Contact" },
-] as const;
-
 export const traits = [
   {
     number: "01",

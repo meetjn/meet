@@ -6,7 +6,7 @@ import { SectionHeader } from "./SectionHeader";
 
 export function CraftSection() {
   return (
-    <section id="craft" className="section-pad scroll-mt-24 bg-portfolio-black">
+    <section id="craft" className="section-pad bg-portfolio-black">
       <SectionHeader
         label={
           <span className="flex items-center gap-2">

@@ -31,12 +31,12 @@ const paragraphs = [
 
 export function NarrativeSection() {
   return (
-    <section id="narrative" className="section-pad scroll-mt-24 bg-portfolio-ash">
+    <section id="narrative" className="relative section-pad bg-portfolio-ash">
       <ScrollReveal as="span" className="section-label">
         Philosophy
       </ScrollReveal>
 
-      <div className="grid min-w-0 items-start gap-12 lg:grid-cols-2 lg:gap-20">
+      <div className="grid min-w-0 items-start gap-6 md:gap-10 lg:grid-cols-2 lg:gap-20">
         <div className="min-w-0 overflow-hidden">
           <ScrollHighlightQuote text={QUOTE} />
         </div>
