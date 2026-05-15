@@ -34,15 +34,30 @@ body::before {
   }
 
   .section-title {
-    @apply font-display text-[clamp(2.5rem,6vw,4.5rem)] leading-none tracking-wide text-portfolio-white;
+    @apply font-display text-[clamp(2.5rem,6vw,4.5rem)] leading-none tracking-[1px] text-portfolio-white;
   }
 
   .hero-title {
-    @apply font-display text-[clamp(3.5rem,12vw,8.75rem)] leading-[0.9] tracking-wide;
+    @apply font-display text-[clamp(72px,10vw,140px)] leading-[0.9] tracking-hero;
   }
 
   .hero-title em {
-    @apply font-serif text-[1.05em] not-italic text-portfolio-ember-glow;
+    @apply font-serif text-[1em] italic text-portfolio-ember-glow;
+    font-style: italic;
+  }
+
+  .nav-logo {
+    @apply font-display text-[22px] tracking-logo text-portfolio-white;
+  }
+
+  .nav-link {
+    @apply font-sans text-xs uppercase tracking-nav text-portfolio-mist transition-colors hover:text-portfolio-white;
+    font-size: 12px;
+  }
+
+  .hero-eyebrow {
+    @apply font-sans text-[11px] uppercase tracking-eyebrow text-portfolio-ember;
+    letter-spacing: 4px;
   }
 
   .divider-line {

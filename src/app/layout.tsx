@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Bebas_Neue, DM_Serif_Display, Inter } from "next/font/google";
+import { Bebas_Neue, DM_Serif_Display } from "next/font/google";
+import { GeistSans } from "geist/font/sans";
 
 import "./globals.css";
 import { GoogleAnalytics } from "@/components/GoogleAnalytics";
@@ -19,12 +20,6 @@ const dmSerif = DM_Serif_Display({
   style: ["normal", "italic"],
   subsets: ["latin"],
   variable: "--font-dm-serif",
-  display: "swap",
-});
-
-const geist = Inter({
-  subsets: ["latin"],
-  variable: "--font-geist",
   display: "swap",
 });
 
@@ -99,7 +94,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <body
-        className={`${bebas.variable} ${dmSerif.variable} ${geist.variable} overflow-x-hidden`}
+        className={`${bebas.variable} ${dmSerif.variable} ${GeistSans.variable} ${GeistSans.className} overflow-x-hidden font-light antialiased`}
       >
         <script
           type="application/ld+json"

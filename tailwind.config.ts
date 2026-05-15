@@ -23,12 +23,21 @@ const config: Config = {
         },
       },
       fontFamily: {
-        display: ["var(--font-bebas)", "sans-serif"],
-        serif: ["var(--font-dm-serif)", "serif"],
-        sans: ["var(--font-geist)", "system-ui", "sans-serif"],
+        display: ["var(--font-bebas)", "Bebas Neue", "sans-serif"],
+        serif: ["var(--font-dm-serif)", "DM Serif Display", "serif"],
+        sans: [
+          "var(--font-geist-sans)",
+          "Geist",
+          "system-ui",
+          "sans-serif",
+        ],
       },
       letterSpacing: {
         widest: "0.25em",
+        hero: "2px",
+        nav: "2px",
+        logo: "3px",
+        eyebrow: "4px",
       },
       animation: {
         "fade-up": "fadeUp 0.9s ease forwards",

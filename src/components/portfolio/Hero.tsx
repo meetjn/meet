@@ -21,11 +21,11 @@ export function Hero() {
       </span>
 
       <div className="relative z-10 max-w-5xl">
-        <p className="animate-fade-up animate-delay-200 mb-6 text-[11px] uppercase tracking-[0.35em] text-portfolio-ember opacity-0 sm:mb-8">
+        <p className="hero-eyebrow animate-fade-up animate-delay-200 mb-6 opacity-0 sm:mb-6">
           {site.role}
         </p>
 
-        <h1 className="hero-title animate-fade-up animate-delay-400 mb-8 opacity-0 sm:mb-9">
+        <h1 className="hero-title animate-fade-up animate-delay-400 mb-9 opacity-0">
           Built to
           <br />
           <em>burn</em>
@@ -35,7 +35,7 @@ export function Hero() {
           down.
         </h1>
 
-        <p className="animate-fade-up animate-delay-600 mb-10 max-w-[520px] text-sm leading-relaxed text-portfolio-cream opacity-0 sm:text-[15px] sm:leading-[1.8]">
+        <p className="animate-fade-up animate-delay-600 mb-12 max-w-[520px] text-[15px] leading-[1.8] text-portfolio-cream opacity-0">
           I build financial infrastructure at the founding layer — lending
           protocols, payment rails, acquisition-grade systems. Not because
           it&apos;s a job. Because I can&apos;t stop until something works
