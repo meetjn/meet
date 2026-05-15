@@ -19,13 +19,13 @@ export const traits = [
     number: "02",
     title: "Zero-to-Production Speed",
     description:
-      "From zero to a crypto onramp used in a NASDAQ acquisition. From zero to a floor-aware lending protocol with five Solidity contracts and automated margin calls. Most engineers prototype. I ship.",
+      "From zero to a crypto onramp used in a NASDAQ acquisition. From zero to a lending protocol with disciplined on-chain execution and automated risk workflows. Most engineers prototype. I ship.",
   },
   {
     number: "03",
     title: "System-Level Thinking",
     description:
-      "I see the whole board — protocol layer, application layer, DevOps, security architecture. When I build a lending protocol, I'm thinking about MEV resistance, KMS key policy, vault reconciliation, and ML audit trails simultaneously.",
+      "I see the whole board — protocol layer, application layer, DevOps, security architecture. When I build lending infrastructure I think about liquidation economics, custody boundaries, reconciliation, and observable decision trails simultaneously.",
   },
   {
     number: "04",
@@ -52,19 +52,21 @@ export const experience = [
     period: "Apr 2026 – Now",
     tag: "Co-founder · CTO",
     role: "Revalon Finance",
+    website: "https://revalon.finance",
     company: "Protocol Engineering · DeFi Infrastructure",
     points: [
-      "Architected a production-grade floor-aware lending protocol on Polygon PoS — 5 Solidity contracts, 7-guard on-chain quote verification, 48h TimelockController, 3-of-5 Gnosis Safe multisig. Zero bad debt across full testnet lifecycle.",
-      "Built a dynamic LTV underwriting engine in Go with 7 real-time risk signal multipliers — time-to-expiry, implied probability, liquidity tier, bid-ask spread, oracle objectivity — with full PostgreSQL audit trails for ML training.",
-      "Engineered a two-sided lending marketplace with rebasing rlUSDC receipt token, utilisation-zone APY controls (6–15%), Go drift monitor goroutine, and 3-tier automated margin call system.",
-      "Integrated Polymarket (ERC-1155 trustless custody) and Kalshi (CFTC-regulated attestation) as dual off-chain collateral sources with AES-256 + KMS envelope encryption.",
+      "Led architecture for a lending protocol on Polygon: Solidity across multiple contracts, guarded execution paths, and operational controls (timelock, multisig). Shipped full testnet lifecycle with disciplined collateral and liquidation practice.",
+      "Built Go services for underwriting and dynamic LTV — multi-signal inputs, auditable outputs, and PostgreSQL trails suitable for downstream analytics and diligence.",
+      "Delivered marketplace mechanics bridging lenders and borrowers: dynamic rate regimes, automated monitoring, and a staged margin workflow aligned with protocol constraints.",
+      "Integrated hybrid on-chain/off-chain collateral from crypto and regulated venues with encryption and KMS-aware key handling. Architecture and integrations available under NDA.",
     ],
-    impact: "Zero bad debt · Production testnet",
+    impact: "Testnet-complete protocol · Risk discipline",
   },
   {
     period: "Apr 2025 – May 2026",
     tag: "Senior Engineer",
     role: "MetaKeep (Acquired)",
+    website: "https://metakeep.xyz",
     company: "Rezolve AI · NASDAQ: RZLV",
     points: [
       "Engineered the crypto payment integration that served as the primary technical validator for MetaKeep's acquisition by Rezolve AI (NASDAQ: RZLV). Sign-up-free transactions in a chatbot UI for luxury retail — shipped March 2026.",
@@ -78,6 +80,7 @@ export const experience = [
     period: "Oct 2024 – Mar 2025",
     tag: "Blockchain Dev Intern",
     role: "Quranium",
+    website: "https://quranium.org",
     company: "Quantum-Resistant Blockchain Infrastructure",
     points: [
       "Built an MVP decentralised exchange using Uniswap v3 and a multi-sig wallet for a quantum-resistant L1 blockchain.",

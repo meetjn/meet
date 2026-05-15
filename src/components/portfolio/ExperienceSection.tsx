@@ -37,7 +37,16 @@ export function ExperienceSection() {
             </div>
 
             <div>
-              <h3 className="exp-role mb-1">{job.role}</h3>
+              <h3 className="exp-role mb-1">
+                <a
+                  href={job.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-inherit underline-offset-[6px] transition-colors hover:text-portfolio-ember-glow hover:underline"
+                >
+                  {job.role}
+                </a>
+              </h3>
               <p className="exp-company mb-5">{job.company}</p>
               <ul className="flex flex-col gap-3">
                 {job.points.map((point) => (

@@ -15,10 +15,9 @@ const paragraphs = [
     &mdash; the kind of proof that turns a deal from maybe to closed.
   </>,
   <>
-    At Revalon I co-founded the protocol layer from zero: a{" "}
-    <strong>7-signal underwriting engine</strong>,{" "}
-    <strong>flash-loan-resistant</strong> architecture, and a two-sided
-    marketplace that had to survive adversarial markets, not slide decks. We ran
+    At Revalon I co-founded the protocol layer from zero: underwriting and
+    pricing wired to guarded on-chain execution, plus a two-sided marketplace
+    built for adversarial markets, not slide decks. We ran
     the full testnet lifecycle with <strong>zero bad debt</strong> &mdash;
     because production discipline is the only honest dress rehearsal.
   </>,

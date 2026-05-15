@@ -46,12 +46,14 @@ body::before {
   }
 
   .section-title {
-    @apply font-display mb-[60px] text-[clamp(40px,6vw,72px)] font-normal leading-none tracking-[1px] text-portfolio-white;
+    font-size: clamp(40px, 6vw, 72px);
+    @apply font-display mb-[60px] font-normal leading-none tracking-[1px] text-portfolio-white;
   }
 
   /* meet_jain_portfolio.html — .hero-title (Bebas: no text-transform on source) */
   .hero-title {
-    @apply mb-9 font-display text-[clamp(72px,10vw,140px)] font-normal leading-[0.9] tracking-[2px] text-portfolio-white;
+    font-size: clamp(72px, 10vw, 140px);
+    @apply mb-9 font-display font-normal leading-[0.9] tracking-[2px] text-portfolio-white;
   }
 
   .hero-title em {
@@ -64,7 +66,8 @@ body::before {
 
   /* meet_jain_portfolio.html — .contact-title (inherits headline white) */
   .contact-title {
-    @apply mb-8 font-display text-portfolio-white text-[clamp(60px,9vw,120px)] font-normal leading-[0.9];
+    font-size: clamp(60px, 9vw, 120px);
+    @apply mb-8 font-display font-normal leading-[0.9] text-portfolio-white;
   }
 
   .contact-eyebrow {
@@ -132,7 +135,8 @@ body::before {
   }
 
   .craft-quote {
-    @apply font-serif text-[clamp(22px,2.5vw,28px)] font-normal italic leading-[1.68] tracking-[-0.01em] text-portfolio-cream;
+    font-size: clamp(22px, 2.5vw, 28px);
+    @apply font-serif font-normal italic leading-[1.68] tracking-[-0.01em] text-portfolio-cream;
   }
 
   .stack-group-title {
@@ -153,7 +157,10 @@ body::before {
 
   /* Matte glass — neutral, no orange gloss */
   .glass-cta {
-    @apply relative inline-flex items-center justify-center gap-2 font-sans text-[11px] font-normal uppercase tracking-[2.5px] transition-[background,border-color,color] duration-300;
+    transition-property: background, border-color, color;
+    transition-duration: 300ms;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    @apply relative inline-flex items-center justify-center gap-2 font-sans text-[11px] font-normal uppercase tracking-[2.5px];
     -webkit-backdrop-filter: blur(12px) saturate(120%);
     backdrop-filter: blur(12px) saturate(120%);
   }
@@ -198,7 +205,10 @@ body::before {
   }
 
   .glass-icon-btn {
-    @apply rounded-xl border border-white/10 bg-white/[0.06] text-portfolio-white shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_4px_16px_rgba(0,0,0,0.3)];
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.1),
+      0 4px 16px rgba(0, 0, 0, 0.3);
+    @apply rounded-xl border border-white/10 bg-white/[0.06] text-portfolio-white;
     -webkit-backdrop-filter: blur(20px) saturate(160%);
     backdrop-filter: blur(20px) saturate(160%);
   }
@@ -215,7 +225,9 @@ body::before {
   }
 
   .trait-card {
-    @apply transition-[background,box-shadow,transform] duration-300;
+    transition-property: background, box-shadow, transform;
+    transition-duration: 300ms;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .trait-card:hover {
@@ -228,6 +240,7 @@ body::before {
   }
 
   @supports not (backdrop-filter: blur(1px)) {
+
     .glass-cta-primary,
     .glass-cta-ghost,
     .glass-chip {
@@ -237,14 +250,12 @@ body::before {
 
   .divider-line {
     @apply h-px w-full opacity-60;
-    background: linear-gradient(
-      to right,
-      transparent,
-      theme("colors.portfolio.smoke") 20%,
-      theme("colors.portfolio.ember") 50%,
-      theme("colors.portfolio.smoke") 80%,
-      transparent
-    );
+    background: linear-gradient(to right,
+        transparent,
+        theme("colors.portfolio.smoke") 20%,
+        theme("colors.portfolio.ember") 50%,
+        theme("colors.portfolio.smoke") 80%,
+        transparent);
   }
 
   .trait-card::after {
@@ -271,12 +282,15 @@ body::before {
   .animate-delay-200 {
     animation-delay: 0.2s;
   }
+
   .animate-delay-400 {
     animation-delay: 0.4s;
   }
+
   .animate-delay-600 {
     animation-delay: 0.6s;
   }
+
   .animate-delay-800 {
     animation-delay: 0.8s;
   }
