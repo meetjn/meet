@@ -1,7 +1,6 @@
 export const site = {
   name: "Meet Jain",
   role: "Co-founder · CTO · Protocol Engineer",
-  email: "meetjaiin@gmail.com",
   x: "https://x.com/meetjaiin",
   github: "https://github.com/meetjn",
   linkedin: "https://www.linkedin.com/in/meetjaiin",
@@ -100,19 +99,6 @@ export const mentors = [
   {
     name: "Twitter Social Graph",
     role: "Distributed systems at social-media scale",
-  },
-] as const;
-
-export const craftStats = [
-  {
-    number: "7",
-    label: "Risk Signals · Underwriting Engine",
-    text: "Real-time multipliers driving dynamic LTV computation: time-to-expiry, implied probability, liquidity tier, bid-ask spread, cross-platform deviation, oracle objectivity — all wired into a Go engine with full ML audit trails.",
-  },
-  {
-    number: "5",
-    label: "Solidity Contracts · Zero Bad Debt",
-    text: "Production-grade lending protocol with automated risk controls, flash-loan resistance via off-chain snapshot signing, CEI enforcement, and real-time vault reconciliation — across full testnet lifecycle.",
   },
 ] as const;
 

@@ -1,6 +1,6 @@
 import { Users } from "lucide-react";
 
-import { craftStats, mentors, site } from "@/content/site";
+import { mentors, site } from "@/content/site";
 import { ScrollReveal } from "./ScrollReveal";
 import { SectionHeader } from "./SectionHeader";
 
@@ -8,6 +8,7 @@ export function CraftSection() {
   return (
     <section id="craft" className="section-pad bg-portfolio-black">
       <SectionHeader
+        className="mb-14 md:mb-20 lg:mb-24"
         label={
           <span className="flex items-center gap-2">
             <Users className="size-3" />
@@ -17,13 +18,13 @@ export function CraftSection() {
         title="The room I was in"
       />
 
-      <div className="grid gap-0.5 lg:grid-cols-2">
+      <div className="mx-auto w-full max-w-6xl">
         <ScrollReveal
           as="article"
-          className="flex flex-col gap-8 bg-portfolio-smoke p-8 sm:p-10 lg:col-span-2 lg:flex-row lg:items-center lg:justify-between lg:gap-16 lg:p-12"
+          className="flex flex-col gap-14 bg-portfolio-smoke p-10 sm:gap-16 sm:p-12 md:p-14 lg:flex-row lg:items-start lg:justify-between lg:gap-x-24 lg:gap-y-0 lg:p-16 xl:gap-x-32 xl:px-20 xl:py-[4.5rem]"
         >
-          <div className="flex-1">
-            <p className="craft-quote mb-3">
+          <div className="flex min-w-0 flex-1 flex-col gap-8 lg:max-w-lg xl:max-w-xl">
+            <p className="craft-quote m-0">
               &ldquo;Being in a room with people who&apos;ve shipped systems at
               civilisational scale doesn&apos;t just teach you — it permanently
               recalibrates what you think is possible.&rdquo;
@@ -33,20 +34,20 @@ export function CraftSection() {
             </span>
           </div>
 
-          <div className="flex-1">
-            <p className="mb-4 font-sans text-[10px] font-normal uppercase tracking-[3px] text-portfolio-ember">
+          <div className="flex min-w-0 flex-1 flex-col lg:max-w-md xl:max-w-lg">
+            <p className="mb-8 font-sans text-[10px] font-normal uppercase tracking-[3px] text-portfolio-ember md:mb-10">
               Worked alongside builders of
             </p>
-            <ul className="flex flex-col">
+            <ul className="flex flex-col divide-y divide-portfolio-smoke/80">
               {mentors.map((mentor) => (
                 <li
                   key={mentor.name}
-                  className="flex flex-col gap-1 border-b border-portfolio-smoke py-4 last:border-0"
+                  className="flex flex-col gap-2 py-8"
                 >
                   <span className="font-sans text-sm font-medium text-portfolio-white">
                     {mentor.name}
                   </span>
-                  <span className="font-sans text-xs font-normal leading-snug tracking-wide text-portfolio-mist">
+                  <span className="font-sans text-xs font-normal leading-relaxed tracking-wide text-portfolio-mist">
                     {mentor.role}
                   </span>
                 </li>
@@ -54,19 +55,6 @@ export function CraftSection() {
             </ul>
           </div>
         </ScrollReveal>
-
-        {craftStats.map((stat, index) => (
-          <ScrollReveal
-            key={stat.number}
-            as="article"
-            delay={120 + index * 80}
-            className="bg-portfolio-ash p-8 sm:p-10"
-          >
-            <p className="craft-number mb-3">{stat.number}</p>
-            <p className="craft-label mb-4">{stat.label}</p>
-            <p className="craft-text">{stat.text}</p>
-          </ScrollReveal>
-        ))}
       </div>
     </section>
   );

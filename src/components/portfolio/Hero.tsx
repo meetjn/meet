@@ -1,4 +1,4 @@
-import { Mail } from "lucide-react";
+import { Calendar } from "lucide-react";
 
 import { site } from "@/content/site";
 import { GlassCta } from "@/components/ui/glass-cta";
@@ -20,11 +20,7 @@ export function Hero() {
       </span>
 
       <div className="relative z-10 max-w-5xl">
-        <p className="hero-eyebrow animate-fade-up animate-delay-200 mb-6 opacity-0">
-          {site.role}
-        </p>
-
-        <h1 className="hero-title animate-fade-up animate-delay-400 opacity-0">
+        <h1 className="hero-title animate-fade-up animate-delay-200 opacity-0">
           Built to
           <br />
           <em>burn</em>
@@ -34,19 +30,19 @@ export function Hero() {
           down.
         </h1>
 
-        <p className="hero-desc animate-fade-up animate-delay-600 opacity-0">
+        <p className="hero-desc animate-fade-up animate-delay-400 opacity-0">
           I build financial infrastructure at the founding layer — lending
           protocols, payment rails, acquisition-grade systems. Not because
           it&apos;s a job. Because I can&apos;t stop until something works
           exactly the way it should.
         </p>
 
-        <div className="animate-fade-up animate-delay-800 flex flex-wrap items-center gap-4 opacity-0">
+        <div className="animate-fade-up animate-delay-600 flex flex-wrap items-center gap-4 opacity-0">
           <GlassCta href="#work" variant="primary">
             See the work
           </GlassCta>
-          <GlassCta href={`mailto:${site.email}`} variant="ghost">
-            <Mail className="mr-2 size-3.5" />
+          <GlassCta href={site.calendly} variant="ghost" external>
+            <Calendar className="size-3.5" />
             Let&apos;s build
           </GlassCta>
         </div>

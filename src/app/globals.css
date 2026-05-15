@@ -79,11 +79,6 @@ body::before {
     @apply inline-flex items-center gap-2 font-sans text-[11px] font-normal uppercase tracking-[2px] text-portfolio-mist transition-colors hover:text-portfolio-ember-glow;
   }
 
-  .hero-eyebrow {
-    @apply font-sans text-[11px] font-normal uppercase tracking-[4px] text-portfolio-ember;
-  }
-
-  /* meet_jain_portfolio.html — .narrative-quote + inner em */
   .narrative-quote {
     font-family: var(--font-dm-serif), "DM Serif Display", serif;
     font-size: clamp(26px, 3.5vw, 42px);
@@ -137,19 +132,7 @@ body::before {
   }
 
   .craft-quote {
-    @apply font-serif text-[22px] font-normal italic leading-normal text-portfolio-cream;
-  }
-
-  .craft-number {
-    @apply font-display text-[80px] font-normal leading-none text-portfolio-ember;
-  }
-
-  .craft-label {
-    @apply font-sans text-[13px] font-normal uppercase tracking-[2px] text-portfolio-mist;
-  }
-
-  .craft-text {
-    @apply font-sans text-sm font-light leading-[1.75] text-portfolio-cream;
+    @apply font-serif text-[clamp(22px,2.5vw,28px)] font-normal italic leading-[1.68] tracking-[-0.01em] text-portfolio-cream;
   }
 
   .stack-group-title {
@@ -275,25 +258,11 @@ body::before {
 
   .exp-item::before {
     content: "";
-    @apply absolute top-0 w-0.5 bg-portfolio-ember transition-[height] duration-300 ease-out;
-    left: 0;
+    @apply absolute -left-5 top-0 w-0.5 bg-portfolio-ember transition-all duration-300;
     height: 0;
   }
 
-  /* Match original offset on larger viewports (avoids clipping under body overflow-x-hidden on phones) */
-  @media (min-width: 640px) {
-    .exp-item::before {
-      left: -1.25rem;
-    }
-  }
-
-  @media (hover: hover) and (pointer: fine) {
-    .exp-item:hover::before {
-      height: 100%;
-    }
-  }
-
-  .exp-item-active::before {
+  .exp-item:hover::before {
     height: 100%;
   }
 }

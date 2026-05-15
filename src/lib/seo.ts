@@ -98,9 +98,8 @@ export function buildPortfolioJsonLd() {
         ],
         contactPoint: {
           "@type": "ContactPoint",
-          email: site.email,
-          contactType: "professional inquiries",
-          url: SITE_URL,
+          contactType: "booking",
+          url: site.calendly,
         },
       },
       {

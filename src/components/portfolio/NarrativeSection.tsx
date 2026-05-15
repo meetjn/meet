@@ -7,20 +7,24 @@ const QUOTE =
 
 const paragraphs = [
   <>
-    Most engineers learn a tool and use it. I learn a domain until I become the
-    tool. When I joined MetaKeep, I didn&apos;t just integrate a SDK — I shipped
+    I treat depth as a prerequisite, not a flex. At MetaKeep I owned the stack end
+    to end &mdash; not wiring a demo but shipping the work that held up under real
+    diligence. The integration I built became the{" "}
+    <strong>primary technical validator for a NASDAQ acquisition</strong>
+    {" "}
+    &mdash; the kind of proof that turns a deal from maybe to closed.
+  </>,
+  <>
+    At Revalon I co-founded the protocol layer from zero: a{" "}
+    <strong>7-signal underwriting engine</strong>,{" "}
+    <strong>flash-loan-resistant</strong> architecture, and a two-sided
+    marketplace that had to survive adversarial markets, not slide decks. We ran
+    the full testnet lifecycle with <strong>zero bad debt</strong> &mdash;
+    because production discipline is the only honest dress rehearsal.
+  </>,
+  <>
+    This is what separates me &mdash; not the stack, not the titles. It&apos;s
     the{" "}
-    <strong>primary technical validator for a NASDAQ acquisition</strong>.
-    That&apos;s not output. That&apos;s ownership.
-  </>,
-  <>
-    When I co-founded Revalon, I didn&apos;t just write Solidity — I designed a
-    7-signal underwriting engine, architected flash-loan resistance, built a
-    two-sided marketplace, and maintained <strong>zero bad debt</strong> across
-    the full testnet lifecycle. From zero to production-grade in weeks.
-  </>,
-  <>
-    This is what separates me — not the stack, not the titles. It&apos;s the{" "}
     <strong>refusal to stop at &ldquo;good enough&rdquo;</strong> when I know
     what &ldquo;right&rdquo; looks like. I&apos;ve worked alongside world-class
     engineers who built WhatsApp Pay, Diem blockchain at Meta, and Twitter&apos;s
