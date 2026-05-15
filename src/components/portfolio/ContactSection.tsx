@@ -1,33 +1,26 @@
 import Link from "next/link";
-import { Calendar, Flame, Github, Linkedin, Mail } from "lucide-react";
+import { Calendar, Flame, Github, Linkedin } from "lucide-react";
 
+import { XIcon } from "@/components/icons/XIcon";
 import { site } from "@/content/site";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import { ScrollReveal } from "./ScrollReveal";
 
-type ContactLink = {
-  href: string;
-  label: string;
-  icon: typeof Mail;
-  external?: boolean;
-};
-
-const links: ContactLink[] = [
-  { href: `mailto:${site.email}`, label: site.email, icon: Mail },
-  { href: site.github, label: "GitHub", icon: Github, external: true },
-  { href: site.linkedin, label: "LinkedIn", icon: Linkedin, external: true },
-  { href: site.calendly, label: "Book a call", icon: Calendar, external: true },
-];
+const links = [
+  { href: site.x, label: "X", external: true, icon: "x" as const },
+  { href: site.github, label: "GitHub", external: true, icon: Github },
+  { href: site.linkedin, label: "LinkedIn", external: true, icon: Linkedin },
+  { href: site.calendly, label: "Book a call", external: true, icon: Calendar },
+] as const;
 
 export function ContactSection() {
   return (
     <section
       id="contact"
-      className="relative scroll-mt-24 overflow-hidden px-5 py-24 text-center sm:px-10 sm:py-32 lg:px-[60px] lg:py-[140px]"
+      className="relative scroll-mt-24 overflow-hidden bg-portfolio-black px-5 pt-24 text-center sm:px-10 sm:pt-32 lg:px-[60px] lg:pt-[140px]"
     >
       <div
-        className="pointer-events-none absolute bottom-0 left-1/2 h-[300px] w-full max-w-[600px] -translate-x-1/2"
+        className="pointer-events-none absolute inset-x-0 bottom-0 mx-auto h-[min(300px,50%)] w-full max-w-[600px]"
         style={{
           background:
             "radial-gradient(ellipse at center bottom, rgba(200,75,17,0.15) 0%, transparent 70%)",
@@ -35,51 +28,52 @@ export function ContactSection() {
         aria-hidden
       />
 
-      <ScrollReveal as="span" className="mb-6 block text-[11px] uppercase tracking-[0.35em] text-portfolio-ember">
+      <ScrollReveal as="span" className="contact-eyebrow">
         Let&apos;s build something that matters
       </ScrollReveal>
 
-      <ScrollReveal as="h2" delay={80} className="font-display text-[clamp(3.5rem,9vw,7.5rem)] leading-[0.9]">
+      <ScrollReveal as="h2" delay={80} className="contact-title">
         Start a
         <br />
         fire.
       </ScrollReveal>
 
-      <ScrollReveal delay={160} className="mx-auto mb-10 mt-8 max-w-md text-sm text-portfolio-mist sm:text-[15px]">
+      <ScrollReveal delay={160} className="contact-sub">
         Available for remote founding roles, senior engineering, and high-stakes
         protocol work.
       </ScrollReveal>
 
-      <ScrollReveal delay={240} className="mb-10 flex flex-wrap items-center justify-center gap-4 sm:gap-6">
-        {links.map((link, index) => {
-          const Icon = link.icon;
-          return (
-            <span key={link.label} className="flex items-center gap-4 sm:gap-6">
-              {index > 0 && (
-                <Separator
-                  orientation="vertical"
-                  className="hidden h-4 bg-portfolio-smoke sm:block"
-                />
+      <ScrollReveal
+        delay={240}
+        className="relative z-10 mb-10 flex flex-wrap items-center justify-center gap-6"
+      >
+        {links.map((link, index) => (
+          <span key={link.label} className="flex items-center gap-6">
+            {index > 0 && (
+              <span className="hidden text-portfolio-smoke sm:inline" aria-hidden>
+                ·
+              </span>
+            )}
+            <Link
+              href={link.href}
+              target="_blank"
+              rel="noreferrer"
+              className="contact-link"
+              aria-label={link.label === "X" ? "X (Twitter)" : link.label}
+            >
+              {link.icon === "x" ? (
+                <XIcon />
+              ) : (
+                <link.icon className="size-3.5" />
               )}
-              <Link
-                href={link.href}
-                target={link.external ? "_blank" : undefined}
-                rel={link.external ? "noreferrer" : undefined}
-                className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.15em] text-portfolio-mist transition-colors hover:text-portfolio-ember-glow"
-              >
-                <Icon className="size-3.5" />
-                {link.label}
-              </Link>
-            </span>
-          );
-        })}
+              {link.label}
+            </Link>
+          </span>
+        ))}
       </ScrollReveal>
 
-      <ScrollReveal delay={320} variant="scale">
-        <Button
-          asChild
-          className="h-auto rounded-none bg-portfolio-ember px-8 py-3.5 text-[11px] uppercase tracking-[0.2em] text-portfolio-white hover:bg-portfolio-ember-glow"
-        >
+      <ScrollReveal delay={320} variant="scale" className="relative z-10 pb-12 lg:pb-14">
+        <Button asChild className="btn-primary h-auto rounded-none border-0">
           <Link href={`mailto:${site.email}`}>
             <Flame className="mr-2 size-3.5" />
             Reach out

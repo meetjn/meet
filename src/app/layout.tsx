@@ -49,6 +49,10 @@ const bingVerification = process.env.NEXT_PUBLIC_BING_SITE_VERIFICATION;
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
+  icons: {
+    icon: [],
+    apple: [],
+  },
   title,
   description,
   applicationName: site.name,
@@ -82,7 +86,7 @@ const personJsonLd = {
   name: site.name,
   url: SITE_URL,
   email: `mailto:${site.email}`,
-  sameAs: [site.linkedin, site.github],
+  sameAs: [site.linkedin, site.github, site.x],
   jobTitle: site.role,
 };
 

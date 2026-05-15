@@ -15,7 +15,6 @@ export function TraitsSection() {
           </span>
         }
         title="The edge"
-        className="mb-12 sm:mb-[60px]"
       />
 
       <div className="grid gap-0.5 sm:grid-cols-2 lg:grid-cols-3">
@@ -26,15 +25,9 @@ export function TraitsSection() {
             delay={index * 70}
             className="trait-card relative overflow-hidden bg-portfolio-ash p-8 transition-colors hover:bg-[#1E1B17] sm:p-9"
           >
-            <div className="font-display mb-4 text-5xl leading-none text-portfolio-smoke sm:text-[64px]">
-              {trait.number}
-            </div>
-            <h3 className="mb-3 text-[13px] font-medium uppercase tracking-[0.15em] text-portfolio-ember">
-              {trait.title}
-            </h3>
-            <p className="text-sm leading-relaxed text-portfolio-cream">
-              {trait.description}
-            </p>
+            <div className="trait-number mb-4">{trait.number}</div>
+            <h3 className="trait-title mb-3">{trait.title}</h3>
+            <p className="trait-desc">{trait.description}</p>
           </ScrollReveal>
         ))}
       </div>

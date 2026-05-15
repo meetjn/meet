@@ -16,16 +16,16 @@ export function Hero() {
         aria-hidden
       />
 
-      <span className="absolute right-5 top-1/2 hidden -translate-y-1/2 rotate-90 text-[11px] uppercase tracking-[0.35em] text-portfolio-ember lg:right-[60px] lg:block">
+      <span className="absolute right-5 top-1/2 hidden -translate-y-1/2 rotate-90 font-sans text-[11px] font-normal uppercase tracking-[4px] text-portfolio-ember lg:right-[60px] lg:block">
         2026
       </span>
 
       <div className="relative z-10 max-w-5xl">
-        <p className="hero-eyebrow animate-fade-up animate-delay-200 mb-6 opacity-0 sm:mb-6">
+        <p className="hero-eyebrow animate-fade-up animate-delay-200 mb-6 opacity-0">
           {site.role}
         </p>
 
-        <h1 className="hero-title animate-fade-up animate-delay-400 mb-9 opacity-0">
+        <h1 className="hero-title animate-fade-up animate-delay-400 opacity-0">
           Built to
           <br />
           <em>burn</em>
@@ -35,7 +35,7 @@ export function Hero() {
           down.
         </h1>
 
-        <p className="animate-fade-up animate-delay-600 mb-12 max-w-[520px] text-[15px] leading-[1.8] text-portfolio-cream opacity-0">
+        <p className="hero-desc animate-fade-up animate-delay-600 opacity-0">
           I build financial infrastructure at the founding layer — lending
           protocols, payment rails, acquisition-grade systems. Not because
           it&apos;s a job. Because I can&apos;t stop until something works
@@ -43,17 +43,10 @@ export function Hero() {
         </p>
 
         <div className="animate-fade-up animate-delay-800 flex flex-wrap items-center gap-4 opacity-0">
-          <Button
-            asChild
-            className="h-auto rounded-none bg-portfolio-ember px-8 py-3.5 text-[11px] uppercase tracking-[0.2em] text-portfolio-white hover:bg-portfolio-ember-glow"
-          >
+          <Button asChild className="btn-primary h-auto rounded-none border-0">
             <Link href="#work">See the work</Link>
           </Button>
-          <Button
-            asChild
-            variant="outline"
-            className="h-auto rounded-none border-portfolio-smoke bg-transparent px-8 py-3.5 text-[11px] uppercase tracking-[0.15em] text-portfolio-mist hover:border-portfolio-mist hover:bg-transparent hover:text-portfolio-white"
-          >
+          <Button asChild variant="outline" className="btn-ghost h-auto rounded-none bg-transparent">
             <Link href={`mailto:${site.email}`}>
               <Mail className="mr-2 size-3.5" />
               Let&apos;s build
@@ -70,7 +63,7 @@ export function Hero() {
           }}
           aria-hidden
         />
-        <span className="text-[10px] uppercase tracking-[0.3em] text-portfolio-mist [writing-mode:vertical-rl]">
+        <span className="font-sans text-[10px] font-normal uppercase tracking-[3px] text-portfolio-mist [writing-mode:vertical-rl]">
           Scroll
         </span>
       </div>

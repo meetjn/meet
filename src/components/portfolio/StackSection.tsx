@@ -15,7 +15,6 @@ export function StackSection() {
           </span>
         }
         title="The arsenal"
-        className="mb-12 sm:mb-[60px]"
       />
 
       <div className="grid gap-0.5 sm:grid-cols-2 lg:grid-cols-4">
@@ -25,15 +24,12 @@ export function StackSection() {
             delay={index * 60}
             className="bg-portfolio-black p-7 sm:p-8"
           >
-            <h3 className="mb-5 border-b border-portfolio-smoke pb-3 text-[10px] uppercase tracking-[0.25em] text-portfolio-ember">
+            <h3 className="stack-group-title mb-5 border-b border-portfolio-smoke pb-3">
               {group.title}
             </h3>
             <ul className="flex flex-col gap-2.5">
               {group.items.map((item) => (
-                <li
-                  key={item}
-                  className="flex items-center gap-2.5 text-sm text-portfolio-cream"
-                >
+                <li key={item} className="stack-item flex items-center gap-2.5">
                   <span className="size-1 shrink-0 rounded-full bg-portfolio-ember-dim" />
                   {item}
                 </li>

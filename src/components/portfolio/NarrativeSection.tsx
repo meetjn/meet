@@ -8,40 +8,35 @@ const paragraphs = [
     Most engineers learn a tool and use it. I learn a domain until I become the
     tool. When I joined MetaKeep, I didn&apos;t just integrate a SDK — I shipped
     the{" "}
-    <strong className="font-medium text-portfolio-white">
-      primary technical validator for a NASDAQ acquisition
-    </strong>
-    . That&apos;s not output. That&apos;s ownership.
+    <strong>primary technical validator for a NASDAQ acquisition</strong>.
+    That&apos;s not output. That&apos;s ownership.
   </>,
   <>
     When I co-founded Revalon, I didn&apos;t just write Solidity — I designed a
     7-signal underwriting engine, architected flash-loan resistance, built a
-    two-sided marketplace, and maintained{" "}
-    <strong className="font-medium text-portfolio-white">zero bad debt</strong>{" "}
-    across the full testnet lifecycle. From zero to production-grade in weeks.
+    two-sided marketplace, and maintained <strong>zero bad debt</strong> across
+    the full testnet lifecycle. From zero to production-grade in weeks.
   </>,
   <>
     This is what separates me — not the stack, not the titles. It&apos;s the{" "}
-    <strong className="font-medium text-portfolio-white">
-      refusal to stop at &ldquo;good enough&rdquo;
-    </strong>{" "}
-    when I know what &ldquo;right&rdquo; looks like. I&apos;ve worked alongside
-    world-class engineers who built WhatsApp Pay, Diem blockchain at Meta, and
-    Twitter&apos;s social graph. That environment sharpened something in me: the
-    standard is always higher than what you think.
+    <strong>refusal to stop at &ldquo;good enough&rdquo;</strong> when I know
+    what &ldquo;right&rdquo; looks like. I&apos;ve worked alongside world-class
+    engineers who built WhatsApp Pay, Diem blockchain at Meta, and Twitter&apos;s
+    social graph. That environment sharpened something in me: the standard is
+    always higher than what you think.
   </>,
 ];
 
 export function NarrativeSection() {
   return (
     <section id="narrative" className="section-pad scroll-mt-24 bg-portfolio-ash">
-      <ScrollReveal as="span" className="section-label block">
+      <ScrollReveal as="span" className="section-label">
         Philosophy
       </ScrollReveal>
 
       <div className="grid items-start gap-12 lg:grid-cols-2 lg:gap-20">
         <ScrollReveal delay={80}>
-          <blockquote className="font-serif text-[clamp(1.5rem,3.5vw,2.625rem)] italic leading-snug text-portfolio-white">
+          <blockquote className="narrative-quote">
             <Quote className="mb-4 size-5 text-portfolio-ember opacity-80" />
             &ldquo;I don&apos;t just write code. I develop a{" "}
             <span className="not-italic text-portfolio-ember-glow">
@@ -55,9 +50,7 @@ export function NarrativeSection() {
         <div className="flex flex-col gap-8">
           {paragraphs.map((paragraph, index) => (
             <ScrollReveal key={index} delay={120 + index * 90}>
-              <p className="text-sm leading-relaxed text-portfolio-cream sm:text-[15px] sm:leading-[1.85]">
-                {paragraph}
-              </p>
+              <p className="narrative-para">{paragraph}</p>
               {index < paragraphs.length - 1 && (
                 <Separator className="mt-8 bg-portfolio-smoke" />
               )}

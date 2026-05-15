@@ -2,6 +2,7 @@ export const site = {
   name: "Meet Jain",
   role: "Co-founder · CTO · Protocol Engineer",
   email: "meetjaiin@gmail.com",
+  x: "https://x.com/meetjaiin",
   github: "https://github.com/meetjn",
   linkedin: "https://www.linkedin.com/in/meetjaiin",
   calendly: "https://calendly.com/meetjaiin/30min",

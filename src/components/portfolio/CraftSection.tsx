@@ -15,7 +15,6 @@ export function CraftSection() {
           </span>
         }
         title="The room I was in"
-        className="mb-12 sm:mb-[60px]"
       />
 
       <div className="grid gap-0.5 lg:grid-cols-2">
@@ -24,18 +23,18 @@ export function CraftSection() {
           className="flex flex-col gap-8 bg-portfolio-smoke p-8 sm:p-10 lg:col-span-2 lg:flex-row lg:items-center lg:justify-between lg:gap-16 lg:p-12"
         >
           <div className="flex-1">
-            <p className="font-serif text-xl italic leading-relaxed text-portfolio-cream sm:text-[22px]">
+            <p className="craft-quote mb-3">
               &ldquo;Being in a room with people who&apos;ve shipped systems at
               civilisational scale doesn&apos;t just teach you — it permanently
               recalibrates what you think is possible.&rdquo;
             </p>
-            <span className="mt-3 block text-[11px] uppercase tracking-[0.15em] text-portfolio-ember">
+            <span className="font-sans text-[11px] font-normal uppercase tracking-[2px] text-portfolio-ember">
               {site.name} · On working with world-class engineers
             </span>
           </div>
 
           <div className="flex-1">
-            <p className="mb-4 text-[10px] uppercase tracking-[0.25em] text-portfolio-ember">
+            <p className="mb-4 font-sans text-[10px] font-normal uppercase tracking-[3px] text-portfolio-ember">
               Worked alongside builders of
             </p>
             <ul className="flex flex-col">
@@ -44,10 +43,10 @@ export function CraftSection() {
                   key={mentor.name}
                   className="border-b border-portfolio-smoke py-4 last:border-0"
                 >
-                  <span className="block text-sm font-medium text-portfolio-white">
+                  <span className="font-sans text-sm font-medium text-portfolio-white">
                     {mentor.name}
                   </span>
-                  <span className="text-xs text-portfolio-mist">
+                  <span className="font-sans text-xs font-normal tracking-wide text-portfolio-mist">
                     {mentor.role}
                   </span>
                 </li>
@@ -63,15 +62,9 @@ export function CraftSection() {
             delay={120 + index * 80}
             className="bg-portfolio-ash p-8 sm:p-10"
           >
-            <p className="font-display mb-3 text-6xl leading-none text-portfolio-ember sm:text-[80px]">
-              {stat.number}
-            </p>
-            <p className="mb-4 text-[13px] uppercase tracking-[0.15em] text-portfolio-mist">
-              {stat.label}
-            </p>
-            <p className="text-sm leading-relaxed text-portfolio-cream">
-              {stat.text}
-            </p>
+            <p className="craft-number mb-3">{stat.number}</p>
+            <p className="craft-label mb-4">{stat.label}</p>
+            <p className="craft-text">{stat.text}</p>
           </ScrollReveal>
         ))}
       </div>
