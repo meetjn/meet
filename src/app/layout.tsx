@@ -1,28 +1,40 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Bebas_Neue, DM_Serif_Display, Inter } from "next/font/google";
+
 import "./globals.css";
-import { Navbar } from "@/components/Navbar";
 import { GoogleAnalytics } from "@/components/GoogleAnalytics";
 import { HotjarAnalytics } from "@/components/HotjarAnalytics";
-import { identity } from "@/content/portfolio";
+import { site } from "@/content/site";
 import { SITE_URL } from "@/lib/site";
 
-const inter = Inter({
-  variable: "--font-inter",
+const bebas = Bebas_Neue({
+  weight: "400",
   subsets: ["latin"],
+  variable: "--font-bebas",
+  display: "swap",
+});
+
+const dmSerif = DM_Serif_Display({
+  weight: "400",
+  style: ["normal", "italic"],
+  subsets: ["latin"],
+  variable: "--font-dm-serif",
+  display: "swap",
+});
+
+const geist = Inter({
+  subsets: ["latin"],
+  variable: "--font-geist",
   display: "swap",
 });
 
 const title = {
-  default: "Meet Jain · Co-founder & Senior Engineer · Fintech & Blockchain",
+  default: "Meet Jain · Co-founder & Protocol Engineer",
   template: "%s · Meet Jain",
 };
 
 const description =
-  "Co-founder of Revalon Finance · Senior Engineer at MetaKeep (acquired by Rezolve, NASDAQ) · Shipping distributed systems, on-chain lending protocols, wallet rails, and multi-platform data pipelines.";
-
-const ogDescription =
-  "Built the Rezolve AI acquisition showcase, co-founded Revalon Finance's on-chain lending protocol, and shipped Predexy — a 7-platform prediction market arbitrage engine.";
+  "Co-founder of Revalon Finance · Senior Engineer at MetaKeep (acquired by Rezolve, NASDAQ) · Lending protocols, payment rails, and acquisition-grade financial infrastructure.";
 
 const keywords = [
   "Meet Jain",
@@ -33,15 +45,8 @@ const keywords = [
   "MetaKeep",
   "Revalon Finance",
   "fintech engineer",
-  "Go engineer",
-  "TypeScript",
-  "wallet infrastructure",
-  "crypto payments",
-  "remote engineer",
   "protocol engineering",
-  "Polygon",
-  "Ethereum",
-  "Solana",
+  "remote engineer",
 ];
 
 const googleVerification = process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION;
@@ -51,34 +56,15 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title,
   description,
-  applicationName: "Meet Jain",
-  authors: [{ name: identity.name, url: SITE_URL }],
-  creator: identity.name,
-  publisher: identity.name,
-  category: "technology",
+  applicationName: site.name,
+  authors: [{ name: site.name, url: SITE_URL }],
+  creator: site.name,
   keywords,
-  formatDetection: {
-    email: false,
-    address: false,
-    telephone: false,
-  },
-  alternates: {
-    canonical: "/",
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      "max-video-preview": -1,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-    },
-  },
+  alternates: { canonical: "/" },
+  robots: { index: true, follow: true },
   openGraph: {
     title: title.default,
-    description: ogDescription,
+    description,
     url: SITE_URL,
     siteName: "meetjain.xyz",
     locale: "en_US",
@@ -87,8 +73,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: title.default,
-    description:
-      "Co-founder, Revalon Finance · Senior Engineer, MetaKeep (NASDAQ: RZLV) · Go · TypeScript · Solidity · Docker · Terraform",
+    description,
   },
   verification: {
     ...(googleVerification ? { google: googleVerification } : {}),
@@ -99,35 +84,11 @@ export const metadata: Metadata = {
 const personJsonLd = {
   "@context": "https://schema.org",
   "@type": "Person",
-  name: identity.name,
+  name: site.name,
   url: SITE_URL,
-  image: `${SITE_URL}/opengraph-image`,
-  jobTitle: identity.role,
-  email: `mailto:${identity.email}`,
-  telephone: identity.phone,
-  address: {
-    "@type": "PostalAddress",
-    addressLocality: identity.location,
-  },
-  sameAs: [identity.linkedin, identity.github],
-  knowsAbout: [
-    "Blockchain",
-    "DeFi",
-    "Solidity",
-    "Distributed systems",
-    "Fintech",
-    "Lending protocols",
-  ],
-};
-
-const websiteJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "WebSite",
-  name: "Meet Jain — Portfolio",
-  url: SITE_URL,
-  description,
-  inLanguage: "en-US",
-  author: { "@type": "Person", name: identity.name, url: SITE_URL },
+  email: `mailto:${site.email}`,
+  sameAs: [site.linkedin, site.github],
+  jobTitle: site.role,
 };
 
 export default function RootLayout({
@@ -136,23 +97,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${inter.variable} antialiased bg-black text-white`}>
+    <html lang="en" className="scroll-smooth">
+      <body
+        className={`${bebas.variable} ${dmSerif.variable} ${geist.variable} overflow-x-hidden`}
+      >
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify([personJsonLd, websiteJsonLd]),
-          }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
         />
         <GoogleAnalytics />
         <HotjarAnalytics />
-        <div className="relative min-h-screen bg-black pb-16 pt-4 text-white">
-          <div className="pointer-events-none absolute inset-0 opacity-30">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.08),_transparent_55%)]" />
-          </div>
-          <Navbar />
-          <div className="relative z-10">{children}</div>
-        </div>
+        {children}
       </body>
     </html>
   );

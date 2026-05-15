@@ -1,1 +1,0 @@
-export { ParticleHero } from "./ParticleHero";
