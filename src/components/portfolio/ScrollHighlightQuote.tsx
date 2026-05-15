@@ -13,10 +13,26 @@ import { cn } from "@/lib/utils";
 
 const ACCENT_WORDS = new Set(["deep", "obsession"]);
 
+/** Scroll runway + per-word timing — tuned for a readable ~2–3s pass through the quote */
+const SCROLL_OFFSET_START = "start 0.92";
+const SCROLL_OFFSET_END = "end 0.08";
+const PROGRESS_PAD_START = 0.05;
+const PROGRESS_PAD_END = 0.1;
+const WORD_FADE_MULTIPLIER = 1.65;
+
 type WordToken = {
   text: string;
   accent: boolean;
 };
+
+function wordProgressRange(index: number, total: number) {
+  const usable = 1 - PROGRESS_PAD_START - PROGRESS_PAD_END;
+  const slot = usable / total;
+  const fade = slot * WORD_FADE_MULTIPLIER;
+  const start = PROGRESS_PAD_START + index * slot;
+  const end = Math.min(start + fade, 1 - PROGRESS_PAD_END * 0.5);
+  return { start, end };
+}
 
 function HighlightWord({
   word,
@@ -29,8 +45,7 @@ function HighlightWord({
   total: number;
   progress: MotionValue<number>;
 }) {
-  const start = (index / total) * 0.9;
-  const end = Math.min(((index + 1) / total) * 0.9 + 0.08, 1);
+  const { start, end } = wordProgressRange(index, total);
 
   const opacity = useTransform(progress, [start, end], [0.16, 1]);
   const color = useTransform(
@@ -50,12 +65,12 @@ function HighlightWord({
 }
 
 export function ScrollHighlightQuote({ text }: { text: string }) {
-  const containerRef = useRef<HTMLQuoteElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const reduceMotion = useReducedMotion();
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start 0.75", "end 0.4"],
+    offset: [SCROLL_OFFSET_START, SCROLL_OFFSET_END],
   });
 
   const words = useMemo<WordToken[]>(() => {
@@ -80,19 +95,23 @@ export function ScrollHighlightQuote({ text }: { text: string }) {
   }
 
   return (
-    <blockquote
+    <div
       ref={containerRef}
-      className={cn("narrative-quote m-0 max-w-none break-words")}
+      className="min-w-0 pt-2 pb-[min(44vh,460px)] sm:pb-[min(48vh,520px)]"
     >
-      {words.map((word, index) => (
-        <HighlightWord
-          key={`${word.text}-${index}`}
-          word={word}
-          index={index}
-          total={words.length}
-          progress={scrollYProgress}
-        />
-      ))}
-    </blockquote>
+      <blockquote
+        className={cn("narrative-quote m-0 max-w-none break-words")}
+      >
+        {words.map((word, index) => (
+          <HighlightWord
+            key={`${word.text}-${index}`}
+            word={word}
+            index={index}
+            total={words.length}
+            progress={scrollYProgress}
+          />
+        ))}
+      </blockquote>
+    </div>
   );
 }

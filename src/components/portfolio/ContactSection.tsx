@@ -64,9 +64,9 @@ export function ContactSection() {
         ))}
       </ScrollReveal>
 
-      <ScrollReveal delay={320} className="relative z-10 pb-12 lg:pb-14">
+      <ScrollReveal delay={320} className="relative z-10 pb-16 sm:pb-20 lg:pb-24">
         <GlassCta href={`mailto:${site.email}`} variant="primary">
-          <Flame className="mr-2 size-3.5" />
+          <Flame className="size-3.5 shrink-0" aria-hidden />
           Reach out
         </GlassCta>
       </ScrollReveal>

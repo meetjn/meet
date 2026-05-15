@@ -5,7 +5,6 @@ import {
   ExperienceSection,
   Hero,
   NarrativeSection,
-  SiteFooter,
   SiteNav,
   StackSection,
   TraitsSection,
@@ -30,7 +29,6 @@ export default function Home() {
         <Divider />
         <ContactSection />
       </main>
-      <SiteFooter />
     </div>
   );
 }

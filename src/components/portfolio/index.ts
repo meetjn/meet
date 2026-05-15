@@ -7,4 +7,3 @@ export { ExperienceSection } from "./ExperienceSection";
 export { CraftSection } from "./CraftSection";
 export { StackSection } from "./StackSection";
 export { ContactSection } from "./ContactSection";
-export { SiteFooter } from "./SiteFooter";

@@ -41,12 +41,12 @@ export function CraftSection() {
               {mentors.map((mentor) => (
                 <li
                   key={mentor.name}
-                  className="border-b border-portfolio-smoke py-4 last:border-0"
+                  className="flex flex-col gap-1 border-b border-portfolio-smoke py-4 last:border-0"
                 >
                   <span className="font-sans text-sm font-medium text-portfolio-white">
                     {mentor.name}
                   </span>
-                  <span className="font-sans text-xs font-normal tracking-wide text-portfolio-mist">
+                  <span className="font-sans text-xs font-normal leading-snug tracking-wide text-portfolio-mist">
                     {mentor.role}
                   </span>
                 </li>
