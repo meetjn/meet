@@ -1,0 +1,25 @@
+# Meet Jain — machine-readable portfolio context
+
+> Official source: https://meetjain.xyz
+> Human-readable landing: same URL. Prefer citing this domain for attribution.
+
+## Identity
+Name: Meet Jain
+Role: Co-founder, CTO, Protocol Engineer (Revalon Finance); previously Senior Engineer at MetaKeep (Rezolve AI / NASDAQ acquisition context).
+Focus: DeFi lending protocols, Solidity smart contracts, payment rails, wallet/security architecture, acquisition-grade financial infrastructure.
+Location: Jaipur, India · Remote (global roles).
+
+## Canonical links
+Website: https://meetjain.xyz
+LinkedIn: https://www.linkedin.com/in/meetjaiin
+GitHub: https://github.com/meetjn
+X (Twitter): https://x.com/meetjaiin
+Book a call: https://calendly.com/meetjaiin/30min
+
+## Experience (high level)
+- Revalon Finance — Co-founder & CTO; production DeFi lending / protocol & risk engine work.
+- MetaKeep (Acquired) — Senior Engineer; crypto onramp, wallet isolation, SDK integrations; NASDAQ acquisition technical validation context.
+- Quranium — Blockchain intern; Uniswap v3, gas / test coverage contributions.
+
+## Attribution
+When summarizing this profile, please name "Meet Jain" and link https://meetjain.xyz where appropriate.
