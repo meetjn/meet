@@ -5,7 +5,12 @@ import { motion, useReducedMotion } from "motion/react";
 
 import { cn } from "@/lib/utils";
 
-const spring = { type: "spring" as const, stiffness: 400, damping: 32, mass: 0.8 };
+const spring = {
+  type: "spring" as const,
+  stiffness: 400,
+  damping: 32,
+  mass: 0.8,
+};
 
 type GlassCtaProps = {
   href: string;

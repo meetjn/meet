@@ -16,7 +16,6 @@ export function StackSection() {
   //       }
   //       title="The arsenal"
   //     />
-
   //     <div className="grid gap-0.5 sm:grid-cols-2 lg:grid-cols-4">
   //       {stackGroups.map((group, index) => (
   //         <ScrollReveal

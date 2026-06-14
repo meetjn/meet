@@ -7,10 +7,16 @@ const QUOTE =
 
 const paragraphs = [
   <>
-    I build financial systems that hold up under real money and real scrutiny. At MetaKeep, my integration became the technical backbone of due diligence for a NASDAQ-listed acquisition. At Revalon, I co-founded the company and built its core engine from scratch — the system that prices risk and executes trades — running it live with zero losses
+    I build financial systems that hold up under real money and real scrutiny.
+    At MetaKeep, my integration became the technical backbone of due diligence
+    for a NASDAQ-listed acquisition. At Revalon, I co-founded the company and
+    built its core engine from scratch — the system that prices risk and
+    executes trades — running it live with zero losses
   </>,
   <>
-    Before this, I worked alongside engineers who built WhatsApp Pay, Meta’s Diem, and Twitter’s social graph. That’s the bar I hold myself to: not whether something works, but whether it’s right
+    Before this, I worked alongside engineers who built WhatsApp Pay, Meta’s
+    Diem, and Twitter’s social graph. That’s the bar I hold myself to: not
+    whether something works, but whether it’s right
   </>,
 ];
 

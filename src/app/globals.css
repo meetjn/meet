@@ -240,7 +240,6 @@ body::before {
   }
 
   @supports not (backdrop-filter: blur(1px)) {
-
     .glass-cta-primary,
     .glass-cta-ghost,
     .glass-chip {
@@ -250,12 +249,14 @@ body::before {
 
   .divider-line {
     @apply h-px w-full opacity-60;
-    background: linear-gradient(to right,
-        transparent,
-        theme("colors.portfolio.smoke") 20%,
-        theme("colors.portfolio.ember") 50%,
-        theme("colors.portfolio.smoke") 80%,
-        transparent);
+    background: linear-gradient(
+      to right,
+      transparent,
+      theme("colors.portfolio.smoke") 20%,
+      theme("colors.portfolio.ember") 50%,
+      theme("colors.portfolio.smoke") 80%,
+      transparent
+    );
   }
 
   .trait-card::after {

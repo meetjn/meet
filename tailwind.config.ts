@@ -25,12 +25,7 @@ const config: Config = {
       fontFamily: {
         display: ["var(--font-bebas)", "Bebas Neue", "sans-serif"],
         serif: ["var(--font-dm-serif)", "DM Serif Display", "serif"],
-        sans: [
-          "var(--font-geist-sans)",
-          "Geist",
-          "system-ui",
-          "sans-serif",
-        ],
+        sans: ["var(--font-geist-sans)", "Geist", "system-ui", "sans-serif"],
       },
       letterSpacing: {
         widest: "0.25em",

@@ -86,9 +86,8 @@ export function ScrollHighlightQuote({ text }: { text: string }) {
   if (reduceMotion) {
     return (
       <blockquote className="narrative-quote m-0 max-w-none break-words">
-        I don&apos;t just write code. I develop a{" "}
-        <em>deep obsession</em> with the domain until I understand it better
-        than almost anyone in the room.
+        I don&apos;t just write code. I develop a <em>deep obsession</em> with
+        the domain until I understand it better than almost anyone in the room.
       </blockquote>
     );
   }

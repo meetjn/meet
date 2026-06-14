@@ -91,7 +91,9 @@ export const metadata: Metadata = {
   },
   verification: {
     ...(googleVerification ? { google: googleVerification } : {}),
-    ...(bingVerification ? { other: { "msvalidate.01": bingVerification } } : {}),
+    ...(bingVerification
+      ? { other: { "msvalidate.01": bingVerification } }
+      : {}),
   },
 };
 

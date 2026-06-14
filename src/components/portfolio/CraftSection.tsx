@@ -40,10 +40,7 @@ export function CraftSection() {
             </p>
             <ul className="flex flex-col divide-y divide-portfolio-smoke/80">
               {mentors.map((mentor) => (
-                <li
-                  key={mentor.name}
-                  className="flex flex-col gap-2 py-8"
-                >
+                <li key={mentor.name} className="flex flex-col gap-2 py-8">
                   <span className="font-sans text-sm font-medium text-portfolio-white">
                     {mentor.name}
                   </span>
