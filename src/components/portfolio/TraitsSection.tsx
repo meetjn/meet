@@ -11,7 +11,7 @@ export function TraitsSection() {
         label={
           <span className="flex items-center gap-2">
             <Sparkles className="size-3" />
-            What sets apart top 1%
+            What sets apart top engineers
           </span>
         }
         title="The edge"

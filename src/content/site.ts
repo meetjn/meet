@@ -27,24 +27,24 @@ export const traits = [
     description:
       "I see the whole board — core platform, application layer, DevOps, security architecture. When I build lending infrastructure I think about recovery workflows, custody boundaries, reconciliation, and auditable decision trails simultaneously.",
   },
-  {
-    number: "04",
-    title: "High-Stakes Calm",
-    description:
-      "The work I do has real financial consequence — credit losses, coordinated attacks, acquisition due diligence. I operate with the same focus under pressure as I do at 2am with no deadline. That's not a work habit. It's character.",
-  },
-  {
-    number: "05",
-    title: "Ownership Instinct",
-    description:
-      "I've never handed a problem back with \"that's not my area.\" Per-app key isolation, open-source cost optimization, fiat funding integrations — I find the gap, understand it, and close it. Not because someone asked, but because leaving it open bothers me.",
-  },
-  {
-    number: "06",
-    title: "Compounding Trajectory",
-    description:
-      "One year: intern contributing to next-generation distributed ledger logic. Two years: CTO of a production-grade lending platform. The velocity isn't luck — it's what happens when someone is genuinely, deeply in love with the craft.",
-  },
+  // {
+  //   number: "04",
+  //   title: "High-Stakes Calm",
+  //   description:
+  //     "The work I do has real financial consequence — credit losses, coordinated attacks, acquisition due diligence. I operate with the same focus under pressure as I do at 2am with no deadline. That's not a work habit. It's character.",
+  // },
+  // {
+  //   number: "05",
+  //   title: "Ownership Instinct",
+  //   description:
+  //     "I've never handed a problem back with \"that's not my area.\" Per-app key isolation, open-source cost optimization, fiat funding integrations — I find the gap, understand it, and close it. Not because someone asked, but because leaving it open bothers me.",
+  // },
+  // {
+  //   number: "06",
+  //   title: "Compounding Trajectory",
+  //   description:
+  //     "One year: intern contributing to next-generation distributed ledger logic. Two years: CTO of a production-grade lending platform. The velocity isn't luck — it's what happens when someone is genuinely, deeply in love with the craft.",
+  // },
 ] as const;
 
 export const experience = [
