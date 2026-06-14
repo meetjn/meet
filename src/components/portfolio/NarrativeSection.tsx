@@ -7,28 +7,10 @@ const QUOTE =
 
 const paragraphs = [
   <>
-    I treat depth as a prerequisite, not a flex. At MetaKeep I owned the stack end
-    to end &mdash; not wiring a demo but shipping the work that held up under real
-    diligence. The integration I built became the{" "}
-    <strong>primary technical validator for a NASDAQ acquisition</strong>
-    {" "}
-    &mdash; the kind of proof that turns a deal from maybe to closed.
+    I build financial systems that hold up under real money and real scrutiny. At MetaKeep, my integration became the technical backbone of due diligence for a NASDAQ-listed acquisition. At Revalon, I co-founded the company and built its core engine from scratch — the system that prices risk and executes trades — running it live with zero losses
   </>,
   <>
-    At Revalon I co-founded the protocol layer from zero: underwriting and
-    pricing wired to guarded on-chain execution, plus a two-sided marketplace
-    built for adversarial markets, not slide decks. We ran
-    the full testnet lifecycle with <strong>zero bad debt</strong> &mdash;
-    because production discipline is the only honest dress rehearsal.
-  </>,
-  <>
-    This is what separates me &mdash; not the stack, not the titles. It&apos;s
-    the{" "}
-    <strong>refusal to stop at &ldquo;good enough&rdquo;</strong> when I know
-    what &ldquo;right&rdquo; looks like. I&apos;ve worked alongside world-class
-    engineers who built WhatsApp Pay, Diem blockchain at Meta, and Twitter&apos;s
-    social graph. That environment sharpened something in me: the standard is
-    always higher than what you think.
+    Before this, I worked alongside engineers who built WhatsApp Pay, Meta’s Diem, and Twitter’s social graph. That’s the bar I hold myself to: not whether something works, but whether it’s right
   </>,
 ];
 

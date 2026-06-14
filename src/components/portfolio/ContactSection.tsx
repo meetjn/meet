@@ -41,7 +41,7 @@ export function ContactSection() {
 
         <ScrollReveal delay={160} className="contact-sub">
           Available for remote founding roles, senior engineering, and high-stakes
-          protocol work.
+          platform work.
         </ScrollReveal>
 
         <ScrollReveal

@@ -30,7 +30,7 @@ const dmSerif = DM_Serif_Display({
 });
 
 const title = {
-  default: "Meet Jain · Co-founder & Protocol Engineer",
+  default: "Meet Jain · Co-founder & Platform Engineer",
   template: "%s · Meet Jain",
 };
 
@@ -41,7 +41,7 @@ const ogImage = {
   url: "/opengraph-image",
   width: 1200,
   height: 630,
-  alt: "Meet Jain — product infrastructure, fintech & blockchain engineering",
+  alt: "Meet Jain — product infrastructure & financial systems engineering",
 };
 
 export const metadata: Metadata = {

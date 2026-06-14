@@ -31,10 +31,7 @@ export function Hero() {
         </h1>
 
         <p className="hero-desc animate-fade-up animate-delay-400 opacity-0">
-          I build financial infrastructure at the founding layer — lending
-          protocols, payment rails, acquisition-grade systems. Not because
-          it&apos;s a job. Because I can&apos;t stop until something works
-          exactly the way it should.
+        I build money infrastructure — lending, payments, products real companies acquire. Not because it’s a job. Because good enough is not enough.
         </p>
 
         <div className="animate-fade-up animate-delay-600 flex flex-wrap items-center gap-4 opacity-0">
@@ -43,7 +40,7 @@ export function Hero() {
           </GlassCta>
           <GlassCta href={site.calendly} variant="ghost" external>
             <Calendar className="size-3.5" />
-            Let&apos;s build
+            Book a call
           </GlassCta>
         </div>
       </div>

@@ -3,7 +3,7 @@ import { ImageResponse } from "next/og";
 export const runtime = "edge";
 
 export const alt =
-  "Meet Jain — product infrastructure, fintech & blockchain engineering";
+  "Meet Jain — product infrastructure & financial systems engineering";
 
 export const size = { width: 1200, height: 630 };
 
@@ -81,7 +81,7 @@ export default function OpenGraphImage() {
             fontWeight: 500,
           }}
         >
-          Co-founder · Fintech & blockchain
+          Co-founder · Fintech & financial systems
         </div>
         <div
           style={{
@@ -92,7 +92,7 @@ export default function OpenGraphImage() {
             lineHeight: 1.45,
           }}
         >
-          Protocol engineering, lending infrastructure, wallet & payment rails
+          Platform engineering, lending infrastructure & payment systems
         </div>
       </div>
     ),

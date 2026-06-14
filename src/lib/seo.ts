@@ -4,7 +4,7 @@ import { SITE_URL } from "./site";
 
 /** Primary meta description — keep under ~160 chars for snippets where possible */
 export const SITE_DESCRIPTION =
-  "Meet Jain — Co-founder & CTO at Revalon Finance; former MetaKeep engineer (NASDAQ acquisition validator). DeFi lending protocols, Solidity, payment rails & acquisition-grade financial infrastructure. Jaipur · Remote.";
+  "Meet Jain — Co-founder & CTO at Revalon Finance; former MetaKeep engineer (NASDAQ acquisition validator). Lending platforms, payment systems & acquisition-grade financial infrastructure. Jaipur · Remote.";
 
 /** Expanded vocabulary for search + AI retrieval */
 export const SITE_KEYWORDS = [
@@ -15,21 +15,19 @@ export const SITE_KEYWORDS = [
   "MetaKeep",
   "Rezolve AI",
   "NASDAQ RZLV",
-  "protocol engineer",
-  "CTO DeFi",
-  "Solidity engineer",
-  "lending protocol",
-  "smart contracts",
-  "Polygon DeFi",
-  "Ethereum developer",
+  "platform engineer",
+  "CTO fintech",
+  "lending platform",
+  "financial infrastructure",
+  "payment systems",
   "Go engineer",
   "fintech engineer",
   "payment rails",
-  "crypto infrastructure",
-  "wallet SDK",
+  "infrastructure engineer",
   "Jaipur engineer",
-  "remote protocol engineer",
+  "remote platform engineer",
   "founding engineer",
+  "risk engineering",
 ] as const;
 
 const TWITTER_HANDLE = "@meetjaiin";
@@ -37,21 +35,17 @@ const TWITTER_HANDLE = "@meetjaiin";
 export const seoTwitterCreator = TWITTER_HANDLE;
 
 const knowsAbout = [
-  "Solidity",
-  "Ethereum",
-  "Polygon",
-  "DeFi",
-  "lending protocols",
-  "smart contracts",
-  "protocol engineering",
+  "lending platforms",
+  "payment systems",
+  "platform engineering",
   "payment rails",
-  "wallet security",
+  "account security",
   "Go",
   "TypeScript",
   "Next.js",
   "financial infrastructure",
   "risk underwriting",
-  "blockchain engineering",
+  "distributed systems",
 ] as const;
 
 export function buildPortfolioJsonLd() {
@@ -115,7 +109,7 @@ export function buildPortfolioJsonLd() {
         "@type": "ProfilePage",
         "@id": webpageId,
         url: SITE_URL,
-        name: `${site.name} — Protocol engineer & co-founder`,
+        name: `${site.name} — Platform engineer & co-founder`,
         description: SITE_DESCRIPTION,
         isPartOf: { "@id": websiteId },
         mainEntity: { "@id": personId },
