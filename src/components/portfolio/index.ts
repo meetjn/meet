@@ -4,5 +4,4 @@ export { NarrativeSection } from "./NarrativeSection";
 export { TraitsSection } from "./TraitsSection";
 export { ExperienceSection } from "./ExperienceSection";
 export { CraftSection } from "./CraftSection";
-export { StackSection } from "./StackSection";
 export { ContactSection } from "./ContactSection";

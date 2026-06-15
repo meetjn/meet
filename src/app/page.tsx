@@ -5,7 +5,6 @@ import {
   ExperienceSection,
   Hero,
   NarrativeSection,
-  StackSection,
   TraitsSection,
 } from "@/components/portfolio";
 
@@ -22,8 +21,6 @@ export default function Home() {
         <ExperienceSection />
         <Divider />
         <CraftSection />
-        <Divider />
-        <StackSection />
         <Divider />
         <ContactSection />
       </main>

@@ -139,14 +139,6 @@ body::before {
     @apply font-serif font-normal italic leading-[1.68] tracking-[-0.01em] text-portfolio-cream;
   }
 
-  .stack-group-title {
-    @apply font-sans text-[10px] font-normal uppercase tracking-[3px] text-portfolio-ember;
-  }
-
-  .stack-item {
-    @apply font-sans text-sm font-light text-portfolio-cream;
-  }
-
   .footer-name {
     @apply font-display text-lg font-normal tracking-[3px] text-portfolio-smoke;
   }

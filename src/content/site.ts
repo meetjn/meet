@@ -49,30 +49,33 @@ export const traits = [
 
 export const experience = [
   {
-    period: "Apr 2026 – Now",
-    tag: "Co-founder · CTO",
+    period: "Apr 2026 – Present",
+    tag: "Senior Software Engineer",
     role: "Revalon Finance",
     website: "https://revalon.finance",
-    company: "Platform Engineering · Financial Infrastructure",
+    company: "Remote · Platform Engineering · Financial Infrastructure",
     points: [
-      "Led architecture for a lending platform: core contract logic across multiple modules, guarded execution paths, and operational controls (delayed execution, multi-party approvals). Shipped full pre-production lifecycle with disciplined asset management and recovery workflows.",
-      "Built Go services for underwriting and dynamic loan-to-value ratios — multi-signal inputs, auditable outputs, and PostgreSQL trails suitable for downstream analytics and diligence.",
-      "Delivered marketplace mechanics bridging lenders and borrowers: dynamic rate regimes, automated monitoring, and a staged margin workflow aligned with platform constraints.",
-      "Integrated hybrid digital and regulated-venue collateral with encryption and KMS-aware key handling. Architecture and integrations available under NDA.",
+      "Shipped to Polygon Amoy testnet — 22 on-chain loans, $3,360 USDC borrowed, 100% repayment rate across 21 beta wallets, 21 invite redemptions; live analytics dashboard, every metric verifiable on Polygonscan.",
+      "Architected a production-grade floor-aware lending protocol on Polygon — 5 Solidity contracts, 7-guard on-chain quote verification, 48h TimelockController, and 3-of-5 Gnosis Safe multisig — zero bad debt across full testnet lifecycle.",
+      "Built a real-time LTV engine in Go — 7 market signals drive dynamic LTV (50–80% floor), with automated 3-tier margin calls and full audit trails for every collateral health change.",
+      "Shipped Polymarket collateral end-to-end (ERC-1155 vault custody, signed floor snapshots); built Kalshi backend (CFTC API attestation, KMS-encrypted read-only keys, 60s health polling).",
+      "Designed 7-layer security (AWS KMS, CEI, flash-loan resistance, Redis rate limiting — rejected 99.96% of ~4,500 req/s abuse burst); deployed on DO App Platform at $24/mo with GitHub Actions CD, p95 <20ms under load.",
+      "Built borrower-facing UI in Next.js — portfolio dashboard, quote-to-borrow flow with Privy, SSE-driven loan updates (~50–100ms post-confirmation), IndexedDB recovery, and invite-gated beta with HMAC JWT auth.",
     ],
-    impact: "Pre-production-ready platform · Risk discipline",
+    impact: "100% repayment · Zero bad debt · p95 <20ms",
   },
   {
-    period: "Apr 2025 – May 2026",
-    tag: "Senior Engineer",
+    period: "Apr 2025 – Apr 2026",
+    tag: "Senior Software Engineer",
     role: "MetaKeep (Acquired)",
     website: "https://metakeep.xyz",
-    company: "Rezolve AI · NASDAQ: RZLV",
+    company: "Rezolve AI · NASDAQ: RZLV · Remote",
     points: [
-      "Engineered the digital payment integration that served as the primary technical validator for MetaKeep's acquisition by Rezolve AI (NASDAQ: RZLV). Sign-up-free transactions in a chatbot UI for luxury retail — shipped March 2026.",
-      "Led Wallet Isolation, an enterprise security feature enforcing per-app key segregation. Reduced pre-production bugs by 40%. Adopted as a production standard across the MetaKeep SDK.",
-      "Built MetaKeep's payment onboarding flow from zero — integrated Coinbase API with zero-fee, sign-up-free UX. Architected a third-party payment routing pipeline with automated account funding.",
-      "Shipped 8 SDK integration demos (6 Android, 2 iOS) covering cross-platform payment integrations — used as developer documentation and enterprise sales tooling.",
+      "Engineered the end-to-end payment integration that served as the primary technical validator for MetaKeep's acquisition by Rezolve AI (NASDAQ: RZLV), March 2026 — built on Reown Wallet Mobile Kit and MetaKeep SDK, enabling sign-up-free transactions inside a chatbot UI for luxury retail.",
+      "Led Wallet Isolation — an enterprise security feature requested by Solana, enforcing per-app key segregation across a wallet infrastructure platform managing 10M+ wallets; reduced pre-production bugs by 40%.",
+      "Built MetaKeep's crypto onramp from zero to production in TypeScript — integrated Coinbase API and MetaKeep SDK for zero-fee, sign-up-free purchases; architected a MoonPay fiat-to-token rail chaining card purchases through Jupiter swaps with auto-deposit into MetaKeep wallets.",
+      "Designed an on-chain USDC transfer system using SPL token delegation, eliminating repeated approval flows and reducing transaction friction for end users.",
+      "Shipped 8 SDK integration demos (6 Android, 2 iOS) covering Solana and Ethereum transaction flows — used as developer documentation and sales tooling for enterprise partners.",
     ],
     impact: "NASDAQ acquisition validator · 40% defect drop",
   },
@@ -102,37 +105,5 @@ export const mentors = [
   {
     name: "Twitter Social Graph",
     role: "Distributed systems at social-media scale",
-  },
-] as const;
-
-export const stackGroups = [
-  {
-    title: "Backend & Core Systems",
-    items: ["Go", "Rust", "PostgreSQL", "Redis", "AWS Nitro Enclaves"],
-  },
-  {
-    title: "Application Layer",
-    items: ["TypeScript", "Next.js", "React", "Node.js", "Prisma", "MongoDB"],
-  },
-  {
-    title: "Financial Platform",
-    items: [
-      "Distributed ledger platforms",
-      "Contract development tooling",
-      "Automated market integrations",
-      "Oracle & pricing feeds",
-      "Security & compliance libraries",
-    ],
-  },
-  {
-    title: "Infrastructure",
-    items: [
-      "Docker / Terraform",
-      "AWS KMS",
-      "GitHub Actions CI/CD",
-      "AWS EC2 / Linux",
-      "Operational security monitoring",
-      "Multi-party approval systems",
-    ],
   },
 ] as const;

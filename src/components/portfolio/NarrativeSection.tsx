@@ -7,11 +7,13 @@ const QUOTE =
 
 const paragraphs = [
   <>
-    I build financial systems that hold up under real money and real scrutiny.
-    At MetaKeep, my integration became the technical backbone of due diligence
-    for a NASDAQ-listed acquisition. At Revalon, I co-founded the company and
-    built its core engine from scratch — the system that prices risk and
-    executes trades — running it live with zero losses
+    I started writing code at 17 — not because someone handed me a curriculum, but
+    because broken systems bothered me more than broken grades. I build financial
+    infrastructure that holds up under real money and real scrutiny. At MetaKeep,
+    within my first year on the job, I shipped an acquisition-grade payment
+    integration that became the technical backbone of due diligence for a
+    NASDAQ-listed deal. At Revalon, I built the core lending engine from scratch
+    — pricing risk, executing loans, running it live with zero bad debt
   </>,
   <>
     Before this, I worked alongside engineers who built WhatsApp Pay, Meta’s
