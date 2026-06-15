@@ -8,8 +8,7 @@ const QUOTE =
 const paragraphs = [
   <>
     I started writing code at 17 — not because someone handed me a curriculum, but
-    because broken systems bothered me more than broken grades. I build financial
-    infrastructure that holds up under real money and real scrutiny. At MetaKeep,
+    because broken systems bothered me more than broken grades. At MetaKeep,
     within my first year on the job, I shipped an acquisition-grade payment
     integration that became the technical backbone of due diligence for a
     NASDAQ-listed deal. At Revalon, I built the core lending engine from scratch
