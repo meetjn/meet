@@ -66,7 +66,7 @@ body::before {
 
   /* meet_jain_portfolio.html — .contact-title (inherits headline white) */
   .contact-title {
-    font-size: clamp(60px, 9vw, 120px);
+    font-size: clamp(28px, 8.5vw, 120px);
     @apply mb-8 font-display font-normal leading-[0.9] text-portfolio-white;
   }
 

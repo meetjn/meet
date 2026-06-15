@@ -33,10 +33,12 @@ export function ContactSection() {
           Let&apos;s build something that matters
         </ScrollReveal>
 
-        <ScrollReveal as="h2" delay={80} className="contact-title">
-          Start a
-          <br />
-          fire.
+        <ScrollReveal
+          as="h2"
+          delay={80}
+          className="contact-title whitespace-nowrap"
+        >
+          Build what matters.
         </ScrollReveal>
 
         <ScrollReveal delay={160} className="contact-sub">
@@ -67,7 +69,7 @@ export function ContactSection() {
         <ScrollReveal delay={320} className="relative z-10">
           <GlassCta href={site.calendly} variant="primary" external>
             <Calendar className="size-3.5 shrink-0" aria-hidden />
-            Reach out
+            Book a call
           </GlassCta>
         </ScrollReveal>
       </div>
