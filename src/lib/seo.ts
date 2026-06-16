@@ -4,7 +4,7 @@ import { SITE_URL } from "./site";
 
 /** Primary meta description — keep under ~160 chars for snippets where possible */
 export const SITE_DESCRIPTION =
-  "Meet Jain — Co-founder & CTO at Revalon Finance; former MetaKeep engineer (NASDAQ acquisition validator). Lending platforms, payment systems & acquisition-grade financial infrastructure. Jaipur · Remote.";
+  "Meet Jain — Founding Engineer at Revalon Finance; former MetaKeep engineer (NASDAQ acquisition validator). Lending platforms, payment systems & acquisition-grade financial infrastructure. Jaipur · Remote.";
 
 /** Expanded vocabulary for search + AI retrieval */
 export const SITE_KEYWORDS = [
@@ -16,7 +16,7 @@ export const SITE_KEYWORDS = [
   "Rezolve AI",
   "NASDAQ RZLV",
   "platform engineer",
-  "CTO fintech",
+  "founding engineer fintech",
   "lending platform",
   "financial infrastructure",
   "payment systems",
@@ -109,7 +109,7 @@ export function buildPortfolioJsonLd() {
         "@type": "ProfilePage",
         "@id": webpageId,
         url: SITE_URL,
-        name: `${site.name} — Platform engineer & co-founder`,
+        name: `${site.name} — Founding engineer & platform engineer`,
         description: SITE_DESCRIPTION,
         isPartOf: { "@id": websiteId },
         mainEntity: { "@id": personId },

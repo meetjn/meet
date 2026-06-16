@@ -5,7 +5,7 @@
 
 ## Identity
 Name: Meet Jain
-Role: Co-founder, CTO, Platform Engineer (Revalon Finance); previously Senior Engineer at MetaKeep (Rezolve AI / NASDAQ acquisition context).
+Role: Founding Engineer, Platform Engineer (Revalon Finance); previously Software Engineer at MetaKeep (Rezolve AI / NASDAQ acquisition context).
 Focus: Lending platforms, payment systems, account security architecture, acquisition-grade financial infrastructure.
 Location: Jaipur, India · Remote (global roles).
 
@@ -17,8 +17,8 @@ X (Twitter): https://x.com/meetjaiin
 Book a call: https://calendly.com/meetjaiin/30min
 
 ## Experience (high level)
-- Revalon Finance — Co-founder & CTO; production lending platform and risk engine work.
-- MetaKeep (Acquired) — Senior Engineer; payment onboarding, account isolation, SDK integrations; NASDAQ acquisition technical validation context.
+- Revalon Finance — Founding Engineer; production lending platform and risk engine work.
+- MetaKeep (Acquired) — Software Engineer; payment onboarding, account isolation, SDK integrations; NASDAQ acquisition technical validation context.
 - Quranium — Platform engineering intern; automated trading exchange, execution cost / test coverage contributions.
 
 ## Attribution

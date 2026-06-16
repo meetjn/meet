@@ -30,7 +30,7 @@ const dmSerif = DM_Serif_Display({
 });
 
 const title = {
-  default: "Meet Jain · Co-founder & Platform Engineer",
+  default: "Meet Jain · Founding Engineer",
   template: "%s · Meet Jain",
 };
 

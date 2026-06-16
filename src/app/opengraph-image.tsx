@@ -80,7 +80,7 @@ export default function OpenGraphImage() {
           fontWeight: 500,
         }}
       >
-        Co-founder · Fintech & financial systems
+        Founding Engineer · Fintech & financial systems
       </div>
       <div
         style={{

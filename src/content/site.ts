@@ -1,6 +1,6 @@
 export const site = {
   name: "Meet Jain",
-  role: "Co-founder · CTO · Platform Engineer",
+  role: "Founding Engineer · Platform Engineer",
   x: "https://x.com/meetjaiin",
   github: "https://github.com/meetjn",
   linkedin: "https://www.linkedin.com/in/meetjaiin",
@@ -50,7 +50,7 @@ export const traits = [
 export const experience = [
   {
     period: "Apr 2026 – Present",
-    tag: "Senior Software Engineer",
+    tag: "Founding Engineer",
     role: "Revalon Finance",
     website: "https://revalon.finance",
     company: "Remote · Platform Engineering · Financial Infrastructure",
@@ -66,7 +66,7 @@ export const experience = [
   },
   {
     period: "Apr 2025 – Apr 2026",
-    tag: "Senior Software Engineer",
+    tag: "Software Engineer",
     role: "MetaKeep (Acquired)",
     website: "https://metakeep.xyz",
     company: "Rezolve AI · NASDAQ: RZLV · Remote",
