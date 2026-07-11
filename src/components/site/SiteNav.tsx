@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Search } from "lucide-react";
@@ -18,12 +19,54 @@ function isActive(pathname: string, href: string): boolean {
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
+/**
+ * Hide the header while scrolling down and reveal it on the way back up
+ * (always visible near the top). Drives the mobile-only slide; desktop keeps
+ * the header pinned via an `sm:` transform override. Tracked with rAF so the
+ * scroll handler stays cheap.
+ */
+function useHideOnScroll(): boolean {
+  const [hidden, setHidden] = useState(false);
+
+  useEffect(() => {
+    let lastY = window.scrollY;
+    let ticking = false;
+
+    const update = () => {
+      const y = window.scrollY;
+      const delta = y - lastY;
+      if (y < 80) setHidden(false);
+      else if (delta > 4) setHidden(true);
+      else if (delta < -4) setHidden(false);
+      lastY = y;
+      ticking = false;
+    };
+
+    const onScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(update);
+        ticking = true;
+      }
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  return hidden;
+}
+
 export function SiteNav() {
   const pathname = usePathname();
   const openSearch = useSearchUi((state) => state.setOpen);
+  const hidden = useHideOnScroll();
 
   return (
-    <header className="sticky top-0 z-40 border-b border-portfolio-smoke/70 bg-portfolio-black/85 backdrop-blur-xl">
+    <header
+      className={`sticky top-0 z-40 border-b border-portfolio-smoke/70 bg-portfolio-black/85 backdrop-blur-xl transition-transform duration-300 ease-out motion-reduce:transition-none sm:!translate-y-0 ${
+        hidden ? "-translate-y-full" : "translate-y-0"
+      }`}
+    >
       <nav
         aria-label="Site"
         className="flex items-center justify-between px-6 py-5 sm:px-12 lg:px-[max(7vw,3.5rem)]"

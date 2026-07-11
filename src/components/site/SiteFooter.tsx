@@ -19,7 +19,10 @@ export function SiteFooter() {
           </span>
         </div>
 
-        <nav aria-label="Social links" className="flex items-center gap-7">
+        <nav
+          aria-label="Social links"
+          className="flex items-center gap-7 self-end sm:self-auto"
+        >
           {socials.map((social) => (
             <a
               key={social.label}
