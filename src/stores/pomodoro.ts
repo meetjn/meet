@@ -177,3 +177,13 @@ export const usePomodoroStore = create<PomodoroState>()(
     },
   ),
 );
+
+// Kick off rehydration once, as early as possible (module load, ahead of any
+// component mount) — not inside a component effect. `skipHydration` keeps SSR
+// HTML deterministic; this is the single place that lifts that skip on the
+// client, so every consumer of `usePomodoroStore.persist` races against the
+// same, earliest-possible hydration rather than whichever component happens
+// to mount first.
+if (typeof window !== "undefined") {
+  void usePomodoroStore.persist.rehydrate();
+}

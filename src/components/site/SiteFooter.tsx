@@ -1,7 +1,10 @@
-import { Github, Linkedin, MapPin } from "lucide-react";
-
-import { XIcon } from "@/components/icons/XIcon";
 import { site } from "@/content/site";
+
+const socials = [
+  { href: site.linkedin, label: "LinkedIn" },
+  { href: site.github, label: "GitHub" },
+  { href: site.x, label: "X" },
+] as const;
 
 export function SiteFooter() {
   return (
@@ -16,39 +19,19 @@ export function SiteFooter() {
           </span>
         </div>
 
-        <nav aria-label="Social links" className="flex items-center gap-6">
-          <a
-            href={site.linkedin}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 font-sans text-[13px] font-medium text-portfolio-bright transition-colors hover:text-portfolio-ember"
-          >
-            <Linkedin className="size-4" aria-hidden />
-            LinkedIn
-          </a>
-          <a
-            href={site.github}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 font-sans text-[13px] font-medium text-portfolio-bright transition-colors hover:text-portfolio-ember"
-          >
-            <Github className="size-4" aria-hidden />
-            GitHub
-          </a>
-          <a
-            href={site.x}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 font-sans text-[13px] font-medium text-portfolio-bright transition-colors hover:text-portfolio-ember"
-          >
-            <XIcon />X
-          </a>
+        <nav aria-label="Social links" className="flex items-center gap-7">
+          {socials.map((social) => (
+            <a
+              key={social.label}
+              href={social.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-sans text-[13px] font-medium text-portfolio-bright transition-colors hover:text-portfolio-ember"
+            >
+              {social.label}
+            </a>
+          ))}
         </nav>
-
-        <span className="flex items-center gap-2 font-sans text-[13px] font-normal text-portfolio-bright">
-          <MapPin className="size-3.5 shrink-0" aria-hidden />
-          {site.location}
-        </span>
       </div>
     </footer>
   );

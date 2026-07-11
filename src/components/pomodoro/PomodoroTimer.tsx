@@ -1,6 +1,5 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
 import {
   Bell,
   BellOff,
@@ -17,105 +16,23 @@ import {
   usePomodoroStore,
   type PomodoroPhase,
 } from "@/stores/pomodoro";
+import { formatClock, useNow, usePomodoroHydrated } from "./runtime";
 
 const RING_RADIUS = 130;
 const RING_CIRCUMFERENCE = 2 * Math.PI * RING_RADIUS;
 
-function formatClock(ms: number): string {
-  const totalSeconds = Math.ceil(ms / 1000);
-  const minutes = Math.floor(totalSeconds / 60);
-  const seconds = totalSeconds % 60;
-  return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
-}
-
-/** Two soft sine tones via WebAudio — no audio asset to download or cache. */
-function playChime() {
-  try {
-    const AudioContextCtor =
-      window.AudioContext ??
-      (window as unknown as { webkitAudioContext?: typeof AudioContext })
-        .webkitAudioContext;
-    if (!AudioContextCtor) return;
-    const context = new AudioContextCtor();
-    [523.25, 783.99].forEach((frequency, index) => {
-      const oscillator = context.createOscillator();
-      const gain = context.createGain();
-      oscillator.type = "sine";
-      oscillator.frequency.value = frequency;
-      const start = context.currentTime + index * 0.18;
-      gain.gain.setValueAtTime(0.0001, start);
-      gain.gain.exponentialRampToValueAtTime(0.12, start + 0.03);
-      gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.5);
-      oscillator.connect(gain).connect(context.destination);
-      oscillator.start(start);
-      oscillator.stop(start + 0.55);
-    });
-    window.setTimeout(() => void context.close(), 1500);
-  } catch {
-    // Audio blocked — silent completion is fine.
-  }
-}
-
 export function PomodoroTimer() {
   const store = usePomodoroStore();
-  const [hydrated, setHydrated] = useState(false);
-  const [now, setNow] = useState(() => Date.now());
-
-  // Rehydrate persisted state after mount (SSR HTML stays deterministic).
-  useEffect(() => {
-    const unsubscribe = usePomodoroStore.persist.onFinishHydration(() =>
-      setHydrated(true),
-    );
-    void usePomodoroStore.persist.rehydrate();
-    return unsubscribe;
-  }, []);
-
-  const notifyPhaseComplete = useCallback((finishedPhase: PomodoroPhase) => {
-    const { settings } = usePomodoroStore.getState();
-    if (settings.sound) playChime();
-    if (
-      settings.notifications &&
-      "Notification" in window &&
-      Notification.permission === "granted"
-    ) {
-      const body =
-        finishedPhase === "focus"
-          ? "Focus session complete. Take a break."
-          : "Break's over. Back to it.";
-      new Notification("Pomodoro", { body, silent: true });
-    }
-  }, []);
-
-  // The render clock: 4 ticks/sec while running; completion fires here.
-  useEffect(() => {
-    if (!hydrated || store.status !== "running") return;
-    const interval = window.setInterval(() => {
-      const current = Date.now();
-      setNow(current);
-      const state = usePomodoroStore.getState();
-      if (state.status === "running" && state.remainingMs(current) <= 0) {
-        const finishedPhase = state.phase;
-        state.completePhase();
-        notifyPhaseComplete(finishedPhase);
-      }
-    }, 250);
-    return () => window.clearInterval(interval);
-  }, [hydrated, store.status, notifyPhaseComplete]);
+  // Rehydration + the completion/chime/tab-title side-effects are owned by the
+  // app-wide <PomodoroEngine>. This page only renders the store it drives.
+  const hydrated = usePomodoroHydrated();
+  const running = hydrated && store.status === "running";
+  const now = useNow(running);
 
   const durationMs = store.phaseDurationMs();
   const remainingMs = hydrated ? store.remainingMs(now) : durationMs;
   const progress = durationMs === 0 ? 0 : 1 - remainingMs / durationMs;
   const clock = formatClock(remainingMs);
-  const running = hydrated && store.status === "running";
-
-  // Countdown in the tab title while running.
-  useEffect(() => {
-    if (!running) return;
-    document.title = `${clock} · ${PHASE_LABEL[store.phase]} · Meet Jain`;
-    return () => {
-      document.title = "Pomodoro · Meet Jain";
-    };
-  }, [running, clock, store.phase]);
 
   const switchPhase = (phase: PomodoroPhase) => {
     if (running) return;

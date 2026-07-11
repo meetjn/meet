@@ -5,5 +5,4 @@ export const site = {
   x: "https://x.com/meetjaiin",
   github: "https://github.com/meetjn",
   linkedin: "https://www.linkedin.com/in/meetjaiin",
-  location: "Jaipur, India · Remote",
 } as const;
