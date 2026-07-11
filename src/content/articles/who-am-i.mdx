@@ -1,0 +1,205 @@
+---
+title: "Who am I?"
+description: "I started writing code at seventeen because broken things bothered me more than broken grades. This is where that took me — and what I want to build here with you."
+date: "2026-07-10"
+updated: "2026-07-11"
+tags: ["personal"]
+featured: true
+---
+
+I'm Meet. I started writing code at seventeen, in high school, in Jaipur.
+Nobody handed me a curriculum — I just couldn't stand things that were broken
+and left that way. Broken systems bothered me more than broken grades. That
+sentence was true then, and if you read this blog for a while, you'll see
+it's still the engine behind everything I do.
+
+Since this is my first post, let me do the polite thing and introduce myself
+properly: where I've worked, what I actually built there, and why I've
+started writing.
+
+## Seventeen
+
+School gives you problems that are already solved and asks you to reproduce
+the answer. Code gave me problems that were genuinely open and asked me what
+I was going to do about them. For a teenager who found half-finished, badly
+built things almost physically irritating, that trade was irresistible.
+
+What hooked me wasn't the syntax. It was the honesty of the feedback loop:
+you can _see_ whether a system is right. It handles the edge case or it
+doesn't. It survives load or it falls over. No partial credit. I liked that
+there was no partial credit.
+
+## The path, drawn out
+
+I think careers make more sense as diagrams than as paragraphs — you'll
+notice that habit everywhere on this site — so here's mine.
+
+<SketchCanvas
+  viewBox="0 0 760 300"
+  title="My path from high school in Jaipur through Quranium and MetaKeep to Ones Finance"
+  caption={
+    <>
+      The path so far. <em>each arrow = a bet somebody made on me</em>
+    </>
+  }
+>
+  <SketchNote x={38} y={84} delay={900}>
+    broken systems &gt; broken grades
+  </SketchNote>
+  <SketchBox
+    x={30}
+    y={110}
+    width={150}
+    height={64}
+    label="High school"
+    sub="Jaipur · code at 17"
+  />
+  <SketchArrow from={[186, 142]} to={[214, 142]} delay={200} />
+  <SketchBox
+    x={220}
+    y={110}
+    width={150}
+    height={64}
+    label="Quranium"
+    sub="DeFi · DEX + multisig"
+    delay={300}
+  />
+  <SketchArrow from={[376, 142]} to={[404, 142]} delay={500} />
+  <SketchBox
+    x={410}
+    y={110}
+    width={150}
+    height={64}
+    label="MetaKeep"
+    sub="wallets · payments"
+    delay={600}
+  />
+  <SketchNote x={408} y={228} delay={1100}>
+    acquired — Nasdaq: RZLV
+  </SketchNote>
+  <SketchArrow from={[566, 142]} to={[594, 142]} delay={800} />
+  <SketchBox
+    x={600}
+    y={110}
+    width={130}
+    height={64}
+    label="Ones Finance"
+    sub="lead backend eng"
+    accent
+    delay={900}
+  />
+  <SketchNote x={598} y={84} angle={2} delay={1300}>
+    ~90 endpoints in Go
+  </SketchNote>
+</SketchCanvas>
+
+**Quranium** was my first room: a DeFi engineering internship on
+next-generation quantum-secure distributed ledger infrastructure. I built an
+MVP decentralized exchange on Uniswap with multi-signature wallet controls —
+a 2-of-N multisig that went on to become the custody foundation the platform
+scaled to production — and landed four merged pull requests into the
+FairFund open-source platform along the way. That internship taught me my
+first real lesson about money software: "it works on my machine" is not a
+sentence you get to say about custody.
+
+**MetaKeep** was where the stakes got real for me. As a full stack engineer
+on a wallet platform, I built payment infrastructure that shipped during
+MetaKeep's acquisition by Rezolve AI (Nasdaq: RZLV) in March 2026 — a
+sign-up-free transaction flow inside a chatbot UI for luxury retail, built
+on the Reown Wallet Mobile Kit and the MetaKeep SDK. I owned pre-production
+testing for Wallet Isolation, an enterprise security feature Solana asked
+for, enforcing per-app key segregation — that ownership cut pre-production
+bugs by 40%. I took the crypto onramp from zero to production in TypeScript:
+Coinbase API integration, a fiat-to-token rail chaining card purchases into
+MetaKeep wallets, and an on-chain USDC transfer system using SPL token
+delegation so you never approve the same thing twice. When production broke,
+I traced it across the codebase and shipped the fix end-to-end, no handoffs.
+Knowing that acquisition due diligence would read my code sharpened it more
+than any review ever has.
+
+**Ones Finance** is my current room, and the deepest backend work I've done.
+As lead backend engineer I've designed and shipped around ninety REST API
+endpoints in Go across business and admin account systems — onboarding,
+payments, treasury, invoicing, cards, approval workflows — every one of them
+tested and documented. The part I'm proudest of is the transaction pipeline:
+idempotent and optimistic-accept, with request validation, risk assessment,
+and fund reservation up front, and settlement handled asynchronously so a
+payment answers you in under 600 milliseconds without ever blocking on an
+external confirmation.
+
+## What I want to draw for you
+
+That pipeline is a good example of why this blog exists, so let me show you
+what I mean instead of telling you.
+
+<SketchCanvas
+  viewBox="0 0 760 330"
+  title="An idempotent optimistic-accept transaction pipeline: validate, assess risk, reserve funds, respond fast, settle asynchronously"
+  caption={
+    <>
+      The optimistic-accept pipeline at Ones Finance.{" "}
+      <em>answer fast, settle carefully</em>
+    </>
+  }
+>
+  <SketchBox x={30} y={60} width={130} height={60} label="Request" sub="+ idempotency key" />
+  <SketchArrow from={[166, 90]} to={[194, 90]} delay={200} />
+  <SketchBox x={200} y={60} width={130} height={60} label="Validate" delay={300} />
+  <SketchArrow from={[336, 90]} to={[364, 90]} delay={500} />
+  <SketchBox x={370} y={60} width={130} height={60} label="Risk check" delay={600} />
+  <SketchArrow from={[506, 90]} to={[534, 90]} delay={800} />
+  <SketchBox x={540} y={60} width={130} height={60} label="Reserve" sub="funds held" delay={900} />
+  <SketchArrow
+    from={[605, 126]}
+    to={[605, 194]}
+    label="accept < 600ms"
+    labelOffset={[78, 6]}
+    accent
+    delay={1100}
+  />
+  <SketchBox
+    x={540}
+    y={200}
+    width={130}
+    height={60}
+    label="Respond"
+    accent
+    delay={1200}
+  />
+  <SketchArrow
+    from={[534, 230]}
+    to={[336, 230]}
+    bow={10}
+    dashed
+    label="settle async"
+    delay={1400}
+  />
+  <SketchBox
+    x={200}
+    y={200}
+    width={130}
+    height={60}
+    label="Settlement"
+    sub="external rails"
+    dashed
+    delay={1500}
+  />
+  <SketchNote x={40} y={250} delay={1800}>
+    the caller never waits for this part
+  </SketchNote>
+</SketchCanvas>
+
+You've probably read a hundred posts that say "the service scales
+horizontally" and left none the wiser. I've read them too. But every system
+I've ever managed to build well became buildable the moment I drew the right
+picture of it — and I don't think I'm special in that.
+
+So that's why I write: I want to share what production has taught me so you
+can take these methods — idempotency, optimistic accepts, custody
+boundaries, rate limits, reconciliation — and apply them on your own
+engineering path. If a concept can't survive being drawn as boxes and
+arrows, I don't understand it well enough to publish it. That's the bar I'm
+holding myself to here.
+
+I'm Meet Jain. I build payment systems for a living, and I'm glad you're
+here. Let's draw some systems together.

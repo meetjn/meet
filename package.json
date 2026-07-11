@@ -3,13 +3,19 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "preinstall": "npx --yes only-allow pnpm",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
     "format": "prettier --write ."
   },
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=9"
+  },
   "dependencies": {
+    "@mdx-js/mdx": "^3.1.1",
     "@radix-ui/react-navigation-menu": "^1.2.14",
     "@radix-ui/react-separator": "^1.1.8",
     "@radix-ui/react-slot": "^1.2.4",
@@ -17,16 +23,26 @@
     "clsx": "^2.1.1",
     "eslint-config-next": "^16.2.4",
     "geist": "^1.7.0",
+    "github-slugger": "^2.0.0",
+    "gray-matter": "^4.0.3",
     "lucide-react": "^0.556.0",
+    "minisearch": "^7.2.0",
     "motion": "^12.38.0",
     "next": "^16.2.4",
+    "next-themes": "^0.4.6",
     "radix-ui": "^1.4.3",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
+    "rehype-pretty-code": "^0.14.4",
+    "rehype-slug": "^6.0.0",
+    "remark-gfm": "^4.0.1",
+    "shiki": "^4.3.1",
     "tailwind-merge": "^2.5.4",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "zustand": "^5.0.14"
   },
   "devDependencies": {
+    "@types/mdx": "^2.0.14",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

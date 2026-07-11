@@ -1,36 +1,44 @@
 import type { Metadata, Viewport } from "next";
-import { Bebas_Neue, DM_Serif_Display } from "next/font/google";
+import { Caveat, Fraunces } from "next/font/google";
 import { GeistSans } from "geist/font/sans";
+import { GeistMono } from "geist/font/mono";
 
 import "./globals.css";
 import { GoogleAnalytics } from "@/components/GoogleAnalytics";
 import { HotjarAnalytics } from "@/components/HotjarAnalytics";
+import { CommandPalette } from "@/components/search/CommandPalette";
+import { ServiceWorkerRegistrar } from "@/components/pwa/ServiceWorkerRegistrar";
+import { SiteNav } from "@/components/site/SiteNav";
+import { SiteFooter } from "@/components/site/SiteFooter";
+import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { site } from "@/content/site";
 import {
   SITE_DESCRIPTION,
   SITE_KEYWORDS,
-  buildPortfolioJsonLd,
+  buildSiteJsonLd,
   seoTwitterCreator,
 } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
 
-const bebas = Bebas_Neue({
-  weight: "400",
+/* Editorial serif — display, italics, and the calligraphic voice. */
+const fraunces = Fraunces({
   subsets: ["latin"],
-  variable: "--font-bebas",
+  weight: ["400", "500", "600"],
+  style: ["normal", "italic"],
+  variable: "--font-display",
   display: "swap",
 });
 
-const dmSerif = DM_Serif_Display({
-  weight: "400",
-  style: ["normal", "italic"],
+/* Handwritten voice for diagram annotations and margin notes. */
+const caveat = Caveat({
+  weight: ["500"],
   subsets: ["latin"],
-  variable: "--font-dm-serif",
+  variable: "--font-hand",
   display: "swap",
 });
 
 const title = {
-  default: "Meet Jain · Founding Engineer",
+  default: "Meet Jain — Systems, explained",
   template: "%s · Meet Jain",
 };
 
@@ -41,7 +49,7 @@ const ogImage = {
   url: "/opengraph-image",
   width: 1200,
   height: 630,
-  alt: "Meet Jain — product infrastructure & financial systems engineering",
+  alt: "Meet Jain — writing on backend engineering and distributed systems",
 };
 
 export const metadata: Metadata = {
@@ -58,7 +66,6 @@ export const metadata: Metadata = {
   publisher: site.name,
   category: "technology",
   keywords: [...SITE_KEYWORDS],
-  alternates: { canonical: "/" },
   formatDetection: { email: false, telephone: false },
   referrer: "origin-when-cross-origin",
   robots: {
@@ -99,13 +106,12 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#0a0a0a" },
-    { media: "(prefers-color-scheme: dark)", color: "#0a0a0a" },
+    { media: "(prefers-color-scheme: light)", color: "#FAF7F0" },
+    { media: "(prefers-color-scheme: dark)", color: "#0A0908" },
   ],
-  colorScheme: "dark",
 };
 
-const portfolioJsonLd = buildPortfolioJsonLd();
+const siteJsonLd = buildSiteJsonLd();
 
 export default function RootLayout({
   children,
@@ -113,19 +119,31 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en-US" className="scroll-smooth">
+    <html lang="en-US" className="scroll-smooth" suppressHydrationWarning>
       <body
-        className={`${bebas.variable} ${dmSerif.variable} ${GeistSans.variable} ${GeistSans.className} overflow-x-hidden font-light antialiased`}
+        className={`${fraunces.variable} ${caveat.variable} ${GeistSans.variable} ${GeistMono.variable} ${GeistSans.className} overflow-x-hidden font-light antialiased`}
       >
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify(portfolioJsonLd),
+            __html: JSON.stringify(siteJsonLd),
           }}
         />
-        <GoogleAnalytics />
-        <HotjarAnalytics />
-        {children}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          disableTransitionOnChange
+        >
+          <GoogleAnalytics />
+          <HotjarAnalytics />
+          <ServiceWorkerRegistrar />
+          <CommandPalette />
+          <div className="flex min-h-[100dvh] flex-col bg-portfolio-black">
+            <SiteNav />
+            <main className="flex flex-1 flex-col">{children}</main>
+            <SiteFooter />
+          </div>
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -10,6 +10,11 @@
 !.yarn/releases
 !.yarn/versions
 
+# pnpm-only: never commit npm/yarn lockfiles (only pnpm-lock.yaml is allowed)
+package-lock.json
+yarn.lock
+npm-shrinkwrap.json
+
 # testing
 /coverage
 

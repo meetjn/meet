@@ -1,33 +1,29 @@
-import { experience, site } from "@/content/site";
+import { site } from "@/content/site";
 
 import { SITE_URL } from "./site";
 
 /** Primary meta description — keep under ~160 chars for snippets where possible */
 export const SITE_DESCRIPTION =
-  "Meet Jain — Founding Engineer at Revalon Finance; former MetaKeep engineer (NASDAQ acquisition validator). Lending platforms, payment systems & acquisition-grade financial infrastructure. Jaipur · Remote.";
+  "Meet Jain writes about backend engineering and distributed systems — payments, lending, and fintech infrastructure, drawn out one diagram at a time. Lead Backend Engineer at Ones Finance.";
 
 /** Expanded vocabulary for search + AI retrieval */
 export const SITE_KEYWORDS = [
   "Meet Jain",
   "meetjain.xyz",
   "Meet Jain engineer",
-  "Revalon Finance",
+  "backend engineering blog",
+  "distributed systems blog",
+  "Ones Finance",
   "MetaKeep",
   "Rezolve AI",
-  "NASDAQ RZLV",
-  "platform engineer",
-  "founding engineer fintech",
-  "lending platform",
-  "financial infrastructure",
-  "payment systems",
+  "payments infrastructure",
+  "fintech infrastructure",
   "Go engineer",
-  "fintech engineer",
-  "payment rails",
-  "infrastructure engineer",
-  "Jaipur engineer",
-  "remote platform engineer",
-  "founding engineer",
-  "risk engineering",
+  "idempotent transaction pipeline",
+  "payment systems",
+  "lending platform",
+  "system design articles",
+  "engineering diagrams",
 ] as const;
 
 const TWITTER_HANDLE = "@meetjaiin";
@@ -35,36 +31,23 @@ const TWITTER_HANDLE = "@meetjaiin";
 export const seoTwitterCreator = TWITTER_HANDLE;
 
 const knowsAbout = [
-  "lending platforms",
+  "backend engineering",
+  "distributed systems",
   "payment systems",
-  "platform engineering",
-  "payment rails",
-  "account security",
+  "REST API design",
+  "idempotency",
+  "event-driven systems",
   "Go",
   "TypeScript",
-  "Next.js",
-  "financial infrastructure",
-  "risk underwriting",
-  "distributed systems",
+  "Python",
+  "PostgreSQL",
+  "Redis",
+  "fintech infrastructure",
 ] as const;
 
-export function buildPortfolioJsonLd() {
+export function buildSiteJsonLd() {
   const personId = `${SITE_URL}/#person`;
   const websiteId = `${SITE_URL}/#website`;
-  const webpageId = `${SITE_URL}/#webpage`;
-
-  const worksFor = [
-    {
-      "@type": "Organization" as const,
-      name: experience[0]?.role ?? "Revalon Finance",
-      description: experience[0]?.company,
-    },
-    {
-      "@type": "Organization" as const,
-      name: "MetaKeep",
-      description: "Acquired by Rezolve AI (NASDAQ: RZLV)",
-    },
-  ];
 
   return {
     "@context": "https://schema.org",
@@ -77,8 +60,11 @@ export function buildPortfolioJsonLd() {
         image: `${SITE_URL}/opengraph-image`,
         description: SITE_DESCRIPTION,
         jobTitle: site.role,
-        worksFor,
-        sameAs: [site.linkedin, site.github, site.x, site.calendly],
+        worksFor: {
+          "@type": "Organization",
+          name: "Ones Finance",
+        },
+        sameAs: [site.linkedin, site.github, site.x],
         knowsAbout: [...knowsAbout],
         address: {
           "@type": "PostalAddress",
@@ -89,30 +75,20 @@ export function buildPortfolioJsonLd() {
         alumniOf: [
           { "@type": "Organization", name: "MetaKeep" },
           { "@type": "Organization", name: "Quranium" },
+          {
+            "@type": "CollegeOrUniversity",
+            name: "JECRC University",
+          },
         ],
-        contactPoint: {
-          "@type": "ContactPoint",
-          contactType: "booking",
-          url: site.calendly,
-        },
       },
       {
         "@type": "WebSite",
         "@id": websiteId,
         url: SITE_URL,
-        name: `${site.name} — Portfolio`,
+        name: `${site.name} — Writing`,
         description: SITE_DESCRIPTION,
         inLanguage: "en-US",
         publisher: { "@id": personId },
-      },
-      {
-        "@type": "ProfilePage",
-        "@id": webpageId,
-        url: SITE_URL,
-        name: `${site.name} — Founding engineer & platform engineer`,
-        description: SITE_DESCRIPTION,
-        isPartOf: { "@id": websiteId },
-        mainEntity: { "@id": personId },
       },
     ],
   };

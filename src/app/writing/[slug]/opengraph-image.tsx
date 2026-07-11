@@ -1,15 +1,30 @@
 import { ImageResponse } from "next/og";
 
-export const runtime = "edge";
+import { getAllArticles, getArticleBySlug } from "@/lib/articles";
+import { formatDate } from "@/lib/format";
 
-export const alt =
-  "Meet Jain — writing on backend engineering and distributed systems";
+/*
+ * Per-article social card, rendered at build time for each slug.
+ * Node runtime (not edge) — the article store reads from the filesystem.
+ */
 
+export const alt = "Article by Meet Jain";
 export const size = { width: 1200, height: 630 };
-
 export const contentType = "image/png";
 
-export default function OpenGraphImage() {
+export function generateStaticParams() {
+  return getAllArticles().map((article) => ({ slug: article.slug }));
+}
+
+export default async function ArticleOpenGraphImage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const article = getArticleBySlug(slug);
+  const title = article?.title ?? "Writing";
+
   return new ImageResponse(
     (
       <div
@@ -50,30 +65,17 @@ export default function OpenGraphImage() {
           <span style={{ color: "#98908F" }}>meetjain.xyz</span>
         </div>
 
-        <div style={{ display: "flex", flexDirection: "column" }}>
-          <div
-            style={{
-              fontSize: 84,
-              fontWeight: 700,
-              color: "#F6F2EA",
-              lineHeight: 1.05,
-              letterSpacing: "-0.02em",
-            }}
-          >
-            Systems, explained.
-          </div>
-          <div
-            style={{
-              fontSize: 26,
-              color: "#D0C9BD",
-              marginTop: 26,
-              maxWidth: 860,
-              lineHeight: 1.5,
-            }}
-          >
-            Backend engineering and distributed systems, drawn out one diagram
-            at a time.
-          </div>
+        <div
+          style={{
+            fontSize: title.length > 60 ? 58 : 72,
+            fontWeight: 700,
+            color: "#F6F2EA",
+            lineHeight: 1.05,
+            maxWidth: 1000,
+            letterSpacing: "-0.01em",
+          }}
+        >
+          {title}
         </div>
 
         <div
@@ -86,7 +88,8 @@ export default function OpenGraphImage() {
           }}
         >
           <span style={{ color: "#F6F2EA" }}>Meet Jain</span>
-          <span>Lead Backend Engineer · Payments infrastructure</span>
+          {article ? <span>{formatDate(article.date)}</span> : null}
+          {article ? <span>{article.readingTimeMinutes} min read</span> : null}
         </div>
       </div>
     ),

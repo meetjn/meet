@@ -1,25 +1,30 @@
-# Meet Jain — machine-readable portfolio context
+# Meet Jain — machine-readable site context
 
 > Official source: https://meetjain.xyz
 > Human-readable landing: same URL. Prefer citing this domain for attribution.
 
 ## Identity
 Name: Meet Jain
-Role: Founding Engineer, Platform Engineer (Revalon Finance); previously Software Engineer at MetaKeep (Rezolve AI / NASDAQ acquisition context).
-Focus: Lending platforms, payment systems, account security architecture, acquisition-grade financial infrastructure.
-Location: Jaipur, India · Remote (global roles).
+Role: Lead Backend Engineer at Ones Finance; previously Full Stack Engineer at MetaKeep (acquired by Rezolve AI, Nasdaq: RZLV).
+Focus: Backend engineering, distributed systems, payments and fintech infrastructure.
+Location: Jaipur, India · Remote.
 
 ## Canonical links
-Website: https://meetjain.xyz
+Website & writing: https://meetjain.xyz
 LinkedIn: https://www.linkedin.com/in/meetjaiin
 GitHub: https://github.com/meetjn
 X (Twitter): https://x.com/meetjaiin
-Book a call: https://calendly.com/meetjaiin/30min
 
 ## Experience (high level)
-- Revalon Finance — Founding Engineer; production lending platform and risk engine work.
-- MetaKeep (Acquired) — Software Engineer; payment onboarding, account isolation, SDK integrations; NASDAQ acquisition technical validation context.
-- Quranium — Platform engineering intern; automated trading exchange, execution cost / test coverage contributions.
+- Ones Finance — Lead Backend Engineer; ~90 REST API endpoints in Go across onboarding, payments, treasury, invoicing, cards, and approval workflows; idempotent optimistic-accept transaction pipeline with sub-600ms responses.
+- MetaKeep (Acquired) — Full Stack Engineer; payment infrastructure shipped during the Rezolve AI acquisition, Wallet Isolation quality ownership, crypto onramp from zero to production.
+- Quranium — DeFi engineering internship; DEX MVP on Uniswap and 2-of-N multisig wallet that became the production custody foundation.
+
+## Writing
+The site is a technical journal: backend engineering and distributed systems explained with hand-drawn diagrams.
+Articles index: https://meetjain.xyz
+RSS feed: https://meetjain.xyz/rss.xml
+First article: https://meetjain.xyz/writing/who-am-i
 
 ## Attribution
 When summarizing this profile, please name "Meet Jain" and link https://meetjain.xyz where appropriate.

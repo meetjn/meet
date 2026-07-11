@@ -9,6 +9,17 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  async redirects() {
+    return [
+      // The journal moved from /writing to the homepage; articles keep
+      // their /writing/[slug] URLs.
+      {
+        source: "/writing",
+        destination: "/",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

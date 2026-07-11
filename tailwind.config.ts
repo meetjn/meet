@@ -1,4 +1,12 @@
 import type { Config } from "tailwindcss";
+import tailwindcssAnimate from "tailwindcss-animate";
+
+/**
+ * Colors are semantic tokens defined as RGB triples in globals.css and
+ * flipped by the light/dark theme class — `<alpha-value>` keeps Tailwind's
+ * opacity modifiers (e.g. border-portfolio-ember/30) working.
+ */
+const token = (name: string) => `rgb(var(--${name}) / <alpha-value>)`;
 
 const config: Config = {
   darkMode: ["class"],
@@ -11,46 +19,31 @@ const config: Config = {
     extend: {
       colors: {
         portfolio: {
-          black: "#0A0A0A",
-          white: "#F7F4EE",
-          ember: "#C84B11",
-          "ember-dim": "#7A2D0A",
-          "ember-glow": "#E8621A",
-          ash: "#1A1612",
-          smoke: "#2E2925",
-          mist: "#8C8480",
-          cream: "#D4CFC8",
+          black: token("canvas"),
+          ash: token("surface"),
+          smoke: token("line"),
+          white: token("ink"),
+          bright: token("ink-strong"),
+          cream: token("ink-2"),
+          mist: token("ink-3"),
+          ember: token("accent"),
+          "ember-glow": token("accent-bright"),
+          "ember-dim": token("accent-dim"),
         },
       },
       fontFamily: {
-        display: ["var(--font-bebas)", "Bebas Neue", "sans-serif"],
-        serif: ["var(--font-dm-serif)", "DM Serif Display", "serif"],
+        display: ["var(--font-display)", "Fraunces", "Georgia", "serif"],
+        serif: ["var(--font-display)", "Fraunces", "Georgia", "serif"],
         sans: ["var(--font-geist-sans)", "Geist", "system-ui", "sans-serif"],
+        mono: ["var(--font-geist-mono)", "ui-monospace", "monospace"],
+        hand: ["var(--font-hand)", "cursive"],
       },
       letterSpacing: {
-        widest: "0.25em",
-        hero: "2px",
-        nav: "2px",
-        logo: "3px",
-        eyebrow: "4px",
-      },
-      animation: {
-        "fade-up": "fadeUp 0.9s ease forwards",
-        "scroll-pulse": "scrollPulse 2s ease infinite",
-      },
-      keyframes: {
-        fadeUp: {
-          from: { opacity: "0", transform: "translateY(30px)" },
-          to: { opacity: "1", transform: "translateY(0)" },
-        },
-        scrollPulse: {
-          "0%, 100%": { opacity: "0.3", transform: "scaleY(1)" },
-          "50%": { opacity: "1", transform: "scaleY(1.1)" },
-        },
+        eyebrow: "0.22em",
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [tailwindcssAnimate],
 };
 
 export default config;
