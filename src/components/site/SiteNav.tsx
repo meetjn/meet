@@ -68,7 +68,7 @@ export function SiteNav() {
     >
       <nav
         aria-label="Site"
-        className="flex items-center justify-between px-6 py-5 sm:px-12 lg:px-[max(7vw,3.5rem)]"
+        className="grid grid-cols-[1fr_auto_1fr] items-center px-6 py-5 sm:px-12 lg:px-[max(7vw,3.5rem)]"
       >
         <Link
           href="/"
@@ -77,7 +77,7 @@ export function SiteNav() {
           Meet Jain
         </Link>
 
-        <div className="flex items-center gap-2 sm:gap-6">
+        <div className="flex items-center gap-6">
           {links.map((link) => {
             const active = isActive(pathname, link.href);
             return (
@@ -95,7 +95,9 @@ export function SiteNav() {
               </Link>
             );
           })}
+        </div>
 
+        <div className="flex items-center justify-end gap-2 sm:gap-6">
           <button
             type="button"
             onClick={() => openSearch(true)}

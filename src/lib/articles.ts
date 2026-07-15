@@ -27,6 +27,8 @@ export type ArticleFrontmatter = {
   featured?: boolean;
   /** Drafts render in dev but are excluded from production builds. */
   draft?: boolean;
+  /** Listed on the homepage but not published — no route, RSS, or search entry. */
+  upcoming?: boolean;
 };
 
 export type TocEntry = {
@@ -105,11 +107,21 @@ function readArticleFile(fileName: string): Article {
 }
 
 function includeInBuild(article: Article): boolean {
+  if (article.upcoming) return true;
   return process.env.NODE_ENV !== "production" || !article.draft;
 }
 
-/** All publishable articles, newest first. */
+function isPublished(article: Article): boolean {
+  return !article.upcoming;
+}
+
+/** All publishable articles, newest first. Excludes upcoming. */
 export function getAllArticles(): Article[] {
+  return getListedArticles().filter(isPublished);
+}
+
+/** Published and upcoming articles for the homepage list, newest first. */
+export function getListedArticles(): Article[] {
   if (!fs.existsSync(ARTICLES_DIR)) return [];
 
   return fs
@@ -117,7 +129,10 @@ export function getAllArticles(): Article[] {
     .filter(isMdxFile)
     .map(readArticleFile)
     .filter(includeInBuild)
-    .sort((a, b) => b.date.localeCompare(a.date));
+    .sort((a, b) => {
+      if (a.upcoming !== b.upcoming) return a.upcoming ? -1 : 1;
+      return b.date.localeCompare(a.date);
+    });
 }
 
 export function getArticleBySlug(slug: string): Article | undefined {
@@ -137,7 +152,7 @@ export function getAdjacentArticles(slug: string): {
 
 export function getAllTags(): string[] {
   const tags = new Set<string>();
-  for (const article of getAllArticles()) {
+  for (const article of getListedArticles()) {
     for (const tag of article.tags) tags.add(tag);
   }
   return [...tags].sort();
