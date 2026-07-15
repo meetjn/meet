@@ -9,7 +9,7 @@ export const dynamic = "force-static";
 export function GET() {
   const urls = [
     "/",
-    "/tools/pomodoro",
+    "/reflection",
     "/offline",
     "/search-index.json",
     ...getAllArticles().map((article) => `/writing/${article.slug}`),

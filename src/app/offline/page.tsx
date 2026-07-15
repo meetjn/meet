@@ -19,15 +19,11 @@ export default function OfflinePage() {
         <em className="italic text-portfolio-ember">offline</em>.
       </h1>
       <p className="mb-12 max-w-[42ch] font-sans text-[15px] font-light leading-[1.9] text-portfolio-cream">
-        This page isn&apos;t cached yet — but every published article is, and
-        the pomodoro timer runs without a network.
+        This page isn&apos;t cached yet — but every published article is.
       </p>
       <div className="flex flex-wrap items-center justify-center gap-4">
         <Link href="/" className="btn-primary">
           Read the writing
-        </Link>
-        <Link href="/tools/pomodoro" className="btn-ghost">
-          Pomodoro
         </Link>
       </div>
     </section>

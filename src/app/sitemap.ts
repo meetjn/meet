@@ -27,12 +27,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.4,
     },
     {
-      url: `${SITE_URL}/tools/pomodoro`,
-      lastModified: now,
-      changeFrequency: "yearly",
-      priority: 0.4,
-    },
-    {
       url: `${SITE_URL}/llms.txt`,
       lastModified: now,
       changeFrequency: "monthly",

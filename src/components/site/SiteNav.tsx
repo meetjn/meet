@@ -6,13 +6,11 @@ import { usePathname } from "next/navigation";
 import { Search } from "lucide-react";
 
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
-import { PomodoroMiniTimer } from "@/components/pomodoro/PomodoroMiniTimer";
 import { useSearchUi } from "@/stores/search";
 
 const links = [
   { href: "/", label: "Writing" },
   { href: "/reflection", label: "Reflection" },
-  { href: "/tools/pomodoro", label: "Pomodoro" },
 ] as const;
 
 function isActive(pathname: string, href: string): boolean {
@@ -97,10 +95,6 @@ export function SiteNav() {
               </Link>
             );
           })}
-
-          {/* The full timer page already shows the countdown front and
-              center — skip the nav pill there so it isn't shown twice. */}
-          {pathname !== "/tools/pomodoro" && <PomodoroMiniTimer />}
 
           <button
             type="button"

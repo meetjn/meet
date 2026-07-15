@@ -8,7 +8,6 @@ import { GoogleAnalytics } from "@/components/GoogleAnalytics";
 import { HotjarAnalytics } from "@/components/HotjarAnalytics";
 import { CommandPalette } from "@/components/search/CommandPalette";
 import { ServiceWorkerRegistrar } from "@/components/pwa/ServiceWorkerRegistrar";
-import { PomodoroEngine } from "@/components/pomodoro/PomodoroEngine";
 import { SiteNav } from "@/components/site/SiteNav";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
@@ -138,7 +137,6 @@ export default function RootLayout({
           <GoogleAnalytics />
           <HotjarAnalytics />
           <ServiceWorkerRegistrar />
-          <PomodoroEngine />
           <CommandPalette />
           <div className="flex min-h-[100dvh] flex-col bg-portfolio-black">
             <SiteNav />

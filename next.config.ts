@@ -23,6 +23,11 @@ const nextConfig: NextConfig = {
         destination: "/reflection",
         permanent: true,
       },
+      {
+        source: "/tools/pomodoro",
+        destination: "/",
+        permanent: true,
+      },
     ];
   },
 };
