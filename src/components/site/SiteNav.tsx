@@ -11,6 +11,7 @@ import { useSearchUi } from "@/stores/search";
 
 const links = [
   { href: "/", label: "Writing" },
+  { href: "/reflection", label: "Reflection" },
   { href: "/tools/pomodoro", label: "Pomodoro" },
 ] as const;
 
