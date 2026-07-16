@@ -1,10 +1,679 @@
 ---
-title: "Your payment API is not idempotent. Here's what actually happens when the client retries"
-description: "A walk through duplicate charges, orphaned authorizations, and the retry storms that only show up once real money is moving — drawn out step by step."
-date: "2026-07-15"
-tags: ["payments", "backend", "systems"]
+title: "How to make a payment API safe to retry: idempotency keys, done properly in Go"
+description: "Build a Go payment endpoint safe to retry — atomic key claims, request fingerprints, crash recovery, and client backoff. Step-by-step, with production rules."
+date: "2026-07-17"
+updated: "2026-07-17"
+tags: ["payments", "backend", "go", "idempotency", "systems"]
 featured: true
-upcoming: true
+keywords:
+  - payment API idempotency
+  - idempotency keys
+  - idempotency keys Go
+  - duplicate charge prevention
+  - safe to retry API
+  - ON CONFLICT DO NOTHING
+  - idempotency key 409 conflict
+  - payment API Go tutorial
+  - optimistic accept payments
+  - idempotent REST API
+programmingLanguage: "Go"
+seoFaqs:
+  - question: "What is an idempotency key in a payment API?"
+    answer: "An idempotency key is a client-generated unique value (typically a v4 UUID) sent in a header that names one operation. The server uses it to tell a first attempt apart from retries of the same charge, so duplicate requests do not move money twice."
+  - question: "Why does a lookup-then-write idempotency check fail under concurrency?"
+    answer: "Two requests with the same key can both look up before either saves, both see 'not found,' and both charge the card. The fix is to claim the key atomically with a unique-constraint insert (ON CONFLICT DO NOTHING) before doing any work."
+  - question: "What HTTP status should a payment API return when an idempotency key is still in progress?"
+    answer: "Return 409 Conflict when a retry arrives while the first request with that key is still running. The client should back off and retry later — not start a second charge and not replay a result that does not exist yet."
+  - question: "What happens if a client reuses an idempotency key with a different request body?"
+    answer: "The server should reject the request with 422 Unprocessable Entity. Store a fingerprint of the original request with the key; if a reused key arrives with a different fingerprint, refuse — one name must not point at two different operations."
+  - question: "How do you survive a server crash between charging a card and saving the result?"
+    answer: "Break the operation into committed stages with markers in the database. Record local intent before the external call, pass the same idempotency key to the payment rail for deduplication, and resume from the last committed marker on retry."
+  - question: "Should failed payment responses be stored for idempotency replay?"
+    answer: "Yes. Store the status code and response body whether the charge succeeded or failed, so a retry gets the same outcome as the first attempt — not a fresh roll of the dice."
+  - question: "How should clients retry payment API calls?"
+    answer: "Reuse one idempotency key for every retry of the same operation, use exponential backoff with jitter, and retry only transient failures (timeouts, dropped connections) — never a declined card or a 4xx the client caused."
 ---
 
-_Writing._
+The first time I watched a customer get charged twice, nothing had gone wrong. No bug in the charge logic, no bad input, no exception. My code charged the card exactly the way I wrote it to — and then charged it again, cleanly, for the same thing. The double charge didn't come from my code failing. It came from my code _succeeding_, twice, because the network between my server and the client is less reliable than the code inside my function.
+
+This article is a build-along. By the end you'll have a payment endpoint in Go that is safe to retry: it survives lost responses, two identical requests arriving at the same instant, mismatched retries, and a crash in the middle of a charge. I'll build it in stages, and at each stage I'll break the previous version on purpose, because every hole in this problem is invisible until you see the exact sequence of events that exposes it.
+
+## The failure we're solving
+
+Start with the endpoint most of us write first.
+
+```go
+func (s *Server) CreateCharge(w http.ResponseWriter, r *http.Request) {
+    var req ChargeRequest
+    if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+        http.Error(w, "bad request", http.StatusBadRequest)
+        return
+    }
+    charge, err := s.rail.Charge(req.CustomerID, req.AmountCents, req.Currency)
+    if err != nil {
+        http.Error(w, "charge failed", http.StatusBadGateway)
+        return
+    }
+    s.db.SaveCharge(charge)
+    json.NewEncoder(w).Encode(charge)
+}
+```
+
+Every line is correct. It breaks anyway, on this exact sequence:
+
+1. Client sends the request.
+2. Server charges the card. **The money moves.**
+3. The connection drops before the response reaches the client.
+4. The client, having received nothing, cannot tell whether the charge happened. So it retries.
+5. The server charges the card a second time.
+
+Here is that sequence — the failure is invisible until you see the timing:
+
+<SketchCanvas
+  viewBox="0 0 760 340"
+  title="Lost HTTP response causes a duplicate charge: the server succeeds twice because the client cannot tell the first attempt worked"
+  caption={
+    <>
+      The original bug. <em>money moved, client heard nothing, retry looks identical</em>
+    </>
+  }
+>
+  <SketchInk>
+    <SketchBox x={30} y={36} width={90} height={44} label="Client" showLabels={false} delay={0} />
+    <SketchArrow from={[124, 58]} to={[152, 58]} delay={100} />
+    <SketchBox x={158} y={36} width={90} height={44} label="Server" showLabels={false} delay={150} />
+    <SketchArrow from={[252, 58]} to={[280, 58]} delay={200} />
+    <SketchBox
+      x={286}
+      y={36}
+      width={120}
+      height={44}
+      label="Card rail"
+      accent
+      showLabels={false}
+      delay={300}
+    />
+    <SketchArrow from={[203, 84]} to={[75, 84]} bow={-22} dashed delay={450} />
+
+    <SketchBox x={30} y={180} width={90} height={44} label="Client" showLabels={false} delay={650} />
+    <SketchArrow from={[124, 202]} to={[152, 202]} delay={750} />
+    <SketchBox x={158} y={180} width={90} height={44} label="Server" showLabels={false} delay={800} />
+    <SketchArrow from={[252, 202]} to={[280, 202]} accent delay={850} />
+    <SketchBox
+      x={286}
+      y={180}
+      width={120}
+      height={44}
+      label="Card rail"
+      accent
+      showLabels={false}
+      delay={950}
+    />
+  </SketchInk>
+  <SketchText>
+    <SketchLabel x={30} y={24} muted>
+      1st attempt
+    </SketchLabel>
+    <SketchBoxCaption x={30} y={36} width={90} height={44} label="Client" delay={0} />
+    <SketchBoxCaption x={158} y={36} width={90} height={44} label="Server" delay={150} />
+    <SketchBoxCaption
+      x={286}
+      y={36}
+      width={120}
+      height={44}
+      label="Card rail"
+      sub="money moves"
+      delay={300}
+    />
+    <SketchLabel x={266} y={74} anchor="middle" muted delay={320}>
+      charge
+    </SketchLabel>
+    <SketchLabel x={120} y={112} anchor="middle" muted delay={480}>
+      response lost
+    </SketchLabel>
+    <SketchNote x={30} y={128} delay={550}>
+      client hears nothing
+    </SketchNote>
+
+    <SketchLabel x={30} y={168} muted>
+      2nd attempt — same bytes
+    </SketchLabel>
+    <SketchBoxCaption x={30} y={180} width={90} height={44} label="Client" sub="retry" delay={650} />
+    <SketchBoxCaption x={158} y={180} width={90} height={44} label="Server" delay={800} />
+    <SketchBoxCaption
+      x={286}
+      y={180}
+      width={120}
+      height={44}
+      label="Card rail"
+      sub="charge #2"
+      delay={950}
+    />
+    <SketchNote x={430} y={248} delay={1050}>
+      server can't tell retry from first
+    </SketchNote>
+  </SketchText>
+</SketchCanvas>
+
+The root cause, stated precisely: **a retry is byte-for-byte identical to a first attempt, so the server cannot distinguish them unless the client gives it a way to.** Nothing in that endpoint lets the server tell "new charge" apart from "the charge you already did and the client didn't hear about."
+
+<Callout type="warning" title="Rule 0">
+
+Any endpoint that creates or moves something is unsafe to retry by default. Reads and deletes are naturally safe; creates and money movements are not.
+
+</Callout>
+
+## The mechanism: name the operation
+
+An operation is idempotent if performing it many times leaves the same state as performing it once. We make a create-operation idempotent by attaching a **name** to it — a client-generated unique value, the _idempotency key_ — that is identical on the first attempt and every retry, and different for every distinct operation.
+
+The key names the operation, not the HTTP request. "Charge customer 42, 2000 paise, INR, for order 4821" gets one name; every attempt to make that one thing happen carries it.
+
+Client side, it's a header:
+
+```go
+key := uuid.NewString() // v4 UUID: enough entropy that two clients never collide
+req.Header.Set("Idempotency-Key", key)
+```
+
+Two hard constraints on the key, both of which prevent real bugs:
+
+- **Generate it with real randomness** (a v4 UUID). If two independent operations can collide on a key, one of them gets the other's result.
+- **Put no meaning inside it.** Never use an email, a user ID, or anything identifying. The key is opaque. Encoding data into it just leaks that data into every log line and index that touches the key.
+
+<Callout type="idea" title="Rule 1">
+
+The client owns the key, generates one per operation, and sends the same key on every retry of that operation. The server treats it as an opaque name.
+
+</Callout>
+
+One operation, one name — every attempt carries the same header; a different charge gets a different key:
+
+<SketchCanvas
+  viewBox="0 0 760 280"
+  title="One idempotency key names one operation; every retry reuses it, distinct operations get distinct keys"
+  caption={
+    <>
+      The key names the operation, not the HTTP request.{" "}
+      <em>same key on every retry of one charge</em>
+    </>
+  }
+>
+  <SketchInk>
+    <SketchBox x={30} y={108} width={100} height={84} label="Client" showLabels={false} delay={0} />
+    <SketchBox x={200} y={98} width={120} height={44} label="Attempt 1" showLabels={false} delay={180} />
+    <SketchBox x={200} y={158} width={120} height={44} label="Retry" showLabels={false} delay={340} />
+    <SketchBox
+      x={420}
+      y={108}
+      width={160}
+      height={84}
+      label="Server"
+      accent
+      showLabels={false}
+      delay={500}
+    />
+    <SketchBox x={200} y={28} width={120} height={44} label="Other charge" dashed showLabels={false} delay={660} />
+
+    <SketchArrow from={[134, 120]} to={[196, 120]} delay={100} />
+    <SketchArrow from={[134, 180]} to={[196, 180]} delay={260} />
+    <SketchArrow from={[324, 120]} to={[416, 130]} delay={420} />
+    <SketchArrow from={[324, 180]} to={[416, 152]} bow={-8} delay={480} />
+    <SketchArrow from={[134, 50]} to={[196, 50]} dashed delay={580} />
+  </SketchInk>
+  <SketchText>
+    <SketchBoxCaption x={30} y={108} width={100} height={84} label="Client" delay={0} />
+    <SketchBoxCaption x={200} y={98} width={120} height={44} label="Attempt 1" delay={180} />
+    <SketchBoxCaption x={200} y={158} width={120} height={44} label="Retry" sub="timeout" delay={340} />
+    <SketchBoxCaption
+      x={420}
+      y={108}
+      width={160}
+      height={84}
+      label="Server"
+      sub="one name · one outcome"
+      delay={500}
+    />
+    <SketchBoxCaption x={200} y={28} width={120} height={44} label="Other charge" delay={660} />
+
+    <SketchLabel x={168} y={116} anchor="end" muted delay={140}>
+      abc-123
+    </SketchLabel>
+    <SketchLabel x={168} y={176} anchor="end" muted delay={300}>
+      same key
+    </SketchLabel>
+    <SketchLabel x={168} y={46} anchor="end" muted delay={620}>
+      xyz-789
+    </SketchLabel>
+    <SketchNote x={520} y={200} delay={740}>
+      different operation → different key
+    </SketchNote>
+  </SketchText>
+</SketchCanvas>
+
+## Version 1: look, then act (and why it's not enough)
+
+The obvious first implementation:
+
+```go
+func (s *Server) CreateCharge(w http.ResponseWriter, r *http.Request) {
+    key := r.Header.Get("Idempotency-Key")
+    if key == "" {
+        http.Error(w, "missing idempotency key", http.StatusBadRequest)
+        return
+    }
+    if saved, found := s.db.LookupCharge(key); found {
+        json.NewEncoder(w).Encode(saved) // replay the first result
+        return
+    }
+    var req ChargeRequest
+    json.NewDecoder(r.Body).Decode(&req)
+    charge, _ := s.rail.Charge(req.CustomerID, req.AmountCents, req.Currency)
+    s.db.SaveCharge(key, charge)
+    json.NewEncoder(w).Encode(charge)
+}
+```
+
+This fixes the _sequential_ retry: first attempt saves under the key, the lost-response retry finds it and replays. Good. But it has a race that production will find within a day.
+
+The client didn't send its retry _after_ the first request finished — it sent it because it gave up waiting, while the first request may still be running. So two requests with the same key run concurrently. Here is the race the lookup-then-write pattern leaves open:
+
+<SketchCanvas
+  viewBox="0 0 760 320"
+  title="Concurrent duplicate charge: two requests with the same idempotency key both pass lookup before either saves"
+  caption={
+    <>
+      The concurrent duplicate. <em>both read "not found" inside the check-then-act window</em>
+    </>
+  }
+>
+  <SketchInk>
+    <SketchBox x={50} y={48} width={130} height={48} label="Lookup key" showLabels={false} delay={0} />
+    <SketchBox x={380} y={48} width={130} height={48} label="Lookup key" showLabels={false} delay={80} />
+    <SketchArrow from={[115, 100]} to={[115, 128]} delay={200} />
+    <SketchArrow from={[445, 100]} to={[445, 128]} delay={220} />
+    <SketchBox x={50} y={136} width={130} height={48} label="Charge card" accent showLabels={false} delay={320} />
+    <SketchBox x={380} y={136} width={130} height={48} label="Charge card" accent showLabels={false} delay={340} />
+    <SketchArrow from={[115, 188]} to={[115, 216]} delay={520} />
+    <SketchArrow from={[445, 188]} to={[445, 216]} delay={540} />
+    <SketchBox x={50} y={224} width={130} height={48} label="Save key" showLabels={false} delay={640} />
+    <SketchBox x={380} y={224} width={130} height={48} label="Save key" showLabels={false} delay={660} />
+  </SketchInk>
+  <SketchText>
+    <SketchLabel x={115} y={32} anchor="middle">
+      Request A
+    </SketchLabel>
+    <SketchLabel x={445} y={32} anchor="middle">
+      Request B
+    </SketchLabel>
+    <SketchBoxCaption x={50} y={48} width={130} height={48} label="Lookup key" sub="not found" delay={0} />
+    <SketchBoxCaption x={380} y={48} width={130} height={48} label="Lookup key" sub="not found" delay={80} />
+    <SketchBoxCaption x={50} y={136} width={130} height={48} label="Charge card" delay={320} />
+    <SketchBoxCaption x={380} y={136} width={130} height={48} label="Charge card" delay={340} />
+    <SketchNote x={248} y={168} angle={0} delay={450}>
+      both inside the window
+    </SketchNote>
+    <SketchBoxCaption x={50} y={224} width={130} height={48} label="Save key" delay={640} />
+    <SketchBoxCaption x={380} y={224} width={130} height={48} label="Save key" delay={660} />
+    <SketchNote x={248} y={292} delay={760}>
+      check-then-act — two steps, one gap
+    </SketchNote>
+  </SketchText>
+</SketchCanvas>
+
+Both looked before either wrote. Both charged. This is the **concurrent duplicate**, and it's a different failure from the sequential retry: the check-then-act pattern has a window between the check and the act, and the second request fits inside it.
+
+<Callout type="warning" title="Rule 2">
+
+A lookup followed by a separate write is not safe under concurrency. Do not let "have I seen this key?" and "record this key" be two steps.
+
+</Callout>
+
+## Version 2: claim the key atomically
+
+The fix is to stop _asking_ whether the key exists and instead _try to claim it_, letting the database's uniqueness constraint be the referee. Exactly one racing request wins the insert; the loser learns someone else owns the key.
+
+The schema — this is the core data structure, worth getting exactly right:
+
+```sql
+CREATE TABLE idempotency_keys (
+    key           TEXT PRIMARY KEY,        -- the claim itself is the lock
+    request_hash  TEXT NOT NULL,           -- fingerprint of the original request
+    status_code   INT,                     -- filled in once the work finishes
+    response_body BYTEA,                   -- the exact bytes to replay on retry
+    state         TEXT NOT NULL,           -- 'in_progress' | 'completed'
+    created_at    TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+```
+
+The claim, as a single atomic statement. `ON CONFLICT DO NOTHING` means the insert either creates the row (we won) or affects zero rows (someone else owns it):
+
+```sql
+INSERT INTO idempotency_keys (key, request_hash, state)
+VALUES ($1, $2, 'in_progress')
+ON CONFLICT (key) DO NOTHING;
+```
+
+In Go, the endpoint now has three cases to handle — this is the heart of the whole implementation:
+
+```go
+func (s *Server) CreateCharge(w http.ResponseWriter, r *http.Request) {
+    key := r.Header.Get("Idempotency-Key")
+    if key == "" {
+        http.Error(w, "missing idempotency key", http.StatusBadRequest)
+        return
+    }
+    var req ChargeRequest
+    if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+        http.Error(w, "bad request", http.StatusBadRequest)
+        return
+    }
+
+    won, err := s.db.ClaimKey(r.Context(), key, req.Fingerprint())
+    if err != nil {
+        http.Error(w, "internal error", http.StatusInternalServerError)
+        return
+    }
+
+    if !won {
+        // The key already exists. Fetch its current state.
+        rec, _ := s.db.LoadKey(r.Context(), key)
+
+        if rec.RequestHash != req.Fingerprint() {
+            // Same key, different request. Refuse — see Version 3.
+            http.Error(w, "idempotency key reused with different parameters",
+                http.StatusUnprocessableEntity)
+            return
+        }
+        if rec.State == "completed" {
+            // Finished earlier. Replay the exact original response, status and all.
+            w.WriteHeader(rec.StatusCode)
+            w.Write(rec.ResponseBody)
+            return
+        }
+        // Claimed but not finished: a request with this key is still running.
+        http.Error(w, "a request with this key is in progress",
+            http.StatusConflict) // 409 — client should back off and retry
+        return
+    }
+
+    // We won the claim. We are the only worker for this key.
+    charge, err := s.rail.Charge(req.CustomerID, req.AmountCents, req.Currency)
+    if err != nil {
+        body, _ := json.Marshal(map[string]string{"error": "charge failed"})
+        s.db.CompleteKey(r.Context(), key, http.StatusBadGateway, body)
+        w.WriteHeader(http.StatusBadGateway)
+        w.Write(body)
+        return
+    }
+    body, _ := json.Marshal(charge)
+    s.db.CompleteKey(r.Context(), key, http.StatusOK, body)
+    w.WriteHeader(http.StatusOK)
+    w.Write(body)
+}
+```
+
+Three things here are deliberate and matter for correctness:
+
+- The `PRIMARY KEY` on `key` is the concurrency control. I wrote no locking logic; the database rejects the second insert. Reach for the tool that's actually built for this instead of hand-rolling mutexes.
+- There's a **third state**, `in_progress`. A retry that lands while the first attempt is still running must not replay a result that doesn't exist yet and must not start a second charge. It gets a `409` and comes back later. This is why a mature payments API has a dedicated "key currently in use" error — it's this exact branch.
+- I **replay the stored response even on failure.** I store the status and body whether the charge succeeded or returned an error, so a retry gets the _same_ outcome the first attempt did, not a fresh roll of the dice.
+
+Once a key is claimed, every later request with that key lands in one of three places:
+
+<SketchCanvas
+  viewBox="0 0 760 360"
+  title="Idempotency key lifecycle: claim, three states, and what each retry hits"
+  caption={
+    <>
+      The three states after atomic claim.{" "}
+      <em>409 while running, replay when done, 422 on body mismatch</em>
+    </>
+  }
+>
+  <SketchInk>
+    <SketchBox x={24} y={56} width={130} height={56} label="Claim key" showLabels={false} delay={0} />
+    <SketchArrow from={[158, 84]} to={[186, 84]} delay={120} />
+    <SketchBox x={192} y={56} width={130} height={56} label="in_progress" showLabels={false} delay={200} />
+    <SketchArrow from={[326, 84]} to={[354, 84]} delay={320} />
+    <SketchBox x={360} y={56} width={150} height={56} label="completed" accent showLabels={false} delay={400} />
+
+    <SketchArrow from={[257, 116]} to={[257, 154]} delay={500} />
+    <SketchBox x={192} y={162} width={130} height={48} label="409 Conflict" showLabels={false} delay={580} />
+
+    <SketchArrow from={[580, 56]} to={[514, 56]} bow={-22} dashed delay={660} />
+
+    <SketchArrow from={[257, 116]} to={[257, 248]} dashed delay={780} />
+    <SketchBox x={192} y={256} width={130} height={48} label="422" showLabels={false} delay={860} />
+  </SketchInk>
+  <SketchText>
+    <SketchBoxCaption x={24} y={56} width={130} height={56} label="Claim key" sub="INSERT wins" delay={0} />
+    <SketchBoxCaption x={192} y={56} width={130} height={56} label="in_progress" sub="charge running" delay={200} />
+    <SketchBoxCaption
+      x={360}
+      y={56}
+      width={150}
+      height={56}
+      label="completed"
+      sub="response stored"
+      delay={400}
+    />
+    <SketchLabel x={278} y={138} muted delay={540}>
+      retry too early
+    </SketchLabel>
+    <SketchBoxCaption x={192} y={162} width={130} height={48} label="409 Conflict" sub="back off" delay={580} />
+    <SketchLabel x={548} y={44} anchor="middle" muted delay={700}>
+      retry later
+    </SketchLabel>
+    <SketchNote x={548} y={72} delay={720}>
+      replay exact status + body
+    </SketchNote>
+    <SketchBoxCaption x={192} y={256} width={130} height={48} label="422" sub="hash mismatch" delay={860} />
+    <SketchNote x={340} y={272} delay={940}>
+      same key, different body
+    </SketchNote>
+  </SketchText>
+</SketchCanvas>
+
+<Callout type="idea" title="Rule 3">
+
+Claim the key with a unique-constraint insert before doing any work. Model three states: new (do the work), completed (replay the stored response), in-progress (return 409).
+
+</Callout>
+
+## Version 3: the same name must mean the same thing
+
+There's a `request_hash` in the schema and a fingerprint check in the code above. Here's the bug it prevents.
+
+A key names an operation. So what should happen when a client sends a key it already used, but with a _different body_ — "charge 2000" the first time, "charge 5000" under the same key later? Replaying the first result silently swallows the second, real request. Running the second means the key protected nothing. Both outcomes let one name point at two operations.
+
+So on every reused key, I verify the incoming request matches the one I first stored under that key, by hashing the meaningful fields:
+
+```go
+func (req ChargeRequest) Fingerprint() string {
+    h := sha256.New()
+    fmt.Fprintf(h, "%s|%d|%s", req.CustomerID, req.AmountCents, req.Currency)
+    return hex.EncodeToString(h.Sum(nil))
+}
+```
+
+Mismatch → reject with `422` (as in the Version 2 code) instead of guessing.
+
+<Callout type="idea" title="Rule 4">
+
+Store a fingerprint of the original request with the key. If a reused key arrives with a different fingerprint, reject it. A name that points at two different operations isn't a name.
+
+</Callout>
+
+## Version 4: when you save decides what a retry can see
+
+A subtle sequencing rule: **claim the key at the moment real work begins — not a step earlier.**
+
+If a request fails validation (malformed body, missing field) before any work happens, don't burn the key on it. The client should fix the typo and retry with the same key successfully. The same logic applies to the checks that run _ahead_ of your endpoint — authentication and rate limiting sit in front of the idempotency layer. A request rejected for a missing API key (`401`) or for arriving too fast (`429`) hasn't started work, so its key must remain reusable once the client fixes auth or slows down.
+
+Concretely, that's why the Version 2 code decodes and validates the body _before_ calling `ClaimKey`, and claims only when it's about to actually charge.
+
+<Callout type="idea" title="Rule 5">
+
+The idempotency layer protects the _work_. Front-door rejections (auth, rate limit, validation) happen before work starts, so they must not consume the key.
+
+</Callout>
+
+## Version 5: surviving a crash in the middle
+
+The hardest case. Charging isn't atomic — it's reserve-locally, call-the-rail, record-the-result. If the server dies between "call the rail" and "record the result," the money moved but the database doesn't know it, and a naive retry charges again.
+
+You can't wrap the external call in a database transaction; no `ROLLBACK` of yours reaches the card network. So instead: break the operation into stages, and after each stage write a marker _in the same transaction that did that stage's work_. Stage and marker commit together or not at all. A retry reads the marker and resumes from where the last attempt stopped.
+
+<SketchCanvas
+  viewBox="0 0 760 330"
+  title="Staged charge with committed markers: record local intent before the irreversible external call, resume after crash"
+  caption={
+    <>
+      Crash recovery. <em>intent before the rail, resume from the last marker</em>
+    </>
+  }
+>
+  <SketchInk>
+    <SketchBox x={24} y={70} width={100} height={52} label="Started" showLabels={false} delay={0} />
+    <SketchArrow from={[128, 96]} to={[156, 96]} delay={100} />
+    <SketchBox x={162} y={70} width={130} height={52} label="Reserved" showLabels={false} delay={200} />
+    <SketchArrow from={[296, 96]} to={[324, 96]} delay={300} />
+    <SketchBox x={330} y={70} width={120} height={52} label="Charge rail" accent showLabels={false} delay={400} />
+    <SketchArrow from={[454, 96]} to={[482, 96]} delay={500} />
+    <SketchBox x={488} y={70} width={130} height={52} label="Completed" showLabels={false} delay={600} />
+
+    <SketchArrow from={[390, 130]} to={[390, 178]} dashed delay={720} />
+    <SketchBox x={310} y={188} width={160} height={52} label="Retry" dashed showLabels={false} delay={780} />
+    <SketchArrow from={[310, 214]} to={[228, 214]} bow={10} dashed delay={860} />
+    <SketchArrow from={[228, 214]} to={[228, 124]} bow={-12} dashed delay={940} />
+  </SketchInk>
+  <SketchText>
+    <SketchBoxCaption x={24} y={70} width={100} height={52} label="Started" delay={0} />
+    <SketchBoxCaption x={162} y={70} width={130} height={52} label="Reserved" sub="intent in DB" delay={200} />
+    <SketchBoxCaption x={330} y={70} width={120} height={52} label="Charge rail" sub="same key" delay={400} />
+    <SketchBoxCaption x={488} y={70} width={130} height={52} label="Completed" sub="result stored" delay={600} />
+    <SketchNote x={404} y={132} delay={680}>
+      crash here?
+    </SketchNote>
+    <SketchBoxCaption x={310} y={188} width={160} height={52} label="Retry" sub="reads last marker" delay={780} />
+    <SketchLabel x={268} y={208} anchor="end" muted delay={880}>
+      ask rail
+    </SketchLabel>
+    <SketchLabel x={236} y={168} anchor="end" muted delay={960}>
+      adopt existing
+    </SketchLabel>
+    <SketchNote x={24} y={280} delay={1020}>
+      never call the rail before intent is committed locally
+    </SketchNote>
+  </SketchText>
+</SketchCanvas>
+
+```go
+func (s *Server) processCharge(ctx context.Context, key string, req ChargeRequest) (*Charge, error) {
+    state, err := s.db.LoadState(ctx, key)
+    if err != nil {
+        return nil, err
+    }
+
+    // Stage 1: reserve intent locally, before any money moves.
+    // ReserveAndMark writes the reservation row AND advances the phase in one tx.
+    if state.Phase == PhaseStarted {
+        if err := s.db.ReserveAndMark(ctx, key, req, PhaseReserved); err != nil {
+            return nil, err
+        }
+        state.Phase = PhaseReserved
+    }
+
+    // Stage 2: the external call — the part that can't be rolled back.
+    if state.Phase == PhaseReserved {
+        // Pass OUR key to the rail too, so the rail can dedupe on its side.
+        charge, err := s.rail.ChargeWithKey(key, req.CustomerID, req.AmountCents, req.Currency)
+        if err != nil {
+            return nil, err
+        }
+        // Crash between the line above and the line below?
+        // The retry re-enters at PhaseReserved and asks the rail whether a
+        // charge under this key already exists — it does — so it adopts it
+        // instead of charging again.
+        if err := s.db.RecordResultAndMark(ctx, key, charge, PhaseCompleted); err != nil {
+            return nil, err
+        }
+        state.Charge = charge
+    }
+    return state.Charge, nil
+}
+```
+
+The ordering in Stage 2 is the whole point: **write local intent first, make the outside call second, never the reverse.** Because intent is recorded before the call, a retry that lands mid-flight knows a charge _might_ have gone out under this key, so it asks the rail (passing the same key) rather than firing blind. If the rail has it, adopt it; if not, make it. One charge either way.
+
+This is the same discipline as reserving funds before you answer a request instead of after: decide what's true and write it down _before_ the irreversible step, so that if you fall over, you fall over somewhere you've already reasoned about.
+
+<Callout type="idea" title="Rule 6">
+
+For steps you can't roll back, record intent locally (committed) before the external call, and record the result after. Make the external provider dedupe on the same key. A retry resumes from the last committed marker.
+
+</Callout>
+
+## Version 6: retry like a good citizen (client side)
+
+Idempotency makes retries _safe_; it doesn't make them _kind_. Retrying instantly and repeatedly turns a momentarily slow server into a self-reinforcing outage, because every client retries in the same instant. So: wait, wait longer each time, and add randomness so clients don't synchronize.
+
+```go
+func chargeWithRetry(ctx context.Context, c *PaymentClient, req ChargeRequest) (*Charge, error) {
+    key := uuid.NewString() // ONE key for the whole operation, reused on every attempt
+
+    backoff := 200 * time.Millisecond
+    for attempt := 0; attempt < 5; attempt++ {
+        charge, err := c.Charge(ctx, key, req) // same key every time
+        if err == nil {
+            return charge, nil
+        }
+        if !isRetryable(err) { // declined card, bad request → don't retry
+            return nil, err
+        }
+        jitter := time.Duration(rand.Int63n(int64(backoff / 2)))
+        time.Sleep(backoff + jitter)
+        backoff *= 2 // 200ms → 400ms → 800ms → ...
+    }
+    return nil, fmt.Errorf("charge failed after retries")
+}
+```
+
+Two independent properties, and you need both: the **same key every attempt** (so the server dedupes), and **exponential backoff with jitter** (so a struggling server recovers instead of being buried). A key without backoff protects your data and endangers your server; backoff without a key protects your server and endangers your data.
+
+And retry only what might differ next time — timeouts, dropped connections. A declined card won't change on retry; asking again just wastes the attempt.
+
+<Callout type="idea" title="Rule 7">
+
+Reuse one key across all retries of an operation. Back off exponentially with jitter. Retry transient failures only; never retry a definitive decline or a 4xx you caused.
+
+</Callout>
+
+## Two smaller decisions
+
+**Key lifetime.** Expire keys after ~24h and reap them. A retry that's coming is coming within minutes. But if a reaped key can ever be reused, make that a deliberate choice — a "new" charge under a recycled name is exactly the bug this article exists to prevent.
+
+**Key scope.** Scope keys to the endpoint and the caller, not globally, so the same value used by different callers for different operations can't collide. Unique _within the place it's used_ is all it needs to be.
+
+## Reference checklist
+
+Hold your own implementation against this:
+
+- [ ] Client generates one v4-UUID key per operation, sends it on every retry.
+- [ ] Server rejects requests with no key on create/money endpoints.
+- [ ] Body is validated _before_ the key is claimed.
+- [ ] Key is claimed with a unique-constraint insert (`ON CONFLICT DO NOTHING`), not a look-then-write.
+- [ ] Three states handled: new → work; completed → replay stored response; in-progress → 409.
+- [ ] Stored response includes status code and body, and is replayed on failure too, not just success.
+- [ ] Request fingerprint stored and checked; reused key + different body → 422.
+- [ ] Front-door rejections (auth/rate-limit/validation) do not consume the key.
+- [ ] Non-rollbackable steps: local intent committed before the external call; external provider deduped on the same key; retries resume from the last marker.
+- [ ] Client uses exponential backoff with jitter, same key throughout, transient-only retries.
+- [ ] Keys expire and are scoped to endpoint + caller.
+
+## Closing
+
+None of this makes failure go away. Networks still drop, servers still restart at the worst moment. What changes is that every failure now lands somewhere you've already handled: a lost response on a key that replays, two simultaneous requests on a claim only one can win, a mid-charge crash on a marker that says where to resume, a struggling server on backoff instead of a stampede.
+
+The whole shift is smaller than it sounds — you stop treating each request as a fresh event and start treating it as a named operation that may arrive more than once. The first time I saw a customer charged twice, it was because my code assumed every request was the first one. Once every operation has a name and every retry lands on a system that remembers what it already did, the double charge doesn't happen. Not because failure stopped — because failure became survivable.

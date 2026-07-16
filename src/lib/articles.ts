@@ -29,6 +29,12 @@ export type ArticleFrontmatter = {
   draft?: boolean;
   /** Listed on the homepage but not published — no route, RSS, or search entry. */
   upcoming?: boolean;
+  /** Extra search/AI vocabulary beyond tags — used in meta keywords and JSON-LD. */
+  keywords?: string[];
+  /** Structured Q&A for FAQPage JSON-LD (rich results + AI extraction). */
+  seoFaqs?: { question: string; answer: string }[];
+  /** Primary code language for TechArticle schema (e.g. "Go"). */
+  programmingLanguage?: string;
 };
 
 export type TocEntry = {

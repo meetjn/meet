@@ -6,9 +6,12 @@ import { CodeBlock } from "./CodeBlock";
 import {
   SketchArrow,
   SketchBox,
+  SketchBoxCaption,
   SketchCanvas,
+  SketchInk,
   SketchLabel,
   SketchNote,
+  SketchText,
 } from "@/components/sketch";
 
 /** Linked heading — rehype-slug supplies the id, we add the anchor. */
@@ -73,7 +76,10 @@ export const mdxComponents: MDXComponents = {
   pre: CodeBlock,
   Callout,
   SketchCanvas,
+  SketchInk,
+  SketchText,
   SketchBox,
+  SketchBoxCaption,
   SketchArrow,
   SketchNote,
   SketchLabel,

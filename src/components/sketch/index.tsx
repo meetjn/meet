@@ -1,10 +1,12 @@
 "use client";
 
 import {
+  Children,
   isValidElement,
   useEffect,
   useRef,
   useState,
+  type ReactElement,
   type ReactNode,
 } from "react";
 
@@ -36,6 +38,86 @@ import {
 const INK = "rgb(var(--ink-2))";
 const MUTED = "rgb(var(--ink-3))";
 const EMBER = "rgb(var(--accent-bright))";
+/** Opaque canvas fill so labels stay legible over ink strokes. */
+const CANVAS = "rgb(var(--canvas))";
+
+type TextAnchor = "start" | "middle" | "end";
+type TextVariant = "label" | "sublabel" | "note";
+
+function backdropForText(
+  x: number,
+  y: number,
+  text: string,
+  anchor: TextAnchor,
+  variant: TextVariant,
+) {
+  const fontSize = variant === "note" ? 19 : variant === "label" ? 12 : 10;
+  const charW = variant === "note" ? 8.5 : 5.6;
+  const width = Math.max(text.length * charW + 14, 28);
+  const height = fontSize + 10;
+  let rx = x - 6;
+  if (anchor === "middle") rx = x - width / 2;
+  if (anchor === "end") rx = x - width;
+  return { x: rx, y: y - fontSize - 1, width, height };
+}
+
+function SketchBackedText({
+  x,
+  y,
+  anchor = "start",
+  variant,
+  fill,
+  delay = 0,
+  angle,
+  children,
+}: {
+  x: number;
+  y: number;
+  anchor?: TextAnchor;
+  variant: TextVariant;
+  fill: string;
+  delay?: number;
+  angle?: number;
+  children: ReactNode;
+}) {
+  const text = textContent(children);
+  if (!text) return null;
+  const rect = backdropForText(x, y, text, anchor, variant);
+  const className =
+    variant === "note"
+      ? "sketch-note"
+      : variant === "label"
+        ? "sketch-label"
+        : "sketch-sublabel";
+  const transform = angle ? `rotate(${angle} ${x} ${y})` : undefined;
+
+  return (
+    <g
+      className="sketch-fade"
+      style={{ transitionDelay: `${delay}ms` }}
+      transform={transform}
+    >
+      <rect
+        x={rect.x}
+        y={rect.y}
+        width={rect.width}
+        height={rect.height}
+        rx={3}
+        fill={CANVAS}
+        opacity={0.96}
+      />
+      <text
+        x={x}
+        y={y}
+        textAnchor={anchor}
+        className={className}
+        style={{ fill }}
+      >
+        {text}
+      </text>
+    </g>
+  );
+}
 
 /**
  * SVG <text> can't render block elements, and MDX wraps multi-line JSX
@@ -98,6 +180,8 @@ export function SketchCanvas({
     return () => observer.disconnect();
   }, []);
 
+  const { ink, text } = partitionSketchLayers(children);
+
   return (
     <figure ref={figureRef} data-drawn={drawn} className="sketch-figure">
       <div className="overflow-x-auto">
@@ -108,7 +192,10 @@ export function SketchCanvas({
           className="h-auto w-full"
           style={{ minWidth }}
         >
-          {children}
+          <g className="sketch-layer-ink">{ink}</g>
+          {text.length > 0 ? (
+            <g className="sketch-layer-text">{text}</g>
+          ) : null}
         </svg>
       </div>
       {caption ? (
@@ -154,9 +241,96 @@ type SketchBoxProps = {
   dashed?: boolean;
   /** Stagger offset in ms for the draw-in. */
   delay?: number;
+  /** When false, only the box outline is drawn — pair with SketchBoxCaption in SketchText. */
+  showLabels?: boolean;
   /** Override the wobble seed; defaults to label + geometry. */
   seed?: string;
 };
+
+export function SketchInk({ children }: { children: ReactNode }) {
+  return <>{children}</>;
+}
+
+export function SketchText({ children }: { children: ReactNode }) {
+  return <>{children}</>;
+}
+
+function isSketchTextLayer(child: ReactNode): child is ReactElement {
+  return isValidElement(child) && child.type === SketchText;
+}
+
+function partitionSketchLayers(children: ReactNode): {
+  ink: ReactNode[];
+  text: ReactNode[];
+} {
+  const ink: ReactNode[] = [];
+  const text: ReactNode[] = [];
+
+  Children.forEach(children, (child) => {
+    if (isSketchTextLayer(child)) {
+      text.push(
+        ...Children.toArray(
+          (child.props as { children: ReactNode }).children,
+        ),
+      );
+    } else {
+      ink.push(child);
+    }
+  });
+
+  return { ink, text };
+}
+
+type SketchBoxCaptionProps = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  label?: string;
+  sub?: string;
+  delay?: number;
+};
+
+/** Labels for a SketchBox drawn with showLabels={false} — place inside SketchText. */
+export function SketchBoxCaption({
+  x,
+  y,
+  width,
+  height,
+  label,
+  sub,
+  delay = 0,
+}: SketchBoxCaptionProps) {
+  const centerX = x + width / 2;
+  return (
+    <>
+      {label ? (
+        <SketchBackedText
+          x={centerX}
+          y={y + height / 2 + (sub ? -4 : 4)}
+          anchor="middle"
+          variant="label"
+          fill={INK}
+          delay={delay + 240}
+        >
+          {label}
+        </SketchBackedText>
+      ) : null}
+      {sub ? (
+        <SketchBackedText
+          x={centerX}
+          y={y + height / 2 + 15}
+          anchor="middle"
+          variant="sublabel"
+          fill={MUTED}
+          delay={delay + 300}
+        >
+          {sub}
+        </SketchBackedText>
+      ) : null}
+    </>
+  );
+}
 
 export function SketchBox({
   x,
@@ -168,6 +342,7 @@ export function SketchBox({
   accent = false,
   dashed = false,
   delay = 0,
+  showLabels = true,
   seed,
 }: SketchBoxProps) {
   const rngSeed = seed ?? `box:${label ?? ""}:${x},${y},${width},${height}`;
@@ -196,27 +371,29 @@ export function SketchBox({
         className="sketch-stroke"
         style={{ stroke: color, transitionDelay: `${delay + 120}ms` }}
       />
-      {label ? (
-        <text
+      {showLabels && label ? (
+        <SketchBackedText
           x={centerX}
           y={y + height / 2 + (sub ? -4 : 4)}
-          textAnchor="middle"
-          className="sketch-label sketch-fade"
-          style={{ fill: INK, transitionDelay: `${delay + 240}ms` }}
+          anchor="middle"
+          variant="label"
+          fill={INK}
+          delay={delay + 240}
         >
           {label}
-        </text>
+        </SketchBackedText>
       ) : null}
-      {sub ? (
-        <text
+      {showLabels && sub ? (
+        <SketchBackedText
           x={centerX}
           y={y + height / 2 + 15}
-          textAnchor="middle"
-          className="sketch-sublabel sketch-fade"
-          style={{ fill: MUTED, transitionDelay: `${delay + 300}ms` }}
+          anchor="middle"
+          variant="sublabel"
+          fill={MUTED}
+          delay={delay + 300}
         >
           {sub}
-        </text>
+        </SketchBackedText>
       ) : null}
     </g>
   );
@@ -270,15 +447,16 @@ export function SketchArrow({
       <InkStroke d={body} color={color} delay={delay} dashed={dashed} />
       <InkStroke d={head} color={color} delay={delay + 260} />
       {label ? (
-        <text
+        <SketchBackedText
           x={midX}
           y={midY}
-          textAnchor={labelAnchor}
-          className="sketch-sublabel sketch-fade"
-          style={{ fill: MUTED, transitionDelay: `${delay + 320}ms` }}
+          anchor={labelAnchor}
+          variant="sublabel"
+          fill={MUTED}
+          delay={delay + 320}
         >
           {label}
-        </text>
+        </SketchBackedText>
       ) : null}
     </g>
   );
@@ -302,15 +480,16 @@ export function SketchNote({
   children,
 }: SketchNoteProps) {
   return (
-    <text
+    <SketchBackedText
       x={x}
       y={y}
-      transform={`rotate(${angle} ${x} ${y})`}
-      className="sketch-note sketch-fade"
-      style={{ fill: EMBER, transitionDelay: `${delay}ms` }}
+      variant="note"
+      fill={EMBER}
+      delay={delay}
+      angle={angle}
     >
-      {textContent(children)}
-    </text>
+      {children}
+    </SketchBackedText>
   );
 }
 
@@ -333,14 +512,15 @@ export function SketchLabel({
   children,
 }: SketchLabelProps) {
   return (
-    <text
+    <SketchBackedText
       x={x}
       y={y}
-      textAnchor={anchor}
-      className={`${muted ? "sketch-sublabel" : "sketch-label"} sketch-fade`}
-      style={{ fill: muted ? MUTED : INK, transitionDelay: `${delay}ms` }}
+      anchor={anchor}
+      variant={muted ? "sublabel" : "label"}
+      fill={muted ? MUTED : INK}
+      delay={delay}
     >
-      {textContent(children)}
-    </text>
+      {children}
+    </SketchBackedText>
   );
 }

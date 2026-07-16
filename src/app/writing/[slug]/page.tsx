@@ -18,6 +18,10 @@ import { ArticleMetaCard } from "@/components/writing/ArticleMetaCard";
 import { ArticleNewsletterRail } from "@/components/writing/ArticleNewsletterRail";
 import { ArticleFocusRails } from "@/components/writing/ArticleFocusRails";
 import { Toc } from "@/components/writing/Toc";
+import {
+  buildArticleJsonLd,
+  buildArticleMetadataKeywords,
+} from "@/lib/article-seo";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -37,10 +41,13 @@ export async function generateMetadata({
   if (!article) return {};
 
   const url = `${SITE_URL}/writing/${slug}`;
+  const keywords = buildArticleMetadataKeywords(article);
+  const ogImage = `${url}/opengraph-image`;
+
   return {
     title: article.title,
     description: article.description,
-    keywords: article.tags,
+    keywords,
     authors: [{ name: site.name, url: SITE_URL }],
     alternates: { canonical: `/writing/${slug}` },
     openGraph: {
@@ -54,54 +61,21 @@ export async function generateMetadata({
       modifiedTime: article.updated ?? article.date,
       authors: [site.name],
       tags: article.tags,
+      images: [{ url: ogImage, width: 1200, height: 630, alt: article.title }],
     },
     twitter: {
       card: "summary_large_image",
       title: article.title,
       description: article.description,
+      images: [ogImage],
     },
   };
 }
 
-function buildArticleJsonLd(slug: string) {
+function buildArticleJsonLdForPage(slug: string) {
   const article = getArticleBySlug(slug);
   if (!article) return null;
-  const url = `${SITE_URL}/writing/${slug}`;
-
-  return {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "BlogPosting",
-        "@id": `${url}#article`,
-        headline: article.title,
-        description: article.description,
-        url,
-        datePublished: article.date,
-        dateModified: article.updated ?? article.date,
-        wordCount: article.wordCount,
-        keywords: article.tags.join(", "),
-        inLanguage: "en-US",
-        isPartOf: { "@id": `${SITE_URL}/#blog` },
-        author: { "@id": `${SITE_URL}/#person` },
-        publisher: { "@id": `${SITE_URL}/#person` },
-        mainEntityOfPage: url,
-        image: `${url}/opengraph-image`,
-      },
-      {
-        "@type": "BreadcrumbList",
-        itemListElement: [
-          {
-            "@type": "ListItem",
-            position: 1,
-            name: "Writing",
-            item: SITE_URL,
-          },
-          { "@type": "ListItem", position: 2, name: article.title, item: url },
-        ],
-      },
-    ],
-  };
+  return buildArticleJsonLd(article);
 }
 
 export default async function ArticlePage({ params }: PageProps) {
@@ -110,7 +84,7 @@ export default async function ArticlePage({ params }: PageProps) {
   if (!article) notFound();
 
   const { newer, older } = getAdjacentArticles(slug);
-  const jsonLd = buildArticleJsonLd(slug);
+  const jsonLd = buildArticleJsonLdForPage(slug);
   const body = await renderArticleMdx(article.content);
 
   return (
