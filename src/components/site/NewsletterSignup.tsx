@@ -155,28 +155,30 @@ export function NewsletterSignup({
         </Button>
       </div>
 
-      <p
-        className="mt-3 min-h-[1.25rem] font-sans text-[13px] font-light"
-        aria-live="polite"
-      >
-        {status === "error" ? (
-          <span className="text-portfolio-ember">{error}</span>
-        ) : (
-          <span className="text-portfolio-mist">
-            One email when there&rsquo;s something new. No spam, unsubscribe
-            anytime.
-          </span>
-        )}
-      </p>
+      {(status === "error" || !compact) && (
+        <p
+          className="mt-3 min-h-[1.25rem] font-sans text-[13px] font-light"
+          aria-live="polite"
+        >
+          {status === "error" ? (
+            <span className="text-portfolio-ember">{error}</span>
+          ) : (
+            <span className="text-portfolio-mist">
+              One email when there&rsquo;s something new. No spam, unsubscribe
+              anytime.
+            </span>
+          )}
+        </p>
+      )}
     </form>
   );
 
   if (compact) {
     return (
       <div className={cn("relative w-full", className)}>
-        <p className="eyebrow mb-2 !text-portfolio-ember">Newsletter</p>
-        <p className="mb-4 font-sans text-[13px] font-light leading-relaxed text-portfolio-mist">
-          New writing, straight to your inbox. Nothing else.
+        <p className="eyebrow mb-3 !text-portfolio-ember">Newsletter</p>
+        <p className="mb-4 font-sans text-[13px] font-light text-portfolio-mist">
+          New writing, straight to your inbox.
         </p>
         {form}
       </div>
