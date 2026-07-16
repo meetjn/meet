@@ -103,7 +103,7 @@ export default function HomePage() {
           .
         </h1>
         <p className="mt-10 max-w-[54ch] border-l border-portfolio-smoke pl-7 font-sans text-[16px] font-light leading-[1.9] text-portfolio-cream">
-          I'm Meet, I build payments and fintech infrastructure for a living. Here I
+          I&apos;m Meet, I build payments and fintech infrastructure for a early-stage startups. Here I
           write down how these infrastructure actually work — backend systems,
           money movement pipelines, distributed systems, the parts I learned in
           production — with a pen and a lot of diagrams.

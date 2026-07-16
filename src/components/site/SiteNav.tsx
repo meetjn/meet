@@ -20,9 +20,8 @@ function isActive(pathname: string, href: string): boolean {
 
 /**
  * Hide the header while scrolling down and reveal it on the way back up
- * (always visible near the top). Drives the mobile-only slide; desktop keeps
- * the header pinned via an `sm:` transform override. Tracked with rAF so the
- * scroll handler stays cheap.
+ * (always visible near the top). Tracked with rAF so the scroll handler stays
+ * cheap.
  */
 function useHideOnScroll(): boolean {
   const [hidden, setHidden] = useState(false);
@@ -62,7 +61,7 @@ export function SiteNav() {
 
   return (
     <header
-      className={`sticky top-0 z-40 border-b border-portfolio-smoke/70 bg-portfolio-black/85 backdrop-blur-xl transition-transform duration-300 ease-out motion-reduce:transition-none sm:!translate-y-0 ${
+      className={`sticky top-0 z-40 bg-portfolio-black/80 backdrop-blur-xl transition-transform duration-300 ease-out motion-reduce:transition-none ${
         hidden ? "-translate-y-full" : "translate-y-0"
       }`}
     >
@@ -77,7 +76,7 @@ export function SiteNav() {
           Meet Jain
         </Link>
 
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-4 sm:gap-6">
           {links.map((link) => {
             const active = isActive(pathname, link.href);
             return (
@@ -85,11 +84,11 @@ export function SiteNav() {
                 key={link.href}
                 href={link.href}
                 aria-current={active ? "page" : undefined}
-                className={`font-sans text-[13px] font-medium transition-colors ${
+                className={`whitespace-nowrap font-sans text-[13px] font-medium transition-colors ${
                   active
                     ? "text-portfolio-white underline decoration-portfolio-ember underline-offset-8"
                     : "text-portfolio-mist hover:text-portfolio-white"
-                } ${link.href === "/" ? "hidden sm:inline" : ""}`}
+                }`}
               >
                 {link.label}
               </Link>

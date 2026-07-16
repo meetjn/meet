@@ -119,7 +119,7 @@ export function ArticleList({ articles, tags }: ArticleListProps) {
           return (
             <li
               key={article.slug}
-              className={`group relative border-t border-portfolio-smoke last:border-b ${
+              className={`group relative border-t border-portfolio-smoke ${
                 article.upcoming ? "opacity-80" : ""
               }`}
             >
