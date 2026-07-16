@@ -13,8 +13,11 @@ import { SITE_URL } from "@/lib/site";
 import { renderArticleMdx } from "@/lib/render-mdx";
 import { PrevNext } from "@/components/writing/PrevNext";
 import { ReadingProgress } from "@/components/writing/ReadingProgress";
-import { Toc } from "@/components/writing/Toc";
 import { ArticleViewTracker } from "@/components/writing/ArticleViewTracker";
+import { ArticleMetaCard } from "@/components/writing/ArticleMetaCard";
+import { ArticleNewsletterRail } from "@/components/writing/ArticleNewsletterRail";
+import { ArticleFocusRails } from "@/components/writing/ArticleFocusRails";
+import { Toc } from "@/components/writing/Toc";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -119,7 +122,8 @@ export default async function ArticlePage({ params }: PageProps) {
       <ReadingProgress />
       <ArticleViewTracker slug={slug} title={article.title} />
 
-      <header className="mx-auto mb-16 w-full max-w-[720px] lg:mb-24">
+      <div className="mx-auto w-full xl:grid xl:grid-cols-[1fr_minmax(0,720px)_1fr] xl:grid-rows-[auto_1fr]">
+        <header className="mb-16 w-full max-w-[720px] mx-auto xl:col-start-2 xl:row-start-1 xl:mx-0 xl:max-w-none lg:mb-24">
         <div className="mb-8 flex flex-wrap items-center gap-x-5 gap-y-2">
           <Link
             href="/"
@@ -151,20 +155,31 @@ export default async function ArticlePage({ params }: PageProps) {
             <span>Updated {formatDate(article.updated)}</span>
           ) : null}
         </div>
-      </header>
+        </header>
 
-      <div className="mx-auto grid w-full max-w-[720px] gap-16 xl:max-w-[1060px] xl:grid-cols-[minmax(0,720px)_1fr]">
-        <div className="writing-prose min-w-0">
+        <ArticleFocusRails
+          left={
+            <ArticleMetaCard
+              title={article.title}
+              slug={slug}
+              date={article.date}
+              tags={article.tags}
+            />
+          }
+          right={
+            <>
+              <Toc entries={article.toc} />
+              <ArticleNewsletterRail />
+            </>
+          }
+        />
+
+        <div className="writing-prose min-w-0 w-full max-w-[720px] mx-auto xl:col-start-2 xl:row-start-2 xl:mx-0 xl:max-w-none">
           {body}
 
           <PrevNext newer={newer} older={older} />
+          <ArticleNewsletterRail className="xl:hidden" />
         </div>
-
-        <aside className="hidden xl:block">
-          <div className="sticky top-28">
-            <Toc entries={article.toc} />
-          </div>
-        </aside>
       </div>
     </article>
   );

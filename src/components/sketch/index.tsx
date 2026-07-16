@@ -230,6 +230,7 @@ type SketchArrowProps = {
   label?: string;
   /** Nudge the label from the curve midpoint. */
   labelOffset?: [number, number];
+  labelAnchor?: "start" | "middle" | "end";
   accent?: boolean;
   dashed?: boolean;
   delay?: number;
@@ -242,6 +243,7 @@ export function SketchArrow({
   bow = 0,
   label,
   labelOffset = [0, -10],
+  labelAnchor = "middle",
   accent = false,
   dashed = false,
   delay = 0,
@@ -271,7 +273,7 @@ export function SketchArrow({
         <text
           x={midX}
           y={midY}
-          textAnchor="middle"
+          textAnchor={labelAnchor}
           className="sketch-sublabel sketch-fade"
           style={{ fill: MUTED, transitionDelay: `${delay + 320}ms` }}
         >

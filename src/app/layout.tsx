@@ -9,7 +9,6 @@ import { HotjarAnalytics } from "@/components/HotjarAnalytics";
 import { CommandPalette } from "@/components/search/CommandPalette";
 import { ServiceWorkerRegistrar } from "@/components/pwa/ServiceWorkerRegistrar";
 import { SiteNav } from "@/components/site/SiteNav";
-import { SiteFooter } from "@/components/site/SiteFooter";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { site } from "@/content/site";
 import {
@@ -141,7 +140,6 @@ export default function RootLayout({
           <div className="flex min-h-[100dvh] flex-col bg-portfolio-black">
             <SiteNav />
             <main className="flex flex-1 flex-col">{children}</main>
-            <SiteFooter />
           </div>
         </ThemeProvider>
       </body>
