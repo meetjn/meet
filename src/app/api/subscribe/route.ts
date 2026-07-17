@@ -2,6 +2,7 @@ import { Resend } from "resend";
 
 import { insertSubscriber } from "@/lib/db";
 import { assertSubscribeRateLimit } from "@/lib/rate-limit";
+import { SITE_URL } from "@/lib/site";
 import { parseSubscriberEmail } from "@/lib/validate-email";
 
 /**
@@ -13,6 +14,7 @@ export const runtime = "nodejs";
 const MAX_BODY_BYTES = 512;
 
 function renderWelcomeEmail(): { html: string; text: string } {
+  const authorImage = `${SITE_URL}/meet-jain.jpg`;
   const text = [
     "Hi,",
     "",
@@ -21,6 +23,8 @@ function renderWelcomeEmail(): { html: string; text: string } {
     "Here's what to expect: when I publish something new about how backend and payment systems actually work, you'll get it here first. That's the whole deal — no spam, nothing in between.",
     "",
     "I write these the way I'd explain them to a friend: plain language, real examples from production, and a lot of diagrams.",
+    "",
+    "If an article ever helps you see a system more clearly, send it to a friend who'd enjoy it too. That's the best way this little journal grows.",
     "",
     "See you in the next one.",
     "",
@@ -36,7 +40,16 @@ function renderWelcomeEmail(): { html: string; text: string } {
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;background:#fffdf8;border:1px solid #e2dbce;border-radius:16px;overflow:hidden;">
             <tr>
               <td style="padding:40px 40px 8px 40px;">
-                <div style="font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:13px;letter-spacing:0.02em;color:#ac3e0a;">Meet Jain · Newsletter</div>
+                <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 18px 0;">
+                  <tr>
+                    <td style="padding:0 12px 0 0;">
+                      <img src="${authorImage}" width="44" height="44" alt="Meet Jain" style="display:block;width:44px;height:44px;border-radius:999px;border:1px solid #e2dbce;object-fit:cover;">
+                    </td>
+                    <td style="font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:13px;letter-spacing:0.02em;color:#ac3e0a;">
+                      Meet Jain · Newsletter
+                    </td>
+                  </tr>
+                </table>
                 <h1 style="margin:14px 0 0 0;font-family:Georgia,'Times New Roman',serif;font-weight:500;font-size:30px;line-height:1.15;color:#1a1612;">You&rsquo;re in.</h1>
               </td>
             </tr>
@@ -46,6 +59,7 @@ function renderWelcomeEmail(): { html: string; text: string } {
                 <p style="margin:0 0 16px 0;">Thanks for subscribing &mdash; it means a lot that you&rsquo;d let me into your inbox.</p>
                 <p style="margin:0 0 16px 0;">Here&rsquo;s what to expect: when I publish something new about how backend and payment systems actually work, you&rsquo;ll get it here first. That&rsquo;s the whole deal &mdash; no spam, nothing in between.</p>
                 <p style="margin:0 0 16px 0;">I write these the way I&rsquo;d explain them to a friend: plain language, real examples from production, and a lot of diagrams.</p>
+                <p style="margin:0 0 16px 0;">If an article ever helps you see a system more clearly, send it to a friend who&rsquo;d enjoy it too. That&rsquo;s the best way this little journal grows.</p>
                 <p style="margin:0 0 4px 0;">See you in the next one.</p>
               </td>
             </tr>
