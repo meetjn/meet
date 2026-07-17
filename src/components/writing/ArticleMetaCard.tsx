@@ -1,6 +1,8 @@
 "use client";
 
-import { Linkedin, Twitter } from "lucide-react";
+import { Linkedin } from "lucide-react";
+
+import { XLogo } from "@/components/icons/XLogo";
 
 import { site } from "@/content/site";
 import { formatDate } from "@/lib/format";
@@ -48,7 +50,7 @@ export function ArticleMetaCard({
             aria-label="Meet Jain on X"
             className="rounded-full p-1.5 text-portfolio-mist transition-colors duration-[60ms] hover:text-portfolio-ember"
           >
-            <Twitter className="size-3.5" aria-hidden />
+            <XLogo className="size-3.5" />
           </a>
           <a
             href={site.linkedin}
