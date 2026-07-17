@@ -9,18 +9,51 @@ import { parseSubscriberEmail } from "@/lib/validate-email";
  * `sql` is not exported. All database access goes through typed helpers so
  * callers cannot run arbitrary queries.
  */
-const url = process.env.DATABASE_URL;
-if (!url) {
+
+/** Strip whitespace and optional wrapping quotes from Vercel/Neon copy-paste. */
+function parseDatabaseUrl(raw: string | undefined): string | null {
+  if (!raw) return null;
+
+  const trimmed = raw.trim();
+  if (!trimmed) return null;
+
+  const unquoted = trimmed.replace(/^['"]+|['"]+$/g, "");
+
+  try {
+    const parsed = new URL(unquoted);
+    if (parsed.protocol !== "postgresql:" && parsed.protocol !== "postgres:") {
+      return null;
+    }
+    return unquoted;
+  } catch {
+    return null;
+  }
+}
+
+const connectionString = parseDatabaseUrl(process.env.DATABASE_URL);
+
+if (process.env.DATABASE_URL && !connectionString) {
+  console.warn(
+    "DATABASE_URL is set but is not a valid postgres URL — subscriber storage is disabled.",
+  );
+} else if (!connectionString) {
   console.warn("DATABASE_URL is not set — subscriber storage is disabled.");
 }
 
-const sql = url ? neon(url) : null;
+let sql: ReturnType<typeof neon> | null = null;
+
+function getSql() {
+  if (!connectionString) return null;
+  if (!sql) sql = neon(connectionString);
+  return sql;
+}
 
 let tableReady = false;
 
 async function ensureSubscribersTable() {
-  if (!sql || tableReady) return;
-  await sql`
+  const db = getSql();
+  if (!db || tableReady) return;
+  await db`
     CREATE TABLE IF NOT EXISTS subscribers (
       email      text PRIMARY KEY,
       created_at timestamptz NOT NULL DEFAULT now()
@@ -36,7 +69,8 @@ async function ensureSubscribersTable() {
 export async function insertSubscriber(
   email: string,
 ): Promise<{ ok: true; isNew: boolean } | { ok: false; reason: "unavailable" }> {
-  if (!sql) return { ok: false, reason: "unavailable" };
+  const db = getSql();
+  if (!db) return { ok: false, reason: "unavailable" };
 
   // Defense in depth: re-validate before any DB write.
   const address = parseSubscriberEmail(email);
@@ -46,11 +80,11 @@ export async function insertSubscriber(
 
   await ensureSubscribersTable();
 
-  const rows = await sql`
+  const rows = await db`
     INSERT INTO subscribers (email) VALUES (${address})
     ON CONFLICT (email) DO NOTHING
     RETURNING email
   `;
 
-  return { ok: true, isNew: rows.length > 0 };
+  return { ok: true, isNew: Array.isArray(rows) && rows.length > 0 };
 }

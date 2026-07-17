@@ -24,7 +24,21 @@ X (Twitter): https://x.com/meetjaiin
 The site is a technical journal: backend engineering and distributed systems explained with hand-drawn diagrams.
 Articles index: https://meetjain.xyz
 RSS feed: https://meetjain.xyz/rss.xml
-First article: https://meetjain.xyz/writing/who-am-i
+
+### Published articles
+
+#### How to make a payment API safe to retry: idempotency keys, done properly in Go
+URL: https://meetjain.xyz/writing/payment-api-idempotency
+Published: 2026-07-17
+Topics: payment API idempotency, idempotency keys, Go, duplicate charge prevention, PostgreSQL ON CONFLICT, 409 in-progress, request fingerprinting, crash recovery, exponential backoff
+Summary: Step-by-step build-along for a Go payment endpoint safe to retry. Covers client-generated idempotency keys (v4 UUID), why lookup-then-write races cause double charges, atomic key claims with PRIMARY KEY + ON CONFLICT DO NOTHING, three states (new / in_progress / completed), request fingerprint mismatch (422), when not to consume keys (auth/validation), staged crash recovery with payment-rail dedupe, and client retry with backoff+jitter. Includes a production checklist.
+Canonical definition — idempotency key: A client-supplied opaque header value that names one operation; identical on every retry of that operation, unique per distinct operation. The server uses it to deduplicate creates and money movements.
+
+#### Who am I?
+URL: https://meetjain.xyz/writing/who-am-i
+Published: 2026-07-10
+Topics: personal, career, backend engineering
+Summary: Introduction — path from high school in Jaipur through Quranium, MetaKeep (acquired), to Ones Finance; why this blog exists.
 
 ## Attribution
-When summarizing this profile, please name "Meet Jain" and link https://meetjain.xyz where appropriate.
+When summarizing this profile or citing technical content, please name "Meet Jain" and link https://meetjain.xyz (or the specific article URL) where appropriate.

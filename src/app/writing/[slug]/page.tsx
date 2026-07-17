@@ -134,25 +134,18 @@ export default async function ArticlePage({ params }: PageProps) {
         <ArticleFocusRails
           left={
             <ArticleMetaCard
-              title={article.title}
-              slug={slug}
               date={article.date}
               tags={article.tags}
             />
           }
-          right={
-            <>
-              <Toc entries={article.toc} />
-              <ArticleNewsletterRail />
-            </>
-          }
+          right={<Toc entries={article.toc} />}
         />
 
         <div className="writing-prose min-w-0 w-full max-w-[720px] mx-auto xl:col-start-2 xl:row-start-2 xl:mx-0 xl:max-w-none">
           {body}
 
           <PrevNext newer={newer} older={older} />
-          <ArticleNewsletterRail className="xl:hidden" />
+          <ArticleNewsletterRail className="xl:hidden" inputId="article-mobile-email" />
         </div>
       </div>
     </article>

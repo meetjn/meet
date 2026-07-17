@@ -7,7 +7,17 @@ import { cn } from "@/lib/utils";
 
 type Status = "idle" | "loading" | "success" | "error";
 
-export function ArticleNewsletterRail({ className }: { className?: string }) {
+type ArticleNewsletterRailProps = {
+  className?: string;
+  variant?: "rail" | "card";
+  inputId?: string;
+};
+
+export function ArticleNewsletterRail({
+  className,
+  variant = "rail",
+  inputId = "article-sidebar-email",
+}: ArticleNewsletterRailProps) {
   const [email, setEmail] = useState("");
   const [honeypot, setHoneypot] = useState("");
   const [status, setStatus] = useState<Status>("idle");
@@ -41,7 +51,12 @@ export function ArticleNewsletterRail({ className }: { className?: string }) {
   if (status === "success") {
     return (
       <div
-        className={cn("border-t border-portfolio-smoke/50 pt-8", className)}
+        className={cn(
+          variant === "card"
+            ? "text-center"
+            : "border-t border-portfolio-smoke/50 pt-8",
+          className,
+        )}
         role="status"
         aria-live="polite"
       >
@@ -53,12 +68,22 @@ export function ArticleNewsletterRail({ className }: { className?: string }) {
   }
 
   return (
-    <div className={cn("border-t border-portfolio-smoke/50 pt-8", className)}>
-      <p className="font-sans text-[12px] font-light leading-snug text-portfolio-mist">
-        Subscribe to newsletter
+    <div
+      className={cn(
+        variant === "card" ? "" : "border-t border-portfolio-smoke/50 pt-8",
+        className,
+      )}
+    >
+      <p
+        className={cn(
+          "font-sans text-[11px] font-light leading-snug text-portfolio-mist",
+          variant === "card" && "text-center",
+        )}
+      >
+        New post in your inbox when I publish.
       </p>
 
-      <form onSubmit={onSubmit} noValidate className="relative mt-3">
+      <form onSubmit={onSubmit} noValidate className="relative mt-4">
         <div
           aria-hidden
           className="absolute left-[-9999px] h-0 w-0 overflow-hidden"
@@ -72,11 +97,11 @@ export function ArticleNewsletterRail({ className }: { className?: string }) {
           />
         </div>
 
-        <label htmlFor="article-sidebar-email" className="sr-only">
+        <label htmlFor={inputId} className="sr-only">
           Email address
         </label>
         <input
-          id="article-sidebar-email"
+          id={inputId}
           type="email"
           inputMode="email"
           autoCapitalize="none"
