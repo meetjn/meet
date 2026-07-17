@@ -16,6 +16,8 @@ import { ReadingProgress } from "@/components/writing/ReadingProgress";
 import { ArticleViewTracker } from "@/components/writing/ArticleViewTracker";
 import { ArticleMetaCard } from "@/components/writing/ArticleMetaCard";
 import { ArticleNewsletterRail } from "@/components/writing/ArticleNewsletterRail";
+import { ArticleSocialLinks } from "@/components/writing/ArticleSocialLinks";
+import { ArticleCorrectionNote } from "@/components/writing/ArticleCorrectionNote";
 import { ArticleFocusRails } from "@/components/writing/ArticleFocusRails";
 import { Toc } from "@/components/writing/Toc";
 import {
@@ -146,6 +148,8 @@ export default async function ArticlePage({ params }: PageProps) {
 
           <PrevNext newer={newer} older={older} />
           <ArticleNewsletterRail className="xl:hidden" inputId="article-mobile-email" />
+          <ArticleSocialLinks className="xl:hidden mt-8 justify-center" />
+          <ArticleCorrectionNote className="xl:hidden mt-4 text-center" />
         </div>
       </div>
     </article>

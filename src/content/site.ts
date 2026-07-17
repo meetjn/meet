@@ -8,5 +8,7 @@ export const site = {
   focus: "Backend engineering · Distributed systems · Payments infrastructure",
   x: "https://x.com/meetjaiin",
   github: "https://github.com/meetjn",
+  /** Repository for this site — used for the "send a pull request" prompt. */
+  repo: "https://github.com/meetjn/meet",
   linkedin: "https://www.linkedin.com/in/meetjaiin",
 } as const;
