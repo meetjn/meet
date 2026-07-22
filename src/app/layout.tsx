@@ -4,8 +4,10 @@ import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
 
 import "./globals.css";
-import { GoogleAnalytics } from "@/components/GoogleAnalytics";
-import { HotjarAnalytics } from "@/components/HotjarAnalytics";
+import {
+  GoogleTagManagerNoscript,
+  GoogleTagManagerScript,
+} from "@/components/GoogleTagManager";
 import { CommandPalette } from "@/components/search/CommandPalette";
 import { ServiceWorkerRegistrar } from "@/components/pwa/ServiceWorkerRegistrar";
 import { SiteNav } from "@/components/site/SiteNav";
@@ -122,6 +124,7 @@ export default function RootLayout({
       <body
         className={`${fraunces.variable} ${caveat.variable} ${GeistSans.variable} ${GeistMono.variable} ${GeistSans.className} overflow-x-hidden font-light antialiased`}
       >
+        <GoogleTagManagerNoscript />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -133,8 +136,7 @@ export default function RootLayout({
           defaultTheme="dark"
           disableTransitionOnChange
         >
-          <GoogleAnalytics />
-          <HotjarAnalytics />
+          <GoogleTagManagerScript />
           <ServiceWorkerRegistrar />
           <CommandPalette />
           <div className="flex min-h-[100dvh] flex-col bg-portfolio-black">
