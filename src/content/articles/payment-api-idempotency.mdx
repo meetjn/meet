@@ -3,7 +3,7 @@ title: "How to make a payment API safe to retry: idempotency keys, done properly
 description: "Build a Go payment endpoint safe to retry — atomic key claims, request fingerprints, crash recovery, and client backoff. Step-by-step, with production rules."
 date: "2026-07-17"
 updated: "2026-07-17"
-tags: ["payments", "backend", "go", "idempotency", "systems"]
+tags: ["payments", "backend", "systems"]
 featured: true
 keywords:
   - payment API idempotency
@@ -275,6 +275,8 @@ func (s *Server) CreateCharge(w http.ResponseWriter, r *http.Request) {
 ```
 
 This fixes the _sequential_ retry: first attempt saves under the key, the lost-response retry finds it and replays. Good. But it has a race that production will find within a day.
+
+The runnable version of this failure is in [`examples/payment-idempotency/01-naive-race`](https://github.com/meetjn/meet/tree/main/examples/payment-idempotency/01-naive-race) in the repo — clone it and watch it happen before reading the fix. Fifty concurrent requests, one idempotency key, 200 trials: every single trial double-charges.
 
 The client didn't send its retry _after_ the first request finished — it sent it because it gave up waiting, while the first request may still be running. So two requests with the same key run concurrently. Here is the race the lookup-then-write pattern leaves open:
 

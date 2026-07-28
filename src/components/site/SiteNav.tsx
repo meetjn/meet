@@ -9,7 +9,7 @@ import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { useSearchUi } from "@/stores/search";
 
 const links = [
-  { href: "/", label: "Writing" },
+  { href: "/", label: "Articles" },
   { href: "/reflection", label: "Reflection" },
 ] as const;
 

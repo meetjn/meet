@@ -105,7 +105,7 @@ export default async function ArticlePage({ params }: PageProps) {
             href="/"
             className="eyebrow transition-colors hover:!text-portfolio-white"
           >
-            Writing
+            Articles
           </Link>
           <span className="h-px w-8 bg-portfolio-smoke" aria-hidden />
           {article.tags.map((tag) => (
@@ -146,10 +146,13 @@ export default async function ArticlePage({ params }: PageProps) {
         <div className="writing-prose min-w-0 w-full max-w-[720px] mx-auto xl:col-start-2 xl:row-start-2 xl:mx-0 xl:max-w-none">
           {body}
 
+          {/* Closes out the article itself, at every width — the side rail is
+              desktop-only and can be dismissed via focus mode. */}
+          <ArticleCorrectionNote className="mt-16 border-t border-portfolio-smoke pt-6" />
+
           <PrevNext newer={newer} older={older} />
           <ArticleNewsletterRail className="xl:hidden" inputId="article-mobile-email" />
           <ArticleSocialLinks className="xl:hidden mt-8 justify-center" />
-          <ArticleCorrectionNote className="xl:hidden mt-4 text-center" />
         </div>
       </div>
     </article>

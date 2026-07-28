@@ -22,6 +22,12 @@ export type ArticleFrontmatter = {
   date: string;
   /** Last significant revision, YYYY-MM-DD. */
   updated?: string;
+  /**
+   * Broad, browsable topics only — these render as filter chips on the
+   * homepage, so the set must stay small as the archive grows. Reuse an
+   * existing tag wherever possible; a tag that will only ever apply to one
+   * article belongs in `keywords` instead (same SEO weight, no extra chip).
+   */
   tags: string[];
   /** Featured articles get the large card on /writing. */
   featured?: boolean;
@@ -156,10 +162,3 @@ export function getAdjacentArticles(slug: string): {
   return { newer: articles[index - 1], older: articles[index + 1] };
 }
 
-export function getAllTags(): string[] {
-  const tags = new Set<string>();
-  for (const article of getListedArticles()) {
-    for (const tag of article.tags) tags.add(tag);
-  }
-  return [...tags].sort();
-}

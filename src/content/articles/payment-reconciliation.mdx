@@ -1,0 +1,631 @@
+---
+title: "Your database is not the truth: building payment reconciliation in Go and Python"
+description: "Build a reconciliation loop for a payment system — event ingest, four-bucket diffing, drift repair. With a runnable harness that measures what idempotency alone cannot fix."
+date: "2026-07-28"
+updated: "2026-07-28"
+tags: ["payments", "backend", "systems"]
+featured: true
+keywords:
+  - payment reconciliation
+  - reconciliation system design
+  - webhook idempotency
+  - lost webhook recovery
+  - payment drift detection
+  - reconcile Stripe charges
+  - out-of-order webhooks
+  - payout batch reconciliation
+  - eventual consistency payments
+  - reconciliation loop Go
+  - reconciliation in Python
+  - webhook handler Python
+  - Go payment systems
+programmingLanguage: "Go"
+seoFaqs:
+  - question: "What is reconciliation in a payment system?"
+    answer: "Reconciliation is the periodic comparison of two independent records of the same money movement — your database and the payment rail's record — to find where they disagree. Each disagreement is classified as matched, only-in-rail, only-in-database, or mismatched, and each class has its own remedy."
+  - question: "Why is my database not the source of truth for payments?"
+    answer: "Your database only records what your server was told, and it is told over networks that drop, duplicate, delay, and reorder messages. The rail moved the money; your database holds a belief about it. When a webhook is lost, that belief is wrong and nothing inside your own system can detect it."
+  - question: "Does idempotent webhook ingest fix lost webhooks?"
+    answer: "No. In a 10,000-charge simulation at a 5% webhook loss rate, naive ingest and fully idempotent ingest both left 4.53% of charges stuck in pending — an identical figure. Deduplication fixes duplicates and out-of-order arrival; only a reconciliation loop recovers events that never arrived at all."
+  - question: "What are the four buckets of a reconciliation diff?"
+    answer: "Matched (both records agree), only-in-rail (usually a lost webhook, safe to auto-repair), only-in-database (usually a charge the rail never processed, needs a human), and mismatched (both sides know the charge but disagree on its state — always alert, never auto-repair)."
+  - question: "Should reconciliation automatically repair mismatches?"
+    answer: "Never. A mismatch means both systems have a confident, terminal, conflicting belief, so any automatic repair picks a winner without knowing which is right. Auto-repair only the only-in-rail case by synthesizing the missing event through the same ingest path, and alert on everything else."
+  - question: "How do you reconcile a payout batch?"
+    answer: "At two levels. First reconcile each transfer in the batch individually against the rail, then reconcile the batch's rollup state against the sum of its transfers' states. A batch marked complete with failed transfers underneath it is drift even when every individual transfer matches."
+  - question: "How do you avoid duplicate side effects from repeated webhooks?"
+    answer: "Claim the rail's event ID with a unique-constraint insert before doing any work, exactly as an idempotency key claims a request. In simulation this reduced duplicate credit application from 9.25% of charges to zero."
+  - question: "What does 'optimistic path, pessimistic check' mean in payment system design?"
+    answer: "It's a pattern for any system where one side claims something happened and another side can independently verify it. The optimistic path assumes the operation succeeded and makes it safe to repeat, such as an idempotency key on a request. The pessimistic check assumes something was missed and proves it right or wrong on a schedule, such as a reconciliation loop against the rail. Neither replaces the other."
+---
+
+In the last article I built a payment endpoint that survives retries. Same key, same operation, no double charges — the API is correct. This one starts one layer out, because the API being correct doesn't mean the system is correct.
+
+Here's the gap. My server charged the card. The rail — Stripe, the card network, whichever — received the charge. Then the rail tried to tell me it succeeded, via a webhook. And the webhook never arrived. My database still says the charge is _pending_. The rail's records say it _succeeded_ and the money moved days ago. Both systems are internally consistent. Both are wrong about each other. That's drift, and it's what reconciliation exists to catch.
+
+This article builds a reconciliation loop from scratch, in Go and in Python. Same shape as the last one: naive version, break it on purpose, fix it in stages. By the end you'll have a system that pulls the rail's record of truth on a schedule, diffs it against your own state, and knows the difference between a mismatch it can repair automatically and one that needs a human.
+
+Then I'll do something the last article didn't: measure it. There's a runnable harness at the end that injects lost, duplicated, and reordered webhooks at a known rate and counts exactly how much drift each version of the ingest leaves behind. The headline number surprised me, and it's the reason this article exists in the shape it does.
+
+## What is reconciliation in a payment system?
+
+Reconciliation is the process of comparing two independent records of the same thing and finding where they disagree. In payments, the two records are: your database, which tracks what your system _thinks_ happened, and the rail's record, which tracks what _actually_ moved money. When they agree, everything is fine. When they don't, you have drift, and every unhandled drift is either a customer you charged and didn't credit, or money the rail says you have that your database doesn't know about.
+
+<Callout type="warning" title="Rule 0">
+
+Your database is one system's belief about the world. The rail is another. Neither is inherently the truth. Reconciliation is how you check them against each other.
+
+</Callout>
+
+## Why isn't my database the source of truth?
+
+Because my database only knows what my server was told, and my server is only told through channels that can fail.
+
+Here is the sequence for a single successful charge, in real production:
+
+```text
+1. My server sends the charge request to the rail.
+2. The rail charges the card. Money moves.
+3. The rail returns a synchronous response — sometimes.
+4. The rail sends a webhook confirming the final state — sometimes.
+5. My server writes the confirmed state to my database.
+```
+
+Steps 3 and 4 both use the network. Networks drop, retry, reorder. My server might get the synchronous response but never the webhook. Or it might get the webhook but never the synchronous response. Or it might get the webhook three times. Or it might get the webhook for a charge that was reversed thirty seconds later.
+
+In every one of those cases, my database ends up holding a story that doesn't match reality. And I have no way to notice, from inside my own system, that I'm wrong — because everything I can see says everything is fine.
+
+<SketchCanvas
+  viewBox="0 0 760 300"
+  title="A lost webhook leaves the database in pending while the rail has already moved the money; the reconciliation loop is the only path that can detect it"
+  caption={
+    <>
+      Drift. <em>both systems internally consistent, both wrong about each other</em>
+    </>
+  }
+>
+  <SketchInk>
+    <SketchBox x={60} y={50} width={150} height={52} accent showLabels={false} delay={0} />
+    <SketchArrow from={[214, 76]} to={[452, 76]} dashed label="webhook · never arrives" delay={150} />
+    <SketchBox x={458} y={50} width={170} height={52} showLabels={false} delay={300} />
+    <SketchBox x={250} y={200} width={200} height={52} dashed showLabels={false} delay={600} />
+    <SketchArrow from={[300, 198]} to={[150, 108]} bow={18} accent delay={700} />
+    <SketchArrow from={[402, 198]} to={[540, 108]} bow={-18} accent delay={800} />
+  </SketchInk>
+  <SketchText>
+    <SketchBoxCaption x={60} y={50} width={150} height={52} label="Card rail" sub="money moved" delay={0} />
+    <SketchBoxCaption x={458} y={50} width={170} height={52} label="My database" sub="state: pending" delay={300} />
+    <SketchBoxCaption x={250} y={200} width={200} height={52} label="Reconciliation" sub="pulls, diffs, repairs" delay={600} />
+    <SketchNote x={214} y={158} angle={-2}>
+      nothing inside my system knows
+    </SketchNote>
+  </SketchText>
+</SketchCanvas>
+
+<Callout type="idea" title="Rule 1">
+
+Anything that reaches your system through the network can be lost, duplicated, delayed, or reordered. Your database's view of reality is only as accurate as the messages that made it through.
+
+</Callout>
+
+## What happens when a webhook is lost, duplicated, or arrives out of order?
+
+Three concrete failure modes. Each one produces a specific kind of drift that reconciliation has to catch.
+
+**Lost webhook.** The rail sends "charge succeeded," it never arrives, my database stays in `pending`. Reality: money moved. My records: money hasn't moved. If I don't reconcile, I never fulfill the order the customer paid for. This is the most common drift and the most damaging one.
+
+**Duplicated webhook.** The rail retries a webhook it wasn't sure I received. I get "charge succeeded" twice for the same charge. Without deduplication, I might record two credits, or two fulfillment events, or fire two "payment received" emails. Same event, different consequences depending on where the duplicate lands in my code.
+
+**Out-of-order webhooks.** For a single charge, the rail sends "succeeded" and then "refunded" a few seconds later. Both webhooks are in flight. They arrive in reverse order. If I process the refund first — noticing the charge doesn't exist yet — I might reject it as invalid, and then apply the succeeded event afterward, ending up with a charge in my database that has no record of its refund.
+
+Each of these leaves my database in a state that's internally sensible but factually wrong.
+
+<Callout type="idea" title="Rule 2">
+
+Webhooks are at-least-once delivery, unordered. Design your ingest to handle each event as if it might arrive zero, one, or many times, in any order.
+
+</Callout>
+
+## Version 1: naive event ingest
+
+Here's the first version most people write. It processes each webhook as it arrives:
+
+```go
+func (s *Server) HandleWebhook(w http.ResponseWriter, r *http.Request) {
+    var event RailEvent
+    if err := json.NewDecoder(r.Body).Decode(&event); err != nil {
+        http.Error(w, "bad request", http.StatusBadRequest)
+        return
+    }
+
+    switch event.Type {
+    case "charge.succeeded":
+        s.db.MarkChargeSucceeded(event.ChargeID)
+    case "charge.refunded":
+        s.db.MarkChargeRefunded(event.ChargeID)
+    }
+
+    w.WriteHeader(http.StatusOK)
+}
+```
+
+The same thing in Python, with the same hole in it:
+
+```python
+@app.post("/webhooks/rail")
+async def handle_webhook(request: Request):
+    event = RailEvent(**await request.json())
+
+    if event.type == "charge.succeeded":
+        db.mark_charge_succeeded(event.charge_id)
+    elif event.type == "charge.refunded":
+        db.mark_charge_refunded(event.charge_id)
+
+    return Response(status_code=200)
+```
+
+This is broken for every failure mode above. A duplicate `charge.succeeded` runs the success path twice. An out-of-order `refunded` arrives for a charge that doesn't exist yet, and either errors or silently no-ops. A lost webhook leaves the charge in `pending` forever, and this endpoint has no way to know.
+
+The runnable version of this failure is in [`examples/payment-reconciliation/01-naive-ingest`](https://github.com/meetjn/meet/tree/main/examples/payment-reconciliation/01-naive-ingest) in the repo — clone it and watch it happen before reading the fix.
+
+**The fix has two parts, and they're separate concerns:** make the ingest itself idempotent and order-tolerant, and add a reconciliation loop that catches what the ingest missed. Most teams build the first and assume it covers the second. The measurement further down is what convinced me it doesn't come close.
+
+## Version 2: idempotent event ingest
+
+Every webhook the rail sends has a unique event ID. I use it exactly the way I used the idempotency key in [the last article](/writing/payment-api-idempotency) — as a claim, with the database's unique constraint doing the deduplication. Same primitive, different name, one layer out:
+
+```sql
+CREATE TABLE rail_events (
+    event_id     TEXT PRIMARY KEY,
+    event_type   TEXT NOT NULL,
+    charge_id    TEXT NOT NULL,
+    payload      JSONB NOT NULL,
+    received_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
+    processed_at TIMESTAMPTZ
+);
+```
+
+The claim is the whole trick. `INSERT ... ON CONFLICT DO NOTHING` either wins or it doesn't, atomically, and only the winner does the work:
+
+```go
+func (s *Server) HandleWebhook(w http.ResponseWriter, r *http.Request) {
+    var event RailEvent
+    if err := json.NewDecoder(r.Body).Decode(&event); err != nil {
+        http.Error(w, "bad request", http.StatusBadRequest)
+        return
+    }
+
+    // Claim the event ID. Duplicates fail the insert and we return 200
+    // so the rail stops retrying.
+    claimed, err := s.db.ClaimEvent(r.Context(), event)
+    if err != nil {
+        http.Error(w, "internal error", http.StatusInternalServerError)
+        return
+    }
+    if !claimed {
+        w.WriteHeader(http.StatusOK) // already processed
+        return
+    }
+
+    // Apply the event to the charge state, tolerating out-of-order arrival.
+    if err := s.applyEvent(r.Context(), event); err != nil {
+        // Don't 500 to the rail — that triggers infinite retries.
+        // Log and let reconciliation catch it later.
+        s.log.Error("apply failed", "event", event.ID, "err", err)
+    }
+
+    w.WriteHeader(http.StatusOK)
+}
+```
+
+```python
+@app.post("/webhooks/rail")
+async def handle_webhook(request: Request):
+    event = RailEvent(**await request.json())
+
+    # Claim the event ID; duplicates lose the race and return 200.
+    if not await db.claim_event(event):
+        return Response(status_code=200)  # already processed
+
+    try:
+        await apply_event(event)
+    except Exception:
+        # Never 500 to the rail — that triggers infinite retries.
+        # Log it and let reconciliation catch it later.
+        log.exception("apply failed", extra={"event_id": event.id})
+
+    return Response(status_code=200)
+```
+
+The out-of-order tolerance lives in `applyEvent`. Instead of "mark succeeded" and "mark refunded" as independent writes, I merge each event into a charge-state record that knows how to accept events in any order:
+
+```go
+func (s *Server) applyEvent(ctx context.Context, e RailEvent) error {
+    return s.db.WithTx(ctx, func(tx *sql.Tx) error {
+        charge, err := s.db.LoadChargeForUpdate(tx, e.ChargeID)
+        if errors.Is(err, sql.ErrNoRows) {
+            // Charge doesn't exist yet — create a shell we can fill in.
+            charge = &Charge{ID: e.ChargeID, State: "unknown"}
+            s.db.InsertCharge(tx, charge)
+        } else if err != nil {
+            return err
+        }
+
+        switch e.Type {
+        case "charge.succeeded":
+            // Only advance forward; never overwrite a refunded state.
+            if charge.State == "unknown" || charge.State == "pending" {
+                charge.State = "succeeded"
+            }
+        case "charge.refunded":
+            // Refund is terminal — accept regardless of prior state.
+            charge.State = "refunded"
+        }
+        charge.LastEventAt = e.CreatedAt
+        return s.db.SaveCharge(tx, charge)
+    })
+}
+```
+
+```python
+async def apply_event(e: RailEvent) -> None:
+    async with db.transaction() as tx:
+        charge = await tx.load_charge_for_update(e.charge_id)
+        if charge is None:
+            # Charge doesn't exist yet — create a shell we can fill in.
+            charge = Charge(id=e.charge_id, state="unknown")
+            await tx.insert_charge(charge)
+
+        if e.type == "charge.succeeded":
+            # Only advance forward; never overwrite a refunded state.
+            if charge.state in ("unknown", "pending"):
+                charge.state = "succeeded"
+        elif e.type == "charge.refunded":
+            # Refund is terminal — accept regardless of prior state.
+            charge.state = "refunded"
+
+        charge.last_event_at = e.created_at
+        await tx.save_charge(charge)
+```
+
+Two things worth naming here. The state machine has a _terminal_ state (`refunded`) that can be reached from anywhere, and a _forward-only_ state (`succeeded`) that can be overwritten by later events but doesn't overwrite them. That's how out-of-order arrival stops being a bug. And I always respond `200` to the rail after claiming the event, even if applying it failed — because a non-200 makes the rail retry forever, and I have a better mechanism for handling failure: the reconciliation loop.
+
+<Callout type="idea" title="Rule 3">
+
+Ingest webhooks with a claim on the event ID, apply them via a state machine that tolerates out-of-order arrival, and always acknowledge the rail once you've stored the event. Don't rely on the rail to retry your bugs for you.
+
+</Callout>
+
+## Version 3: the reconciliation loop
+
+Idempotent ingest fixes duplicates and reordering. It does not fix the case where a webhook never arrives. For that, I need a job that periodically asks the rail: _"here's what I think happened in the last N hours — what actually happened?"_ and compares.
+
+The shape:
+
+```go
+func (s *Server) ReconcileWindow(ctx context.Context, from, to time.Time) (ReconcileReport, error) {
+    // 1. Pull the rail's record of truth for this window.
+    railCharges, err := s.rail.ListCharges(ctx, from, to)
+    if err != nil {
+        return ReconcileReport{}, err
+    }
+
+    // 2. Pull my own record for the same window.
+    myCharges, err := s.db.ListCharges(ctx, from, to)
+    if err != nil {
+        return ReconcileReport{}, err
+    }
+
+    // 3. Diff them.
+    report := diff(railCharges, myCharges)
+
+    // 4. Act on each category of discrepancy.
+    return s.applyReconcileActions(ctx, report)
+}
+```
+
+```python
+async def reconcile_window(self, start: datetime, end: datetime) -> ReconcileReport:
+    # 1. The rail's record of truth for this window.
+    rail_charges = await self.rail.list_charges(start, end)
+    # 2. My own record for the same window.
+    my_charges = await self.db.list_charges(start, end)
+    # 3. Diff them.
+    report = diff(rail_charges, my_charges)
+    # 4. Act on each category of discrepancy.
+    return await self.apply_reconcile_actions(report)
+```
+
+The interesting work is in `diff`. Every reconciliation ever written boils down to sorting each record into one of four buckets:
+
+```go
+type ReconcileReport struct {
+    Matched    []ChargePair // rail and DB agree
+    OnlyInRail []RailCharge // rail knows about it, DB doesn't
+    OnlyInDB   []DBCharge   // DB knows about it, rail doesn't
+    Mismatched []ChargePair // both know about it, but disagree on state
+}
+```
+
+<SketchCanvas
+  viewBox="0 0 760 300"
+  title="Reconciliation diffs two independent records into four buckets: matched, only-in-rail, only-in-database, and mismatched, each with its own remedy"
+  caption={
+    <>
+      The whole job. <em>one bucket repairs itself, three need a human</em>
+    </>
+  }
+>
+  <SketchInk>
+    <SketchBox x={30} y={60} width={150} height={46} accent showLabels={false} delay={0} />
+    <SketchBox x={30} y={170} width={150} height={46} showLabels={false} delay={100} />
+    <SketchArrow from={[184, 83]} to={[246, 128]} delay={200} />
+    <SketchArrow from={[184, 193]} to={[246, 148]} delay={250} />
+    <SketchBox x={252} y={110} width={120} height={56} showLabels={false} delay={350} />
+    <SketchArrow from={[376, 128]} to={[468, 46]} delay={500} />
+    <SketchArrow from={[376, 136]} to={[468, 112]} accent delay={550} />
+    <SketchArrow from={[376, 144]} to={[468, 178]} delay={600} />
+    <SketchArrow from={[376, 152]} to={[468, 244]} delay={650} />
+    <SketchBox x={474} y={24} width={190} height={42} showLabels={false} delay={700} />
+    <SketchBox x={474} y={90} width={190} height={42} accent showLabels={false} delay={750} />
+    <SketchBox x={474} y={156} width={190} height={42} showLabels={false} delay={800} />
+    <SketchBox x={474} y={222} width={190} height={42} showLabels={false} delay={850} />
+  </SketchInk>
+  <SketchText>
+    <SketchBoxCaption x={30} y={60} width={150} height={46} label="Rail record" delay={0} />
+    <SketchBoxCaption x={30} y={170} width={150} height={46} label="My database" delay={100} />
+    <SketchBoxCaption x={252} y={110} width={120} height={56} label="diff" delay={350} />
+    <SketchBoxCaption x={474} y={24} width={190} height={42} label="Matched" sub="do nothing" delay={700} />
+    <SketchBoxCaption x={474} y={90} width={190} height={42} label="Only in rail" sub="auto-repair" delay={750} />
+    <SketchBoxCaption x={474} y={156} width={190} height={42} label="Only in DB" sub="alert" delay={800} />
+    <SketchBoxCaption x={474} y={222} width={190} height={42} label="Mismatched" sub="alert, never repair" delay={850} />
+  </SketchText>
+</SketchCanvas>
+
+Each bucket means something different:
+
+- **Matched** is the boring, good case — most of your volume lives here and you do nothing.
+- **Only in rail** is almost always a lost webhook. The rail confirms money moved, my database has no idea. This is repairable automatically: I ingest the missing event as if the webhook had arrived.
+- **Only in DB** is rarer and weirder. Usually it means I recorded an intent to charge but the rail never actually processed it (a network failure right at the boundary). Sometimes it means my system created a phantom row it shouldn't have. This one usually needs a human to look at it.
+- **Mismatched** is the most serious. Both systems know about the charge but disagree on its state — I say `succeeded`, the rail says `refunded`, or vice versa. Never auto-repair mismatches. Alert.
+
+```go
+func (s *Server) applyReconcileActions(ctx context.Context, r ReconcileReport) (ReconcileReport, error) {
+    for _, c := range r.OnlyInRail {
+        // Synthesize the webhook we never received, feed it through the same
+        // ingest path so idempotency still holds if it later arrives for real.
+        synthetic := RailEvent{
+            ID:        "recon-" + c.ID,
+            Type:      c.TerminalEventType(),
+            ChargeID:  c.ID,
+            CreatedAt: c.UpdatedAt,
+        }
+        _ = s.applyEvent(ctx, synthetic)
+    }
+    for _, m := range r.Mismatched {
+        s.alerts.Fire(ctx, "mismatch", m)
+    }
+    for _, o := range r.OnlyInDB {
+        s.alerts.Fire(ctx, "orphan_in_db", o)
+    }
+    return r, nil
+}
+```
+
+```python
+async def apply_reconcile_actions(self, r: ReconcileReport) -> ReconcileReport:
+    for c in r.only_in_rail:
+        # Synthesize the webhook we never received and feed it through the
+        # same ingest path, so idempotency holds if the real one shows up.
+        await apply_event(RailEvent(
+            id=f"recon-{c.id}",
+            type=c.terminal_event_type(),
+            charge_id=c.id,
+            created_at=c.updated_at,
+        ))
+    for m in r.mismatched:
+        await self.alerts.fire("mismatch", m)
+    for o in r.only_in_db:
+        await self.alerts.fire("orphan_in_db", o)
+    return r
+```
+
+Two details that matter more than they look. The synthetic event ID is prefixed (`recon-`) so it can't collide with a real event ID from the rail — if the real webhook eventually shows up, it gets its own separate claim and the state machine handles the no-op gracefully. And I feed synthetic events through the same `applyEvent` function, not a shortcut path — because the state machine's logic applies just as much to repaired events as to real ones.
+
+<Callout type="idea" title="Rule 4">
+
+Reconcile in windows, diff into four buckets, auto-repair only the lost-webhook case, and alert on everything else. Never repair a mismatch automatically.
+
+</Callout>
+
+## How much drift does each version actually leave?
+
+Everything above is the standard advice, and I'd written it three times before I thought to measure it. So I built a small harness: one rail, one unreliable webhook channel, and the three ingest strategies from this article, all fed the identical delivery transcript so any difference in the results comes from the ingest logic and nothing else.
+
+It's a runnable repo, not a paragraph of prose — clone [`examples/payment-reconciliation`](https://github.com/meetjn/meet/tree/main/examples/payment-reconciliation) and run the three programs in order:
+
+```sh
+cd 01-naive-ingest        && go run .   # or: python3 sim.py
+cd ../02-idempotent-ingest && go run .   # or: python3 sim.py
+cd ../03-reconciliation    && go run .   # or: python3 sim.py
+```
+
+Three harms are measured separately, because each maps to one of the three failure modes:
+
+- **Stuck** — the rail moved money, my database still says `pending`. Caused by loss.
+- **2x credit** — the side effect fired more than once for one charge. Caused by duplicates.
+- **Wrong state** — both sides terminal, and I disagree with the rail. Caused by reordering, and by lost refunds.
+
+### The results
+
+| strategy | stuck | 2x credit | wrong state | disagrees with rail |
+| --- | --- | --- | --- | --- |
+| naive ingest | 4.53% | 9.25% | 0.98% | 5.51% |
+| idempotent ingest | 4.53% | 0.00% | 0.56% | 5.09% |
+| idempotent + reconciliation | 0.00% | 0.00% | 0.56% | 0.56% |
+
+Reconciliation auto-repaired 453 charges and raised 56 alerts for humans.
+
+Read the first column again. **Idempotent ingest left exactly as many charges stuck as the naive version did — 4.53%, the same number to the basis point.** Deduplication and a well-built state machine did outstanding work on the harms they address: duplicate side effects went from 9.25% of charges to zero, and wrong terminal states nearly halved. They did *nothing at all* for lost webhooks, because there is nothing they can do. You cannot deduplicate a message that never arrived.
+
+That result holds across the whole range of loss rates:
+
+| webhook loss | naive stuck | idempotent stuck | disagrees after reconciliation |
+| --- | --- | --- | --- |
+| 0% | 0.00% | 0.00% | 0.00% |
+| 1% | 1.02% | 1.02% | 0.10% |
+| 2% | 1.71% | 1.71% | 0.19% |
+| 5% | 4.53% | 4.53% | 0.56% |
+| 10% | 8.87% | 8.87% | 0.93% |
+| 20% | 17.70% | 17.70% | 1.69% |
+
+The first two columns are identical at every single loss rate. Idempotency is not a partial mitigation for message loss; it is orthogonal to it.
+
+The last column is the part worth internalising. Reconciliation doesn't drive disagreement to zero — at 5% loss it leaves 0.56%. But every one of those remaining charges is a lost _refund_ event, where my database says `succeeded` and the rail says `refunded`: two confident, terminal, conflicting beliefs. That's a mismatch, and Rule 4 says never auto-repair a mismatch. So reconciliation surfaced all 56 as alerts rather than guessing.
+
+That's the actual guarantee, and it's a more useful one than "no drift":
+
+<Callout type="warning" title="What reconciliation actually buys you">
+
+Reconciliation does not eliminate disagreement. It converts **silent** drift into **visible** drift. Charges that were quietly wrong and undetectable become either automatically repaired or an alert with a human's name on it. Silent drift went to zero; the residue became a work queue.
+
+</Callout>
+
+The Python port produces the same pattern from a different random stream — 4.34% stuck under both naive and idempotent ingest, 9.93% duplicate credits eliminated, 434 repaired and 49 alerted. The specific decimals depend on the PRNG; the identity between the naive and idempotent stuck columns does not.
+
+**What this is and isn't.** It's a deterministic simulation of three named failure modes, not production telemetry. It doesn't model network partitions, rail-side outages, clock skew, or the partial-batch weirdness in the next section. What it does establish is a *lower bound*: even with a perfectly reliable database, a perfectly correct state machine, and a rail that never lies, message loss alone leaves a few percent of your charges wrong, and no amount of ingest hardening touches that number. Change the rates to match your own webhook delivery stats and rerun it — the shape of the result won't move.
+
+## Version 4: reconciling a payout batch
+
+Everything above assumes each event describes one charge. Payouts break that assumption. A payout is a batch — I ask the rail to send money to 500 different recipients in one call — and the rail processes them independently. Some succeed. Some fail. Some are still pending after the batch is "complete."
+
+The naive version treats a payout as one atomic thing: it either succeeded or it didn't. That's wrong. A batch's state is really a rollup of 500 individual states, and reconciliation has to work at both levels.
+
+```go
+type PayoutBatch struct {
+    ID        string
+    State     string // "processing", "partial", "complete"
+    Transfers []Transfer
+}
+
+type Transfer struct {
+    ID          string
+    BatchID     string
+    RecipientID string
+    AmountCents int64
+    State       string // "pending", "succeeded", "failed"
+    FailReason  string
+}
+```
+
+```python
+@dataclass
+class Transfer:
+    id: str
+    batch_id: str
+    recipient_id: str
+    amount_cents: int
+    state: str  # "pending" | "succeeded" | "failed"
+    fail_reason: str | None = None
+
+
+@dataclass
+class PayoutBatch:
+    id: str
+    state: str  # "processing" | "partial" | "complete"
+    transfers: list[Transfer]
+```
+
+Reconciling a batch means two passes. First, reconcile each transfer individually — same four-bucket diff as before, one transfer at a time. Then reconcile the batch's rollup state against the sum of its transfers' states. A batch marked `complete` in my database with three `failed` transfers underneath it is a drift, even if every individual transfer matches the rail.
+
+```go
+func (s *Server) ReconcileBatch(ctx context.Context, batchID string) error {
+    batch, _ := s.db.LoadBatch(ctx, batchID)
+    railTransfers, _ := s.rail.ListTransfersInBatch(ctx, batchID)
+
+    // Per-transfer reconciliation.
+    for _, rt := range railTransfers {
+        mt := batch.FindTransfer(rt.ID)
+        if mt == nil {
+            s.repairMissingTransfer(ctx, batch, rt)
+        } else if mt.State != rt.State {
+            s.alerts.Fire(ctx, "transfer_mismatch", rt.ID)
+        }
+    }
+
+    // Rollup check.
+    computed := computeBatchState(batch.Transfers)
+    if batch.State != computed {
+        s.alerts.Fire(ctx, "batch_state_drift", batchID)
+    }
+    return nil
+}
+```
+
+```python
+async def reconcile_batch(self, batch_id: str) -> None:
+    batch = await self.db.load_batch(batch_id)
+    rail_transfers = await self.rail.list_transfers_in_batch(batch_id)
+
+    # Per-transfer reconciliation.
+    for rt in rail_transfers:
+        mt = batch.find_transfer(rt.id)
+        if mt is None:
+            await self.repair_missing_transfer(batch, rt)
+        elif mt.state != rt.state:
+            await self.alerts.fire("transfer_mismatch", rt.id)
+
+    # Rollup check.
+    if batch.state != compute_batch_state(batch.transfers):
+        await self.alerts.fire("batch_state_drift", batch_id)
+```
+
+The partial-failure case is where payouts genuinely differ from single charges: a batch can be _correctly_ in a `partial` state, meaning some transfers succeeded and some didn't, and that's a real terminal outcome, not a bug. Your reconciliation has to know the difference between "this batch is in a broken state" and "this batch is correctly reporting partial success," and that distinction lives in the state machine, not in the diff.
+
+<Callout type="idea" title="Rule 5">
+
+Batches reconcile at two levels — individual items against the rail, and the batch's rollup against the sum of its items. Partial success is a valid terminal state; treat it as such.
+
+</Callout>
+
+## When shouldn't you reconcile?
+
+Two cases where reconciliation is the wrong answer.
+
+**When the two sides aren't independent.** If both records ultimately derive from the same source, you're not reconciling — you're checking your own arithmetic. That's still useful, but it's a different technique (invariant checks, not reconciliation), and it can't detect the failures reconciliation is meant to catch.
+
+**When the drift you're looking for is inside a single request.** Reconciliation runs periodically and catches drift over time. If the correctness question is "did this single API call do the right thing," you need transactional guarantees inside the request path — the idempotency and staging patterns from [the previous article](/writing/payment-api-idempotency) — not a job that runs an hour later. Reconciliation is for _systemic_ drift, not per-request bugs.
+
+<Callout type="idea" title="Rule 6">
+
+Reconciliation requires two genuinely independent record-keepers and works over time windows. It does not replace transactional correctness inside a single request.
+
+</Callout>
+
+## Reference checklist
+
+Hold your own reconciliation system against this:
+
+- [ ] Webhooks ingested via a unique-constraint claim on the rail's event ID.
+- [ ] Webhook handler always returns 200 after claiming, even if applying fails.
+- [ ] Event application via a state machine that tolerates out-of-order arrival (forward-only states, terminal states).
+- [ ] Reconciliation runs on a fixed schedule, over defined time windows.
+- [ ] Diff produces four buckets: matched, only-in-rail, only-in-DB, mismatched.
+- [ ] Only-in-rail auto-repaired by synthesizing an event through the same ingest path.
+- [ ] Synthetic events have IDs that can't collide with real events.
+- [ ] Mismatches never auto-repaired — always alerted for human review.
+- [ ] For batches: two-level reconciliation, individual items and rollup state.
+- [ ] Metrics on each bucket over time — a rising only-in-rail count is an early signal of webhook infrastructure problems.
+- [ ] Reconciliation windows overlap slightly, so events near a boundary aren't missed.
+- [ ] Alert volume itself is monitored — a reconciliation loop that silently stops alerting looks identical to one with nothing to report.
+- [ ] You have measured your own webhook loss rate, rather than assuming it's zero.
+
+## Closing
+
+The last article ended by saying failure becomes _survivable_ when every request has a name and every retry lands on a system that remembers what it already did. This one ends one layer out: correctness doesn't stop at the request boundary. Your API can be perfectly idempotent and your system can still be quietly wrong, because the channels that tell you what happened are the same unreliable networks the requests themselves ran over.
+
+I believed that before I measured it. What I didn't expect was how cleanly the numbers separate the two concerns — that hardening the ingest would erase duplicate side effects entirely and move the lost-webhook number by exactly nothing, at every loss rate I tried.
+
+Looking back at both articles together, they're really the same move applied at two layers: an idempotency key is an **optimistic path** — assume the request will complete, make it safe to repeat. A reconciliation loop is the **pessimistic check** — assume something got lost, and prove it one way or the other on a schedule. Neither substitutes for the other, and I don't think that pairing is specific to payments. Anywhere a system claims something happened and something else can independently verify it, the same two questions apply: what's the optimistic path here, and what's the pessimistic check that catches it when the optimistic path is wrong?
+
+That's the lens I'll keep applying as this series goes on. Build the request path and you have an API that survives retries. Build the recovery path and you have a system that survives silence — which, in payments, is the failure that actually costs you customers. The alternative is finding out from them.

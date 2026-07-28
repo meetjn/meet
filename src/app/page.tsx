@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
-import { getAllArticles, getAllTags, getListedArticles } from "@/lib/articles";
+import { getAllArticles, getListedArticles } from "@/lib/articles";
 import { formatDate } from "@/lib/format";
 import { site } from "@/content/site";
 import { SITE_DESCRIPTION } from "@/lib/seo";
@@ -39,7 +39,6 @@ function buildBlogJsonLd() {
 
 export default function HomePage() {
   const articles = getListedArticles();
-  const tags = getAllTags();
   const featured =
     articles.find((article) => article.featured) ??
     articles.find((article) => !article.upcoming);
@@ -93,8 +92,14 @@ export default function HomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <header className="mb-24 max-w-4xl lg:mb-32">
-        <p className="eyebrow mb-8">
+      {/*
+        Centred hero. The dek carries its own narrower measure — centred text
+        needs a shorter line than left-aligned to stay comfortable to read —
+        and the old left rule is dropped, since a left-edge accent reads as
+        broken once the text is centred.
+      */}
+      <header className="mx-auto mb-28 max-w-4xl text-center lg:mb-40">
+        <p className="eyebrow mb-10">
           {site.name} · {site.role}
         </p>
         <h1 className="font-display text-[clamp(44px,6.5vw,84px)] font-medium leading-[1.05] tracking-[-0.02em] text-portfolio-white">
@@ -102,7 +107,7 @@ export default function HomePage() {
           <em className="font-normal italic text-portfolio-ember">explained</em>
           .
         </h1>
-        <p className="mt-10 max-w-[54ch] border-l border-portfolio-smoke pl-7 font-sans text-[16px] font-light leading-[1.9] text-portfolio-cream">
+        <p className="mx-auto mt-12 max-w-[50ch] font-sans text-[16px] font-light leading-[1.9] text-portfolio-cream">
           I&apos;m Meet, I build payments and fintech infrastructure for a early-stage startups. Here I
           write down how these infrastructure actually work — backend systems,
           money movement pipelines, distributed systems, the parts I learned in
@@ -124,7 +129,6 @@ export default function HomePage() {
             readingTimeMinutes: article.readingTimeMinutes,
             upcoming: article.upcoming,
           }))}
-          tags={tags}
         />
       </section>
     </div>

@@ -4,7 +4,6 @@ import { site } from "@/content/site";
 import { formatDate } from "@/lib/format";
 import { ArticleNewsletterRail } from "@/components/writing/ArticleNewsletterRail";
 import { ArticleSocialLinks } from "@/components/writing/ArticleSocialLinks";
-import { ArticleCorrectionNote } from "@/components/writing/ArticleCorrectionNote";
 
 type ArticleMetaCardProps = {
   date: string;
@@ -48,8 +47,6 @@ export function ArticleMetaCard({
         </p>
 
         <ArticleNewsletterRail variant="card" inputId="article-meta-email" />
-
-        <ArticleCorrectionNote />
       </div>
     </aside>
   );

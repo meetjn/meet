@@ -59,7 +59,7 @@ export function buildArticleJsonLd(article: Article) {
         {
           "@type": "ListItem",
           position: 1,
-          name: "Writing",
+          name: "Articles",
           item: SITE_URL,
         },
         {

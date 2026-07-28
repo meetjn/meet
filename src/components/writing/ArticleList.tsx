@@ -17,12 +17,19 @@ export type ArticleListEntry = {
 
 type ArticleListProps = {
   articles: ArticleListEntry[];
-  tags: string[];
 };
 
+/**
+ * How many topic chips stay visible before the rest collapse behind "More".
+ * Fixed so the filter row keeps its height as the archive grows — without a
+ * cap, every new article's tags widen this row indefinitely.
+ */
+const VISIBLE_TAG_LIMIT = 6;
+
 /** Chronological article index with client-side tag filtering. */
-export function ArticleList({ articles, tags }: ArticleListProps) {
+export function ArticleList({ articles }: ArticleListProps) {
   const [activeTag, setActiveTag] = useState<string | null>(null);
+  const [showAllTags, setShowAllTags] = useState(false);
 
   const visible = useMemo(
     () =>
@@ -32,15 +39,38 @@ export function ArticleList({ articles, tags }: ArticleListProps) {
     [articles, activeTag],
   );
 
+  /** Tags ranked by how many articles carry them — the broadest topics first. */
+  const rankedTags = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const article of articles) {
+      for (const tag of article.tags) {
+        counts.set(tag, (counts.get(tag) ?? 0) + 1);
+      }
+    }
+    return [...counts.entries()]
+      .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+      .map(([tag]) => tag);
+  }, [articles]);
+
+  const shownTags = useMemo(() => {
+    if (showAllTags) return rankedTags;
+    const top = rankedTags.slice(0, VISIBLE_TAG_LIMIT);
+    // Keep the current filter on screen even if it ranks below the cut.
+    if (activeTag && !top.includes(activeTag)) top.push(activeTag);
+    return top;
+  }, [rankedTags, showAllTags, activeTag]);
+
+  const hiddenCount = rankedTags.length - shownTags.length;
+
   return (
     <div>
-      {tags.length > 1 ? (
+      {rankedTags.length > 1 ? (
         <div
           role="group"
           aria-label="Filter by topic"
           className="mb-14 flex flex-wrap gap-3"
         >
-          {[null, ...tags].map((tag) => {
+          {[null, ...shownTags].map((tag) => {
             const active = activeTag === tag;
             return (
               <button
@@ -54,6 +84,17 @@ export function ArticleList({ articles, tags }: ArticleListProps) {
               </button>
             );
           })}
+
+          {hiddenCount > 0 || showAllTags ? (
+            <button
+              type="button"
+              onClick={() => setShowAllTags((open) => !open)}
+              aria-expanded={showAllTags}
+              className="chip !border-transparent !px-3 text-portfolio-mist hover:!text-portfolio-white"
+            >
+              {showAllTags ? "Show fewer" : `+${hiddenCount} more`}
+            </button>
+          ) : null}
         </div>
       ) : null}
 
