@@ -1,0 +1,523 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Reconciliation — LinkedIn assets</title>
+    <style>
+      :root {
+        --canvas: #0a0908;
+        --surface: #141110;
+        --surface-2: #1a1614;
+        --line: #2c2620;
+        --ink: #f6f2ea;
+        --ink-2: #d0c9bd;
+        --ink-3: #8b8377;
+        --ember: #c84b11;
+        --ember-bright: #e8621a;
+        --serif: Georgia, "Times New Roman", serif;
+        --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial,
+          sans-serif;
+        --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, monospace;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        padding: 48px;
+        background: #17171a;
+        font-family: var(--sans);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 56px;
+      }
+
+      .hint {
+        width: 1200px;
+        color: #9a9aa5;
+        font-size: 13px;
+        letter-spacing: 0.02em;
+        font-family: var(--mono);
+      }
+      .hint b {
+        color: #e6e6ee;
+        font-weight: 600;
+      }
+
+      /* ————— the capture area ————— */
+      .panel {
+        width: 1200px;
+        background: var(--canvas);
+        color: var(--ink);
+        position: relative;
+        overflow: hidden;
+        padding: 76px;
+        display: flex;
+        flex-direction: column;
+      }
+      .panel.square {
+        height: 1200px;
+      }
+      .panel.wide {
+        height: 628px;
+        padding: 64px 76px;
+      }
+
+      /* faint grain, same as the site */
+      .panel::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        opacity: 0.35;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+      }
+
+      .eyebrow {
+        margin: 0;
+        font-family: var(--mono);
+        font-size: 13px;
+        letter-spacing: 0.24em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+      }
+      .eyebrow .on {
+        color: var(--ember);
+      }
+
+      h1 {
+        margin: 26px 0 0;
+        font-family: var(--serif);
+        font-weight: 500;
+        letter-spacing: -0.02em;
+        line-height: 1.04;
+        color: #fff;
+      }
+      .panel.square h1 {
+        font-size: 76px;
+      }
+      .panel.wide h1 {
+        font-size: 60px;
+      }
+      h1 em {
+        font-style: italic;
+        color: var(--ember-bright);
+      }
+
+      .dek {
+        margin: 24px 0 0;
+        max-width: 46ch;
+        font-size: 19px;
+        font-weight: 300;
+        line-height: 1.7;
+        color: var(--ink-2);
+      }
+
+      .spacer {
+        flex: 1;
+      }
+
+      .url {
+        font-family: var(--mono);
+        font-size: 14px;
+        letter-spacing: 0.06em;
+        color: var(--ink-3);
+      }
+      .url b {
+        color: var(--ink-2);
+        font-weight: 500;
+      }
+
+      /* ————— Panel A: the two-truths stage ————— */
+      .stage {
+        position: relative;
+        height: 560px;
+        margin-top: 52px;
+      }
+      .wires {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        overflow: visible;
+      }
+
+      .card {
+        position: absolute;
+        top: 0;
+        width: 470px;
+        height: 256px;
+        border: 1px solid var(--line);
+        background: var(--surface);
+        border-radius: 18px;
+        padding: 26px 28px;
+      }
+      .card.left {
+        left: 0;
+      }
+      .card.right {
+        right: 0;
+        border-color: #3a3128;
+      }
+      .card h2 {
+        margin: 0;
+        font-family: var(--mono);
+        font-size: 12px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+        font-weight: 500;
+      }
+      .row {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        font-family: var(--mono);
+        font-size: 15px;
+        color: var(--ink-2);
+        padding: 11px 0;
+        border-bottom: 1px solid #221d18;
+      }
+      .row:first-of-type {
+        margin-top: 18px;
+      }
+      .row .k {
+        color: var(--ink-3);
+        font-size: 13px;
+      }
+      .state {
+        font-family: var(--mono);
+        font-size: 22px;
+        letter-spacing: 0.04em;
+        font-weight: 600;
+      }
+      .state.ok {
+        color: #6fbf73;
+      }
+      .state.bad {
+        color: var(--ember-bright);
+      }
+      .consistent {
+        margin: 16px 0 0;
+        font-size: 13px;
+        color: var(--ink-3);
+        font-style: italic;
+        font-family: var(--serif);
+      }
+
+      .recon {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 432px;
+        height: 104px;
+        border: 1px dashed #3d342a;
+        border-radius: 16px;
+        background: rgba(200, 75, 17, 0.045);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 18px;
+      }
+      .recon .t {
+        font-family: var(--serif);
+        font-size: 27px;
+        color: #fff;
+      }
+      .recon .s {
+        font-family: var(--mono);
+        font-size: 13px;
+        color: var(--ink-3);
+        letter-spacing: 0.04em;
+      }
+
+      .verdict {
+        margin: 46px 0 0;
+        font-family: var(--serif);
+        font-size: 29px;
+        line-height: 1.45;
+        color: var(--ink);
+      }
+      .verdict em {
+        font-style: italic;
+        color: var(--ember-bright);
+      }
+
+      /* ————— Panel B: the measurement ————— */
+      .matrix {
+        margin-top: 54px;
+        width: 100%;
+        border-collapse: collapse;
+        font-family: var(--mono);
+      }
+      .matrix th,
+      .matrix td {
+        text-align: right;
+        padding: 22px 18px;
+        border-bottom: 1px solid var(--line);
+      }
+      .matrix th:first-child,
+      .matrix td:first-child {
+        text-align: left;
+        padding-left: 0;
+      }
+      .matrix thead th {
+        font-size: 12.5px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+        font-weight: 500;
+        padding-bottom: 16px;
+      }
+      .matrix tbody td {
+        font-size: 27px;
+        color: var(--ink-2);
+        letter-spacing: 0.01em;
+      }
+      .matrix tbody td:first-child {
+        font-family: var(--sans);
+        font-size: 17px;
+        font-weight: 400;
+        color: var(--ink-3);
+      }
+      .matrix tr.hero td {
+        padding-top: 30px;
+        padding-bottom: 30px;
+        font-size: 44px;
+        color: #fff;
+        background: rgba(200, 75, 17, 0.07);
+      }
+      .matrix tr.hero td:first-child {
+        font-size: 18px;
+        color: var(--ink);
+        font-weight: 500;
+        padding-left: 20px;
+        border-left: 3px solid var(--ember);
+      }
+      .matrix tr.hero .same {
+        color: var(--ember-bright);
+      }
+      .matrix .zero {
+        color: #6fbf73;
+      }
+      .note-in {
+        display: block;
+        font-family: var(--sans);
+        font-size: 12.5px;
+        letter-spacing: 0.02em;
+        color: var(--ink-3);
+        margin-top: 6px;
+        font-weight: 400;
+      }
+
+      .kicker {
+        margin: 44px 0 0;
+        font-family: var(--serif);
+        font-size: 30px;
+        line-height: 1.45;
+        color: var(--ink);
+        max-width: 30ch;
+      }
+      .kicker em {
+        font-style: italic;
+        color: var(--ember-bright);
+      }
+
+      /* ————— Panel C: wide ————— */
+      .wide-grid {
+        display: grid;
+        grid-template-columns: 1fr 400px;
+        gap: 64px;
+        align-items: center;
+        flex: 1;
+      }
+      .big-stat {
+        text-align: right;
+      }
+      .big-stat .n {
+        font-family: var(--mono);
+        font-size: 108px;
+        line-height: 1;
+        color: var(--ember-bright);
+        letter-spacing: -0.02em;
+      }
+      .big-stat .n2 {
+        font-family: var(--mono);
+        font-size: 108px;
+        line-height: 1;
+        color: #6fbf73;
+        letter-spacing: -0.02em;
+      }
+      .big-stat .l {
+        font-family: var(--mono);
+        font-size: 12px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+        margin-top: 10px;
+      }
+      .arrowdown {
+        color: var(--ink-3);
+        font-size: 30px;
+        margin: 14px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <p class="hint">
+      <b>PANEL A</b> — 1200×1200 · the redraw. Screenshot the dark square only.
+    </p>
+
+    <section class="panel square">
+      <p class="eyebrow">Payments · <span class="on">silent drift</span></p>
+      <h1>One charge.<br /><em>Two truths.</em></h1>
+
+      <div class="stage">
+        <svg class="wires" viewBox="0 0 1048 560" preserveAspectRatio="none">
+          <!-- webhook that dies in transit -->
+          <line x1="470" y1="128" x2="516" y2="128" stroke="#e8621a" stroke-width="2" />
+          <line
+            x1="516"
+            y1="128"
+            x2="556"
+            y2="128"
+            stroke="#e8621a"
+            stroke-width="2"
+            stroke-dasharray="5 7"
+            opacity="0.55"
+          />
+          <line x1="562" y1="121" x2="576" y2="135" stroke="#e8621a" stroke-width="2.2" />
+          <line x1="576" y1="121" x2="562" y2="135" stroke="#e8621a" stroke-width="2.2" />
+
+          <!-- reconciliation reaches up into both -->
+          <path
+            d="M232 432 L232 272"
+            stroke="#5c4f41"
+            stroke-width="1.5"
+            stroke-dasharray="6 8"
+            fill="none"
+          />
+          <path d="M226 282 L232 268 L238 282" stroke="#5c4f41" stroke-width="1.5" fill="none" />
+          <path
+            d="M816 432 L816 272"
+            stroke="#5c4f41"
+            stroke-width="1.5"
+            stroke-dasharray="6 8"
+            fill="none"
+          />
+          <path d="M810 282 L816 268 L822 282" stroke="#5c4f41" stroke-width="1.5" fill="none" />
+        </svg>
+
+        <div class="card left">
+          <h2>Payment rail</h2>
+          <div class="row"><span class="k">charge</span><span>ch_9f2a1c</span></div>
+          <div class="row"><span class="k">amount</span><span>$240.00</span></div>
+          <div class="row" style="border-bottom: none">
+            <span class="k">state</span><span class="state ok">SUCCEEDED</span>
+          </div>
+          <p class="consistent">Money moved. Three days ago.</p>
+        </div>
+
+        <div class="card right">
+          <h2>Your database</h2>
+          <div class="row"><span class="k">charge</span><span>ch_9f2a1c</span></div>
+          <div class="row"><span class="k">amount</span><span>$240.00</span></div>
+          <div class="row" style="border-bottom: none">
+            <span class="k">state</span><span class="state bad">PENDING</span>
+          </div>
+          <p class="consistent">Still waiting for a webhook that died.</p>
+        </div>
+
+        <div class="recon">
+          <span class="t">Reconciliation</span>
+          <span class="s">— pulls both · diffs · repairs</span>
+        </div>
+      </div>
+
+      <p class="verdict">
+        Both systems are internally consistent.<br />
+        <em>Both are wrong about each other.</em>
+      </p>
+
+      <div class="spacer"></div>
+      <p class="url"><b>meetjain.xyz</b> · your database is not the truth</p>
+    </section>
+
+    <p class="hint">
+      <b>PANEL B</b> — 1200×1200 · the data. This is the one nobody else can post.
+    </p>
+
+    <section class="panel square">
+      <p class="eyebrow">10,000 charges · 5% webhook loss · <span class="on">seed 42</span></p>
+      <h1>The number that<br /><em>didn't move.</em></h1>
+
+      <table class="matrix">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Naive</th>
+            <th>Idempotent</th>
+            <th>+ Reconciliation</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="hero">
+            <td>
+              Stuck in pending
+              <span class="note-in">money moved, you never knew</span>
+            </td>
+            <td class="same">4.53%</td>
+            <td class="same">4.53%</td>
+            <td class="zero">0.00%</td>
+          </tr>
+          <tr>
+            <td>Double-credited</td>
+            <td>9.25%</td>
+            <td class="zero">0.00%</td>
+            <td class="zero">0.00%</td>
+          </tr>
+          <tr>
+            <td>Wrong final state</td>
+            <td>0.98%</td>
+            <td>0.56%</td>
+            <td>0.56%</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p class="kicker">
+        Idempotency fixed everything it could reach.<br />
+        <em>It cannot reach a message that never arrived.</em>
+      </p>
+
+      <div class="spacer"></div>
+      <p class="url"><b>meetjain.xyz</b> · runnable harness in the repo</p>
+    </section>
+
+    <p class="hint"><b>PANEL C</b> — 1200×628 · slim version, good as a link-preview crop.</p>
+
+    <section class="panel wide">
+      <p class="eyebrow">Measured · 10,000 charges · <span class="on">5% webhook loss</span></p>
+      <div class="wide-grid">
+        <div>
+          <h1>Idempotency does not<br /><em>fix lost webhooks.</em></h1>
+          <p class="dek">
+            Deduplication took duplicate charges from 9.25% to zero — and moved
+            the lost-webhook number by nothing at all. Only reconciliation did.
+          </p>
+        </div>
+        <div class="big-stat">
+          <div class="n">4.53%</div>
+          <div class="l">idempotent ingest</div>
+          <div class="arrowdown">↓</div>
+          <div class="n2">0.00%</div>
+          <div class="l">+ reconciliation</div>
+        </div>
+      </div>
+      <p class="url"><b>meetjain.xyz</b></p>
+    </section>
+  </body>
+</html>

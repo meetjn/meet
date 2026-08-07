@@ -138,7 +138,7 @@ export function NewsletterSignup({
           type="submit"
           disabled={status === "loading"}
           className={cn(
-            "h-12 shrink-0 gap-2 rounded-full bg-portfolio-ember px-7 font-sans text-[14px] font-medium text-white transition-colors hover:bg-portfolio-ember-glow disabled:opacity-70",
+            "h-12 shrink-0 gap-2 rounded-full bg-portfolio-white px-7 font-sans text-[14px] font-medium text-portfolio-black transition-opacity hover:opacity-85 disabled:opacity-70",
           )}
         >
           {status === "loading" ? (

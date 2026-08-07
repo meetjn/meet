@@ -45,7 +45,7 @@ function renderWelcomeEmail(): { html: string; text: string } {
                     <td style="padding:0 12px 0 0;">
                       <img src="${authorImage}" width="44" height="44" alt="Meet Jain" style="display:block;width:44px;height:44px;border-radius:999px;border:1px solid #e2dbce;object-fit:cover;">
                     </td>
-                    <td style="font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:13px;letter-spacing:0.02em;color:#ac3e0a;">
+                    <td style="font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:13px;letter-spacing:0.02em;color:#1a1612;">
                       Meet Jain · Newsletter
                     </td>
                   </tr>

@@ -46,7 +46,7 @@ export default async function ArticleOpenGraphImage({
             top: 0,
             bottom: 0,
             width: 10,
-            background: "linear-gradient(to bottom, #E8621A, #7A2D0A)",
+            background: "linear-gradient(to bottom, #F6F2EA, #4C453C)",
           }}
         />
         <div
@@ -54,7 +54,7 @@ export default async function ArticleOpenGraphImage({
             display: "flex",
             alignItems: "center",
             gap: 16,
-            color: "#C84B11",
+            color: "#F6F2EA",
             fontSize: 22,
             letterSpacing: "0.3em",
             textTransform: "uppercase",

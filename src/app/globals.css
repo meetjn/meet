@@ -17,9 +17,12 @@
   --ink-strong: 255 255 255;
   --ink-2: 208 201 189;
   --ink-3: 152 144 131;
-  --accent: 200 75 17; /* ember */
-  --accent-bright: 232 98 26;
-  --accent-dim: 122 45 10;
+  /* Accent is monochrome: emphasis comes from brightness, not hue. Pure
+     white sits one step above headings (--ink), so accented text still
+     reads as the brightest thing on the page. */
+  --accent: 255 255 255;
+  --accent-bright: 255 255 255;
+  --accent-dim: 120 113 104;
   --grain-opacity: 0.4;
   color-scheme: dark;
 }
@@ -32,9 +35,10 @@
   --ink-strong: 16 13 10;
   --ink-2: 76 69 60;
   --ink-3: 132 123 110;
-  --accent: 172 62 10; /* deeper ember for contrast on paper */
-  --accent-bright: 200 75 17;
-  --accent-dim: 226 148 104;
+  /* Mirrored on paper: accent is the darkest ink, one step below headings. */
+  --accent: 12 10 8;
+  --accent-bright: 0 0 0;
+  --accent-dim: 150 142 130;
   --grain-opacity: 0.18;
   color-scheme: light;
 }
@@ -249,8 +253,8 @@ body::before {
   }
 
   .writing-prose pre [data-highlighted-line] {
-    background: rgb(200 75 17 / 0.12);
-    border-left: 2px solid rgb(200 75 17);
+    background: rgb(var(--accent) / 0.1);
+    border-left: 2px solid rgb(var(--accent) / 0.85);
     margin-left: -1.25rem;
     padding-left: calc(1.25rem - 2px);
   }

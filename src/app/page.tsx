@@ -93,21 +93,17 @@ export default function HomePage() {
       />
 
       {/*
-        Centred hero. The dek carries its own narrower measure — centred text
-        needs a shorter line than left-aligned to stay comfortable to read —
-        and the old left rule is dropped, since a left-edge accent reads as
-        broken once the text is centred.
+        No display headline — the intro carries the page on its own. The h1 is
+        kept but visually hidden: every page needs exactly one for search
+        engines and screen readers, and removing it outright would cost
+        ranking on the site's own name without changing what a reader sees.
       */}
-      <header className="mx-auto mb-28 max-w-4xl text-center lg:mb-40">
-        <p className="eyebrow mb-10">
+      <header className="mx-auto mb-20 max-w-4xl text-center lg:mb-24">
+        <h1 className="sr-only">{site.name} — writing on backend and payment systems</h1>
+        <p className="eyebrow mb-8">
           {site.name} · {site.role}
         </p>
-        <h1 className="font-display text-[clamp(44px,6.5vw,84px)] font-medium leading-[1.05] tracking-[-0.02em] text-portfolio-white">
-          Systems,{" "}
-          <em className="font-normal italic text-portfolio-ember">explained</em>
-          .
-        </h1>
-        <p className="mx-auto mt-12 max-w-[50ch] font-sans text-[16px] font-light leading-[1.9] text-portfolio-cream">
+        <p className="mx-auto max-w-[50ch] font-sans text-[16px] font-light leading-[1.9] text-portfolio-cream">
           I&apos;m Meet, I build payments and fintech infrastructure for a early-stage startups. Here I
           write down how these infrastructure actually work — backend systems,
           money movement pipelines, distributed systems, the parts I learned in
